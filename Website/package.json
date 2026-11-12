@@ -1,0 +1,25 @@
+{
+  "name": "dinu-market-ecommerce",
+  "version": "1.0.0",
+  "description": "Dinu Market — Full-Stack Specialty Asian & Global Grocery E-Commerce Platform (Israel)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node test-suite.js"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "keywords": [
+    "dinu-market",
+    "ecommerce",
+    "asian-grocery",
+    "israel",
+    "supabase",
+    "sqlite"
+  ],
+  "author": "Dinu Market Engineering",
+  "license": "UNLICENSED"
+}
+

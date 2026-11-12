@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DINU MARKET — Authentic Indian, Thai, Sri Lankan &amp; Filipino Groceries in Israel</title>
+  <meta name="description" content="Explore authentic products from India, Thailand, Sri Lanka and the Philippines, delivered straight to your door throughout Israel. Shop DINU MARKET online." />
+  <link rel="canonical" href="https://dinumarket.co.il/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Montserrat:wght@600;700;800;900&amp;family=Playfair+Display:wght@700&amp;display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script type="application/ld+json" id="seoStructuredData">
+  {
+    "@context": "https://schema.org",
+    "@type": "GroceryStore",
+    "name": "DINU MARKET",
+    "url": "https://dinumarket.co.il",
+    "logo": "https://dinumarket.co.il/images/brand/dinu-logo.png",
+    "description": "Explore authentic products from India, Thailand, Sri Lanka and the Philippines, delivered straight to your door in Israel. Browse authentic products by their country of origin, all stocked in Israel and delivered to Israeli addresses.",
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "IL"
+    },
+    "areaServed": "IL",
+    "currenciesAccepted": "ILS"
+  }
+  </script>
+</head>
+<body>
+  <!-- ====================================================================
+       5A. ANNOUNCEMENT BAR (Genuine Domestic Israel Delivery Messaging)
+       ==================================================================== -->
+  <div class="announcement-bar" role="region" aria-label="Store Announcement">
+    <div class="announcement-inner">
+      <div id="announcementText">
+        <span class="announcement-badge">ISRAEL DELIVERY ONLY</span>
+        <span>Discover flavours from around the world • Explore our Indian, Thai, Sri Lankan and Filipino selections • Delivery throughout Israel</span>
+      </div>
+      <div class="announcement-right">
+        <button type="button" onclick="app.showPolicyModal('shipping')">🇮🇱 Israel Delivery Information</button>
+        <button type="button" onclick="app.quickDemoLogin('customer')">👤 Demo Customer</button>
+        <button type="button" onclick="app.quickDemoLogin('admin')">🛡️ Admin Dashboard</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       4 & 5B. STICKY HEADER + TOP NAVIGATION
+       ==================================================================== -->
+  <header class="site-header">
+    <div class="header-main">
+      <!-- DINU MARKET Master Logo (Uncropped & Undistorted) -->
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button type="button" class="mobile-menu-btn" aria-label="Open Navigation Menu" onclick="app.toggleMobileDrawer(true)">☰</button>
+        <div class="brand-logo-wrap" onclick="app.navigateToHome()" role="button" tabindex="0" aria-label="DINU MARKET Home">
+          <img src="images/brand/dinu-logo.png" alt="DINU MARKET Official Logo" class="brand-logo-img" />
+          <div class="brand-wordmark">
+            <span class="brand-wordmark-dinu">DINU</span>
+            <span class="brand-wordmark-market">MARKET</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Prominent Product Search Bar -->
+      <div class="search-container">
+        <form class="search-input-group" onsubmit="app.handleSearchSubmit(event)" role="search">
+          <input
+            type="search"
+            id="globalSearchInput"
+            class="search-input"
+            placeholder="Search Indian, Thai, Sri Lankan &amp; Filipino products, brands or EAN barcode..."
+            aria-label="Search products, brands, and regions"
+            autocomplete="off"
+            oninput="app.handlePredictiveInput(this.value)"
+          />
+          <button type="submit" class="search-submit-btn">🔍 Search</button>
+        </form>
+        <div id="predictiveDropdown" class="predictive-dropdown" style="display:none;" role="listbox" aria-label="Search suggestions"></div>
+      </div>
+
+      <!-- Header Controls: Language, Admin, Customer Account, Wishlist & Shopping Basket -->
+      <div class="header-actions">
+        <select
+          id="langSelector"
+          class="lang-select-dropdown"
+          aria-label="Select Store Language"
+          onchange="app.setLanguage(this.value)"
+        >
+          <option value="en">English</option>
+          <option value="he">עברית (Hebrew)</option>
+          <option value="hi">हिन्दी (India)</option>
+          <option value="th">ไทย (Thailand)</option>
+          <option value="si">සිංහල (Sri Lanka)</option>
+          <option value="tl">Filipino (Philippines)</option>
+        </select>
+        <button type="button" id="adminHeaderBtn" class="header-btn header-btn-admin" style="display:none;" onclick="app.switchView('admin')">
+          🛡️ <span data-i18n="admin_dashboard">Admin</span>
+        </button>
+        <button type="button" id="accountHeaderBtn" class="header-btn" onclick="app.handleAccountClick()" aria-label="Customer Account">
+          👤 <span id="accountHeaderLabel">Sign In / Account</span>
+        </button>
+        <button type="button" class="header-btn" onclick="app.openWishlistModal()" aria-label="View Wishlist">
+          ❤️ <span>Wishlist</span>
+          <span id="headerWishlistCount" class="cart-count-pill" style="background:var(--brand-red);color:#FFF;">0</span>
+        </button>
+        <button type="button" class="header-btn header-btn-cart" onclick="app.toggleCartDrawer(true)" aria-label="Open Shopping Basket">
+          🛒 <span data-i18n="basket_label">Basket</span>
+          <span id="headerCartCount" class="cart-count-pill">0</span>
+          <span id="headerCartTotal" style="font-size:0.82rem;opacity:0.92;">₪0.00</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Section 4 Primary Navigation: HOME, SHOP BY REGION, SHOP BY CATEGORY, SPECIAL OFFERS, NEW ARRIVALS, BEST SELLERS, ABOUT US, CONTACT US -->
+    <nav class="primary-nav" aria-label="Primary Navigation">
+      <ul id="desktopNavList" class="nav-list"></ul>
+    </nav>
+  </header>
+
+  <!-- ====================================================================
+       MAIN VIEWPORT CONTAINER
+       ==================================================================== -->
+  <main id="mainContent">
+    <!-- VIEW 1: HOMEPAGE & STOREFRONT (Section 5A–5J) -->
+    <div id="view-storefront">
+      <!-- 5C. Hero Banner -->
+      <section class="hero-banner" id="heroSection">
+        <div class="container hero-grid">
+          <div>
+            <span class="hero-badge" data-i18n="hero_badge">AUTHENTIC ASIAN &amp; REGIONAL GROCERIES IN ISRAEL</span>
+            <h1 class="hero-title" id="heroHeadlineText" data-i18n="hero_title">DISCOVER THE FLAVOURS OF ASIA</h1>
+            <p class="hero-subtitle" id="heroSubtext" data-i18n="hero_subtitle">
+              Explore authentic products from India, Thailand, Sri Lanka and the Philippines, delivered straight to your door in Israel. Browse authentic products by their country of origin, all stocked in Israel and delivered to Israeli addresses.
+            </p>
+            <div class="hero-cta-row">
+              <button type="button" class="btn-primary" onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})">
+                SHOP NOW
+              </button>
+              <button type="button" class="btn-outline" style="background:#FFFFFF;color:var(--brand-forest);border-color:var(--brand-gold);" onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})">
+                EXPLORE OUR REGIONS
+              </button>
+            </div>
+          </div>
+          <div class="hero-emblem-card">
+            <img src="images/brand/dinu-logo.png" alt="DINU MARKET Master Logo" style="height:110px;width:auto;border-radius:0;border:none;background:transparent;" />
+            <div style="font-family:var(--font-heading);font-weight:800;font-size:1.15rem;color:#FFE484;margin-top:6px;">DINU MARKET ISRAEL</div>
+            <p style="font-size:0.85rem;margin:6px 0 12px;color:rgba(255,255,255,0.92);">
+              Authentic Regional Products • Domestic Delivery Throughout Israel Only • Prices in ₪ ILS
+            </p>
+            <div style="font-size:0.78rem;background:rgba(0,0,0,0.28);padding:8px 12px;border-radius:6px;border:1px solid rgba(204,167,50,0.4);">
+              🇮🇳 India • 🇹🇭 Thailand • 🇱🇰 Sri Lanka • 🇵🇭 Philippines
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="container">
+        <!-- 5E. FEATURED CATEGORIES GRID -->
+        <section id="featuredCategoriesSection" style="padding-top:8px;">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">Featured Categories</h2>
+              <div style="font-size:0.9rem;color:var(--text-secondary);">
+                Active product categories available in our Israel warehouse
+              </div>
+            </div>
+            <button type="button" class="btn-outline" style="padding:6px 14px;font-size:0.82rem;" onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})">
+              View Full Catalogue →
+            </button>
+          </div>
+          <div id="featuredCategoriesGrid" class="category-tiles-grid"></div>
+        </section>
+
+        <!-- 5F. BEST SELLERS SECTION -->
+        <section id="bestSellersSection" style="margin-bottom:28px;">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">Best Sellers</h2>
+              <div style="font-size:0.9rem;color:var(--text-secondary);">
+                Customer favourites across our Indian, Thai, Sri Lankan and Filipino selections
+              </div>
+            </div>
+          </div>
+          <div id="bestSellersGrid" class="product-grid compact-product-grid best-sellers-grid"></div>
+        </section>
+
+        <!-- 5G. SPECIAL OFFERS SECTION -->
+        <section id="specialOffersSection" style="margin-bottom:28px;">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">Special Offers &amp; Promotions</h2>
+              <div style="font-size:0.9rem;color:var(--text-secondary);">
+                Verified promotional campaigns and discount codes managed by the store administrator
+              </div>
+            </div>
+          </div>
+          <div id="specialOffersContainer"></div>
+        </section>
+
+        <!-- 5H. NEW ARRIVALS SECTION -->
+        <section id="newArrivalsSection" style="margin-bottom:28px;">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">New Arrivals</h2>
+              <div style="font-size:0.9rem;color:var(--text-secondary);">
+                Recently added products in our Israel warehouse
+              </div>
+            </div>
+          </div>
+          <div id="newArrivalsGrid" class="product-grid compact-product-grid"></div>
+        </section>
+
+        <!-- FULL CATALOGUE & COMBINED COUNTRY + CATEGORY FILTER -->
+        <section id="catalog" style="padding-top:12px;">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title" data-i18n="region_section_title">Complete Product Catalogue</h2>
+              <div style="font-size:0.88rem;color:var(--text-secondary);">
+                Filter simultaneously by Country of Origin, Category, Brand, Product Size, Availability, and Price in ILS (₪)
+              </div>
+            </div>
+            <button type="button" class="btn-outline" style="padding:6px 14px;font-size:0.82rem;" onclick="app.resetAllFilters()" data-i18n="clear_all_filters">
+              Clear All Filters
+            </button>
+          </div>
+          <div id="regionPillsContainer" class="region-strip"></div>
+
+          <div class="catalog-layout">
+            <aside class="filter-sidebar" aria-label="Product Filters">
+              <div class="filter-group">
+                <select id="filterRegionSelect" aria-label="Country of Origin" style="width:100%;padding:8px;border-radius:4px;border:1px solid var(--border);" onchange="app.selectRegion(this.value, false)">
+                  <option value="">All 4 Countries (India, Thailand, Sri Lanka, Philippines)</option>
+                  <option value="india">🇮🇳 India</option>
+                  <option value="thailand">🇹🇭 Thailand</option>
+                  <option value="sri-lanka">🇱🇰 Sri Lanka</option>
+                  <option value="philippines">🇵🇭 Philippines</option>
+                </select>
+              </div>
+
+              <div class="filter-group">
+                <h4 data-i18n="filter_dept_title">Product Category</h4>
+                <select id="filterCategorySelect" style="width:100%;padding:8px;border-radius:4px;border:1px solid var(--border);" onchange="app.onDepartmentSelectChange(this.value)">
+                  <option value="">All Active Categories</option>
+                </select>
+              </div>
+
+              <div class="filter-group">
+                <h4 data-i18n="filter_subcat_title">Subcategory</h4>
+                <select id="filterSubcategorySelect" style="width:100%;padding:8px;border-radius:4px;border:1px solid var(--border);" onchange="app.applyCatalogFilters()">
+                  <option value="">All Subcategories</option>
+                </select>
+              </div>
+
+              <div class="filter-group">
+                <h4 data-i18n="filter_brand_title">Brand / Manufacturer</h4>
+                <select id="filterVendorSelect" style="width:100%;padding:8px;border-radius:4px;border:1px solid var(--border);" onchange="app.applyCatalogFilters()">
+                  <option value="">All Brands</option>
+                </select>
+              </div>
+
+              <div class="filter-group">
+                <h4>Product Size / Weight</h4>
+                <select id="filterSizeSelect" style="width:100%;padding:8px;border-radius:4px;border:1px solid var(--border);" onchange="app.applyCatalogFilters()">
+                  <option value="">All Sizes</option>
+                  <option value="250g">250g</option>
+                  <option value="500g">500g</option>
+                  <option value="1000 ml">1000 ml (1 Liter)</option>
+                  <option value="1 kg">1 kg</option>
+                  <option value="5 kg">5 kg</option>
+                </select>
+              </div>
+
+              <div class="filter-group">
+                <h4 data-i18n="filter_dietary_title">Dietary &amp; Attributes</h4>
+                <select id="filterDietarySelect" style="width:100%;padding:8px;border-radius:4px;border:1px solid var(--border);" onchange="app.applyCatalogFilters()">
+                  <option value="">All Dietary Types</option>
+                  <option value="Kosher">✡️ Kosher Certified (כשר)</option>
+                  <option value="Vegan">🌱 Vegan</option>
+                  <option value="Vegetarian">🥬 Vegetarian</option>
+                  <option value="Gluten-Free">🌾 Gluten-Free</option>
+                </select>
+              </div>
+
+              <div class="filter-group">
+                <h4 data-i18n="filter_quick_title">Availability &amp; Status</h4>
+                <label class="filter-check-row">
+                  <input type="checkbox" id="filterInStockOnly" onchange="app.applyCatalogFilters()" />
+                  <span data-i18n="filter_in_stock">✅ In Stock Only</span>
+                </label>
+                <label class="filter-check-row">
+                  <input type="checkbox" id="filterOnSaleOnly" onchange="app.applyCatalogFilters()" />
+                  <span data-i18n="filter_on_sale">🔥 Promotional Offers Only</span>
+                </label>
+                <label class="filter-check-row">
+                  <input type="checkbox" id="filterAuthenticOnly" onchange="app.applyCatalogFilters()" />
+                  <span>📸 <strong data-i18n="filter_authentic">Photographed Store Items</strong></span>
+                </label>
+              </div>
+
+              <div class="filter-group">
+                <h4><span data-i18n="filter_max_price">Maximum Price (₪ ILS):</span> <span id="maxPriceLabel">₪150</span></h4>
+                <input
+                  type="range"
+                  id="filterMaxPriceRange"
+                  min="10"
+                  max="150"
+                  step="5"
+                  value="150"
+                  style="width:100%;accent-color:var(--brand-forest);"
+                  oninput="document.getElementById('maxPriceLabel').textContent='₪'+this.value; app.applyCatalogFilters();"
+                />
+              </div>
+            </aside>
+
+            <section aria-label="Product Catalogue Results">
+              <div class="catalog-toolbar">
+                <div>
+                  <strong id="activeCatalogHeading" style="font-family:var(--font-heading);font-size:1.08rem;color:var(--brand-forest);">All Products</strong>
+                  <span id="catalogCountBadge" style="margin-left:8px;font-size:0.85rem;color:var(--text-secondary);"></span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <label for="sortSelect" style="font-size:0.84rem;font-weight:600;" data-i18n="sort_by_label">Sort by:</label>
+                  <select id="sortSelect" style="padding:7px 10px;border-radius:4px;border:1px solid var(--border);" onchange="app.applyCatalogFilters()">
+                    <option value="featured">Popularity / Featured</option>
+                    <option value="price-asc">Price: Low to High (₪)</option>
+                    <option value="price-desc">Price: High to Low (₪)</option>
+                    <option value="newest">Newest Arrivals</option>
+                    <option value="title-asc">Alphabetical Order (A–Z)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div id="productGridContainer" class="product-grid compact-product-grid catalog-product-grid"></div>
+            </section>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- VIEW 2: DEDICATED REGIONAL SHOPPING LANDING PAGES (Section 6: India, Thailand, Sri Lanka, Philippines) -->
+    <div id="view-region" class="container view-section" style="display:none;"></div>
+
+    <!-- VIEW 3: SECURE ISRAEL-ONLY CHECKOUT PROCESS (Section 9, 10, 11) -->
+    <div id="view-checkout" class="container view-section" style="display:none;"></div>
+
+    <!-- VIEW 4: CUSTOMER ACCOUNT PORTAL (Section 12) -->
+    <div id="view-account" class="container view-section" style="display:none;"></div>
+
+    <!-- VIEW 5: SUPABASE-BACKED ADMINISTRATION DASHBOARD (Section 13) -->
+    <div id="view-admin" class="container view-section" style="display:none;"></div>
+  </main>
+
+  <!-- ====================================================================
+       SECTION 7: DEDICATED PRODUCT DETAIL MODAL (WITH IMAGE ZOOM, FRONT/BACK PHOTOS & RELATED PRODUCTS)
+       ==================================================================== -->
+  <div id="pdpModalBackdrop" class="backdrop-overlay" style="display:none;" onclick="if(event.target===this) app.closePdpModal()">
+    <div id="pdpModalContent" class="modal-window" role="dialog" aria-modal="true" aria-label="Product Details"></div>
+  </div>
+
+  <!-- ====================================================================
+       AUTHENTICATION, WISHLIST & POLICY MODAL
+       ==================================================================== -->
+  <div id="genericModalBackdrop" class="backdrop-overlay" style="display:none;" onclick="if(event.target===this) app.closeGenericModal()">
+    <div id="genericModalContent" class="modal-window" style="max-width:640px;" role="dialog" aria-modal="true"></div>
+  </div>
+
+  <!-- ====================================================================
+       SECTION 8: SLIDE-OUT PERSISTENT SHOPPING BASKET DRAWER
+       ==================================================================== -->
+  <div id="cartDrawerBackdrop" class="cart-drawer-backdrop" style="display:none;" onclick="if(event.target===this) app.toggleCartDrawer(false)">
+    <aside class="cart-drawer" aria-label="Shopping Basket">
+      <div class="cart-drawer-header">
+        <h3>🛒 Your DINU MARKET Basket</h3>
+        <button type="button" style="background:none;border:none;color:#FFF;font-size:1.3rem;cursor:pointer;" onclick="app.toggleCartDrawer(false)">✕</button>
+      </div>
+      <div id="cartFreeShippingBar" class="free-shipping-bar"></div>
+      <div id="cartDrawerItems" class="cart-drawer-items"></div>
+      <div id="cartDrawerFooter" class="cart-drawer-footer"></div>
+    </aside>
+  </div>
+
+  <!-- ====================================================================
+       MOBILE NAVIGATION DRAWER
+       ==================================================================== -->
+  <div id="mobileDrawerBackdrop" class="cart-drawer-backdrop" style="display:none;justify-content:flex-start;" onclick="if(event.target===this) app.toggleMobileDrawer(false)">
+    <aside class="cart-drawer" style="max-width:340px;" aria-label="Mobile Category Menu">
+      <div class="cart-drawer-header">
+        <h3>DINU MARKET MENU</h3>
+        <button type="button" style="background:none;border:none;color:#FFF;font-size:1.3rem;cursor:pointer;" onclick="app.toggleMobileDrawer(false)">✕</button>
+      </div>
+      <div id="mobileNavContainer" class="cart-drawer-items"></div>
+    </aside>
+  </div>
+
+  <!-- ====================================================================
+       5K. SITE FOOTER (Complete Required Links, Support & Policies)
+       ==================================================================== -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+            <img src="images/brand/dinu-logo.png" alt="DINU MARKET Official Logo" style="height:64px;width:auto;border-radius:0;border:none;background:#FFF;padding:4px;border-radius:6px;" />
+            <div>
+              <div style="font-family:var(--font-heading);font-weight:900;font-size:1.3rem;color:#FFFFFF;">DINU MARKET</div>
+              <div style="font-size:0.78rem;color:var(--brand-gold);">ISRAEL’S ASIAN &amp; REGIONAL GROCERY</div>
+            </div>
+          </div>
+          <p style="font-size:0.86rem;color:rgba(255,255,255,0.85);margin-bottom:12px;" data-i18n="footer_about_text">
+            Bringing authentic specialty foods originating from India, Thailand, Sri Lanka, and the Philippines directly to customers throughout Israel.
+          </p>
+          <div style="font-size:0.84rem;color:rgba(255,255,255,0.9);margin-bottom:10px;">
+            📍 Business Location &amp; Dispatch: Israel (Domestic Israel Delivery Only)<br />
+            📧 Customer Support: <strong>[PLACEHOLDER: support@dinumarket.co.il]</strong><br />
+            📞 Phone / WhatsApp: <strong>[PLACEHOLDER: Configure in Admin]</strong>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:8px;">
+            <a href="#facebook" onclick="event.preventDefault(); app.showPolicyModal('contact');" class="pay-badge" aria-label="DINU MARKET Facebook">Facebook</a>
+            <a href="#instagram" onclick="event.preventDefault(); app.showPolicyModal('contact');" class="pay-badge" aria-label="DINU MARKET Instagram">Instagram</a>
+            <a href="#whatsapp" onclick="event.preventDefault(); app.showPolicyModal('contact');" class="pay-badge" aria-label="DINU MARKET WhatsApp">WhatsApp</a>
+          </div>
+        </div>
+
+        <div>
+          <h4>Shop by Region</h4>
+          <ul class="footer-links">
+            <li><button type="button" onclick="app.openRegionalPage('india')">🇮🇳 India — Regional Shopping Page</button></li>
+            <li><button type="button" onclick="app.openRegionalPage('thailand')">🇹🇭 Thailand — Regional Shopping Page</button></li>
+            <li><button type="button" onclick="app.openRegionalPage('sri-lanka')">🇱🇰 Sri Lanka — Regional Shopping Page</button></li>
+            <li><button type="button" onclick="app.openRegionalPage('philippines')">🇵🇭 Philippines — Regional Shopping Page</button></li>
+          </ul>
+          <h4 style="margin-top:16px;">Shop by Category</h4>
+          <ul class="footer-links">
+            <li><button type="button" onclick="app.selectCategory('sweets')">Sweets, Biscuits &amp; Cookies</button></li>
+            <li><button type="button" onclick="app.selectCategory('snacks')">Snacks, Rusks &amp; Crisps</button></li>
+            <li><button type="button" onclick="app.selectCategory('pantry')">Rice, Grains, Jaggery &amp; Pantry</button></li>
+            <li><button type="button" onclick="app.selectCategory('canned-jarred-goods')">Canned &amp; Jarred Foods</button></li>
+            <li><button type="button" onclick="app.selectCategory('sauce-seasoning')">Sauces, Soy Sauce &amp; Seasonings</button></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Customer Care &amp; Policies</h4>
+          <ul class="footer-links">
+            <li><button type="button" onclick="app.showPolicyModal('about')">About DINU MARKET</button></li>
+            <li><button type="button" onclick="app.showPolicyModal('contact')">Contact Us</button></li>
+            <li><button type="button" onclick="app.showPolicyModal('faq')">Frequently Asked Questions (FAQ)</button></li>
+            <li><button type="button" onclick="app.showPolicyModal('shipping')">Delivery Information (Israel Only)</button></li>
+            <li><button type="button" onclick="app.showPolicyModal('returns')">Returns and Refunds</button></li>
+            <li><button type="button" onclick="app.showPolicyModal('privacy')">Privacy Policy</button></li>
+            <li><button type="button" onclick="app.showPolicyModal('terms')">Terms and Conditions</button></li>
+            <li><button type="button" onclick="app.showPolicyModal('accessibility')">Accessibility Statement (WCAG 2.2 AA)</button></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Secure Israeli Payment Gateway</h4>
+          <p style="font-size:0.84rem;color:rgba(255,255,255,0.85);">
+            PCI-DSS compliant Israeli payment processing. Raw credit card numbers and CVV codes are never stored on our servers. All orders ship within Israel only.
+          </p>
+          <div class="payment-badges-row">
+            <span class="pay-badge">VISA</span>
+            <span class="pay-badge">Mastercard</span>
+            <span class="pay-badge">American Express</span>
+            <span class="pay-badge">Isracard</span>
+            <span class="pay-badge">Bit ביט</span>
+            <span class="pay-badge">Apple Pay</span>
+            <span class="pay-badge">Google Pay</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="border-top:1px solid rgba(255,255,255,0.16);padding-top:18px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:0.8rem;color:rgba(255,255,255,0.75);">
+        <div>© 2026 DINU MARKET Israel. All Rights Reserved. All orders dispatched from Israel to Israeli addresses only.</div>
+        <div>Prices in Israeli New Shekels (₪ ILS) • Includes 18% Israeli VAT (כולל מע״מ).</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

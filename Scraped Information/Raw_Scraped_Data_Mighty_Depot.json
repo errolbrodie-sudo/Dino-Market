@@ -1,0 +1,349 @@
+{
+  "metadata": {
+    "reference_website": "https://mightydepot.com/",
+    "about_us_url": "https://mightydepot.com/pages/about-mighty-depot",
+    "scraped_at": "2026-11-10T14:30:00+02:00",
+    "platform": "Shopify",
+    "company_name": "Mighty Depot Inc.",
+    "established_year": 2017,
+    "headquarters_and_fulfillment": "Queens, New York City, NY, USA",
+    "primary_currency": "USD",
+    "contact_emails": {
+      "customer_support": "Support@MightyDepot.com",
+      "general_and_privacy": "info@MightyDepot.com"
+    },
+    "excluded_features_per_specification": [
+      "Mighty Rewards (Loyalty / Cash-back program)"
+    ]
+  },
+  "about_us_page": {
+    "url": "https://mightydepot.com/pages/about-mighty-depot",
+    "headline": "About Mighty Depot",
+    "established": 2017,
+    "mission_statement_summary": "Founded in 2017 in New York City with the mission of making quality global ingredients, Asian groceries, and specialty foods accessible to everyone who loves exploring new flavors and cooking at home.",
+    "core_value_propositions": [
+      "Thousands of curated imported Asian and international grocery items",
+      "Direct fulfillment from Queens, New York facility for fast dispatch",
+      "Free U.S. shipping above qualifying order threshold ($39-$50 promotional threshold)",
+      "30-day no-questions-asked satisfaction guarantee and full replacement warranty",
+      "Dedicated customer service via Support@MightyDepot.com"
+    ]
+  },
+  "navigation_hierarchy": {
+    "excluded_items": [
+      {
+        "label": "Mighty Rewards",
+        "status": "EXCLUDED_BY_REQUIREMENT",
+        "reason": "Explicitly excluded in Section 2 & Section 12 of project specification"
+      }
+    ],
+    "main_categories": [
+      {
+        "id": "shop-by-region",
+        "name": "Shop by Region",
+        "slug": "/collections/shop-by-region",
+        "menu_type": "dropdown_or_mega_column",
+        "subcategories": [
+          { "name": "China", "slug": "/collections/china" },
+          { "name": "Japan", "slug": "/collections/japan" },
+          { "name": "Republic of Korea (South Korea)", "slug": "/collections/korea" },
+          { "name": "Taiwan", "slug": "/collections/taiwan" },
+          { "name": "Thailand", "slug": "/collections/thailand" },
+          { "name": "Philippines", "slug": "/collections/philippines" },
+          { "name": "India", "slug": "/collections/india" },
+          { "name": "Indonesia", "slug": "/collections/indonesia" },
+          { "name": "Vietnam", "slug": "/collections/vietnam" },
+          { "name": "Malaysia", "slug": "/collections/malaysia" },
+          { "name": "Singapore", "slug": "/collections/singapore" },
+          { "name": "Pakistan", "slug": "/collections/pakistan" },
+          { "name": "Other Regions", "slug": "/collections/other-regions" }
+        ]
+      },
+      {
+        "id": "sweets",
+        "name": "Sweets",
+        "slug": "/collections/sweets",
+        "menu_type": "dropdown",
+        "subcategories": [
+          { "name": "Chocolates", "slug": "/collections/chocolates" },
+          { "name": "Candy", "slug": "/collections/candy" },
+          { "name": "Cookies", "slug": "/collections/cookies" },
+          { "name": "Jelly", "slug": "/collections/jelly" },
+          { "name": "Cakes", "slug": "/collections/cakes" },
+          { "name": "Mochi", "slug": "/collections/mochi" }
+        ]
+      },
+      {
+        "id": "snacks",
+        "name": "Snacks",
+        "slug": "/collections/snacks",
+        "menu_type": "dropdown",
+        "subcategories": [
+          { "name": "Chips, Crisps & Puffs", "slug": "/collections/chips-crisps-puffs" },
+          { "name": "Crackers & Buns", "slug": "/collections/crackers-buns" },
+          { "name": "Seafood Snacks", "slug": "/collections/seafood-snacks" },
+          { "name": "Nuts & Seeds", "slug": "/collections/nuts-seeds" }
+        ]
+      },
+      {
+        "id": "pantry",
+        "name": "Pantry",
+        "slug": "/collections/pantry",
+        "menu_type": "dropdown",
+        "subcategories": [
+          { "name": "Rice", "slug": "/collections/rice" },
+          { "name": "Noodles", "slug": "/collections/noodles", "nested_types": ["Japanese Noodles", "Korean Noodles", "Rice Noodles & Vermicelli"] },
+          { "name": "Flour", "slug": "/collections/flour" },
+          { "name": "Sugar", "slug": "/collections/sugar" }
+        ]
+      },
+      {
+        "id": "drinks",
+        "name": "Drinks",
+        "slug": "/collections/drinks",
+        "menu_type": "dropdown",
+        "subcategories": [
+          { "name": "Coffee", "slug": "/collections/coffee" },
+          { "name": "Juice", "slug": "/collections/juice" },
+          { "name": "Soy & Milk", "slug": "/collections/soy-milk" },
+          { "name": "Tea", "slug": "/collections/tea" },
+          { "name": "Soda", "slug": "/collections/soda" }
+        ]
+      },
+      {
+        "id": "canned-jarred-goods",
+        "name": "Canned & Jarred Goods",
+        "slug": "/collections/canned-jarred-goods",
+        "menu_type": "dropdown",
+        "subcategories": [
+          { "name": "Canned & Jarred Meats", "slug": "/collections/canned-jarred-meats" },
+          { "name": "Canned & Jarred Vegetables", "slug": "/collections/canned-jarred-vegetables" },
+          { "name": "Canned & Jarred Fruits", "slug": "/collections/canned-jarred-fruits" }
+        ]
+      },
+      {
+        "id": "sauce-seasoning",
+        "name": "Sauce & Seasoning",
+        "slug": "/collections/sauce-seasoning",
+        "menu_type": "dropdown",
+        "subcategories": [
+          { "name": "Soy Sauces", "slug": "/collections/soy-sauces" },
+          { "name": "Vinegars", "slug": "/collections/vinegars" },
+          { "name": "Ketchups", "slug": "/collections/ketchups" },
+          { "name": "Hot Sauces", "slug": "/collections/hot-sauces" },
+          { "name": "Dressings", "slug": "/collections/dressings" },
+          { "name": "Dipping Sauces", "slug": "/collections/dipping-sauces" },
+          { "name": "Spices & Seasonings", "slug": "/collections/spices-seasonings" }
+        ]
+      },
+      {
+        "id": "instant-foods",
+        "name": "Instant Foods",
+        "slug": "/collections/instant-foods",
+        "menu_type": "dropdown",
+        "subcategories": [
+          { "name": "Instant Noodles & Ramen", "slug": "/collections/instant-noodles-ramen" },
+          { "name": "Hot Pot & Meals", "slug": "/collections/hot-pot-meals" },
+          { "name": "Soups", "slug": "/collections/soups" }
+        ]
+      }
+    ]
+  },
+  "sample_scraped_products": [
+    {
+      "title": "Orion Turtle Chips (Choco Churros / Corn Soup Flavor)",
+      "category": "Snacks",
+      "subcategory": "Chips, Crisps & Puffs",
+      "region": "Republic of Korea",
+      "vendor": "Orion",
+      "url": "https://mightydepot.com/collections/snacks",
+      "format": "Single Pack / Multi-Pack",
+      "stock_status": "In Stock"
+    },
+    {
+      "title": "Takuma Fried Baby Crab Seafood Snack",
+      "category": "Snacks",
+      "subcategory": "Seafood Snacks",
+      "region": "Japan",
+      "vendor": "Takuma",
+      "url": "https://mightydepot.com/collections/seafood-snacks",
+      "format": "Bag",
+      "stock_status": "In Stock"
+    },
+    {
+      "title": "Weilong Spicy Big Gluten Snack (Latiao)",
+      "category": "Snacks",
+      "subcategory": "Crackers & Buns",
+      "region": "China",
+      "vendor": "Weilong",
+      "url": "https://mightydepot.com/collections/china",
+      "format": "Pack",
+      "stock_status": "In Stock"
+    },
+    {
+      "title": "Japanese Canned Coffee Variety Pack (Boss, Georgia, Pokka, UCC, Asahi, Wonda)",
+      "category": "Drinks",
+      "subcategory": "Coffee",
+      "region": "Japan",
+      "vendor": "Assorted Japanese Brands",
+      "url": "https://mightydepot.com/collections/coffee",
+      "format": "Variety Pack",
+      "stock_status": "In Stock"
+    },
+    {
+      "title": "HAIO Korean Honey Citron / Ginger / Jujube Tea (Jar)",
+      "category": "Drinks",
+      "subcategory": "Tea",
+      "region": "Republic of Korea",
+      "vendor": "HAIO",
+      "url": "https://mightydepot.com/collections/tea",
+      "format": "Glass Jar (2.2 lbs / 1kg)",
+      "stock_status": "In Stock"
+    },
+    {
+      "title": "FOCO Fruit Nectar Beverage (Mango / Guava / Coconut / Lychee)",
+      "category": "Drinks",
+      "subcategory": "Juice",
+      "region": "Thailand",
+      "vendor": "FOCO",
+      "url": "https://mightydepot.com/collections/juice",
+      "format": "Can / Multi-Pack",
+      "stock_status": "On Sale"
+    },
+    {
+      "title": "Kagayaki Select Short Grain Rice",
+      "category": "Pantry",
+      "subcategory": "Rice",
+      "region": "Japan",
+      "vendor": "Kagayaki",
+      "url": "https://mightydepot.com/collections/rice",
+      "format": "Bag (15 lbs / 6.8 kg)",
+      "stock_status": "In Stock"
+    },
+    {
+      "title": "Nishiki Premium Medium Grain Rice",
+      "category": "Pantry",
+      "subcategory": "Rice",
+      "region": "Japan",
+      "vendor": "Nishiki",
+      "url": "https://mightydepot.com/collections/rice",
+      "format": "Bag",
+      "stock_status": "In Stock"
+    },
+    {
+      "title": "Sekka Premium Japanese Style Medium Grain Rice",
+      "category": "Pantry",
+      "subcategory": "Rice",
+      "region": "Japan",
+      "vendor": "Sekka",
+      "url": "https://mightydepot.com/collections/rice",
+      "format": "Bag",
+      "stock_status": "In Stock"
+    },
+    {
+      "title": "Shirakiku Japanese Style Noodles & Pantry Staples",
+      "category": "Pantry",
+      "subcategory": "Noodles",
+      "region": "Japan",
+      "vendor": "Shirakiku",
+      "url": "https://mightydepot.com/collections/noodles",
+      "format": "Pack",
+      "stock_status": "In Stock"
+    },
+    {
+      "title": "Mae Ploy Sweet Chili Sauce",
+      "category": "Sauce & Seasoning",
+      "subcategory": "Dipping Sauces",
+      "region": "Thailand",
+      "vendor": "Mae Ploy",
+      "url": "https://mightydepot.com/collections/dipping-sauces",
+      "format": "Bottle",
+      "stock_status": "In Stock"
+    },
+    {
+      "title": "AROY-D Green Curry Paste",
+      "category": "Sauce & Seasoning",
+      "subcategory": "Spices & Seasonings",
+      "region": "Thailand",
+      "vendor": "AROY-D",
+      "url": "https://mightydepot.com/collections/spices-seasonings",
+      "format": "Tub (14 oz / 400g)",
+      "stock_status": "On Sale"
+    },
+    {
+      "title": "Havista Fermented Bean Curd",
+      "category": "Canned & Jarred Goods",
+      "subcategory": "Canned & Jarred Vegetables",
+      "region": "China",
+      "vendor": "Havista",
+      "url": "https://mightydepot.com/collections/canned-jarred-vegetables",
+      "format": "Glass Jar",
+      "stock_status": "On Sale"
+    },
+    {
+      "title": "Hup Seng Special Cream Crackers",
+      "category": "Snacks",
+      "subcategory": "Crackers & Buns",
+      "region": "Malaysia",
+      "vendor": "Hup Seng",
+      "url": "https://mightydepot.com/collections/crackers-buns",
+      "format": "Pack / Tin",
+      "stock_status": "In Stock"
+    },
+    {
+      "title": "Japanese Coffee Jelly Dessert",
+      "category": "Sweets",
+      "subcategory": "Jelly",
+      "region": "Japan",
+      "vendor": "Imported Japan",
+      "url": "https://mightydepot.com/collections/jelly",
+      "format": "Cup / 3-Pack",
+      "stock_status": "In Stock"
+    },
+    {
+      "title": "Taiwanese / Japanese Assorted Fruit Mochi",
+      "category": "Sweets",
+      "subcategory": "Mochi",
+      "region": "Taiwan",
+      "vendor": "Royal Family / Imported",
+      "url": "https://mightydepot.com/collections/mochi",
+      "format": "Box (210g)",
+      "stock_status": "In Stock"
+    },
+    {
+      "title": "Asian Snack Discovery / Mystery Box",
+      "category": "Snacks",
+      "subcategory": "Assorted Regional Box",
+      "region": "Pan-Asian (Japan, Korea, China, Taiwan, Thailand, India)",
+      "vendor": "Mighty Depot Curated",
+      "url": "https://mightydepot.com/collections/snacks",
+      "format": "Curated Box",
+      "stock_status": "In Stock"
+    }
+  ],
+  "policies": {
+    "shipping_policy": {
+      "origin_warehouse": "Queens, New York, USA",
+      "supported_countries": ["United States", "Canada"],
+      "international_workaround": "Suggests U.S.-based freight forwarding companies for customers outside the US and Canada",
+      "free_shipping_threshold_usd": "Orders over $39.00 - $50.00 (promotional tier within contiguous US)"
+    },
+    "return_and_refund_policy": {
+      "return_window_days": 30,
+      "condition_requirement": "Accepts returns for any or no reason within 30 days of receipt, even if opened or used",
+      "rma_process": "Customer emails Support@MightyDepot.com to obtain an RMA (Return Merchandise Authorization) number and pre-paid return label, writes RMA on outside of box, and ships back",
+      "replacement_warranty_days": 30
+    },
+    "privacy_policy": {
+      "legal_entity": "Mighty Depot Inc.",
+      "data_sale_policy": "Never sells personal information",
+      "data_collected": ["Name", "Billing & Shipping Address", "Email Address", "Phone Number", "Payment Token / Transaction Reference", "IP Address & Browser User-Agent"],
+      "marketing_consent": "Explicit opt-in for marketing emails; withdrawal/deletion requests handled via info@MightyDepot.com or Support@MightyDepot.com"
+    },
+    "reviews_system": {
+      "provider": "Judge.me (Shopify integration)",
+      "aggregate_rating": "4.14 - 4.8+ stars across 1,400+ verified customer reviews"
+    }
+  }
+}
+
