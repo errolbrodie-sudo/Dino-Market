@@ -191,7 +191,7 @@ function renderProductIllustrationSvg(slug) {
     <rect x="165" y="185" width="270" height="175" rx="16" fill="#FFFFFF" fill-opacity="0.96"/>
     <text x="300" y="235" text-anchor="middle" font-family="Montserrat, Arial, sans-serif" font-size="21" font-weight="800" fill="#14542E">${line1}</text>
     <text x="300" y="268" text-anchor="middle" font-family="Montserrat, Arial, sans-serif" font-size="18" font-weight="700" fill="#202020">${line2}</text>
-    <text x="300" y="312" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#8D191C">${ product ? sanitizeText(product.title_he, 34) : '' }</text>
+    <text x="300" y="312" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#8D191C">${product ? sanitizeText(product.title_he, 34) : ''}</text>
     <rect x="215" y="330" width="170" height="22" rx="11" fill="#F7F5EC"/>
     <text x="300" y="346" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#14542E">${flag}</text>
     <circle cx="300" cy="425" r="36" fill="${colors.accent}"/>
@@ -1378,5 +1378,5 @@ if (require.main === module) {
   });
 }
 
-module.exports = { server };
+module.exports = server;
 
