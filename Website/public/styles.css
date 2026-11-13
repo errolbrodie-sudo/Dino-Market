@@ -523,9 +523,9 @@ button, input, select, textarea {
 
 .hero-grid {
   display: grid;
-  grid-template-columns: 1.35fr 0.65fr;
+  grid-template-columns: 1fr;
   align-items: center;
-  gap: 32px;
+  gap: 24px;
 }
 
 .hero-badge {
@@ -553,7 +553,7 @@ button, input, select, textarea {
   color: rgba(255, 255, 255, 0.9);
   font-size: 1.05rem;
   margin-bottom: 22px;
-  max-width: 620px;
+  max-width: 780px;
 }
 
 .hero-cta-row {
@@ -682,8 +682,14 @@ button, input, select, textarea {
   display: flex;
   gap: 10px;
   overflow-x: auto;
-  padding-bottom: 8px;
-  margin-bottom: 20px;
+  padding-bottom: 6px;
+  margin-bottom: 6px;
+}
+
+.clear-filters-row {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 18px;
 }
 
 .region-pill {
@@ -725,7 +731,7 @@ button, input, select, textarea {
   padding: 18px;
   box-shadow: var(--shadow-card);
   position: sticky;
-  top: 194px;
+  top: 152px;
 }
 
 .filter-group {

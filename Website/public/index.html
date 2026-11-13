@@ -137,43 +137,14 @@
               <button type="button" class="btn-primary" onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})">
                 SHOP NOW
               </button>
-              <button type="button" class="btn-outline" style="background:#FFFFFF;color:var(--brand-forest);border-color:var(--brand-gold);" onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})">
-                EXPLORE OUR REGIONS
-              </button>
-            </div>
-          </div>
-          <div class="hero-emblem-card">
-            <img src="images/brand/dinu-logo.png" alt="DINU MARKET Master Logo" style="height:110px;width:auto;border-radius:0;border:none;background:transparent;" />
-            <div style="font-family:var(--font-heading);font-weight:800;font-size:1.15rem;color:#FFE484;margin-top:6px;">DINU MARKET ISRAEL</div>
-            <p style="font-size:0.85rem;margin:6px 0 12px;color:rgba(255,255,255,0.92);">
-              Authentic Regional Products • Domestic Delivery Throughout Israel Only • Prices in ₪ ILS
-            </p>
-            <div style="font-size:0.78rem;background:rgba(0,0,0,0.28);padding:8px 12px;border-radius:6px;border:1px solid rgba(204,167,50,0.4);">
-              🇮🇳 India • 🇹🇭 Thailand • 🇱🇰 Sri Lanka • 🇵🇭 Philippines
             </div>
           </div>
         </div>
       </section>
 
       <div class="container">
-        <!-- 5E. FEATURED CATEGORIES GRID -->
-        <section id="featuredCategoriesSection" style="padding-top:8px;">
-          <div class="section-header">
-            <div>
-              <h2 class="section-title">Featured Categories</h2>
-              <div style="font-size:0.9rem;color:var(--text-secondary);">
-                Active product categories available in our Israel warehouse
-              </div>
-            </div>
-            <button type="button" class="btn-outline" style="padding:6px 14px;font-size:0.82rem;" onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})">
-              View Full Catalogue →
-            </button>
-          </div>
-          <div id="featuredCategoriesGrid" class="category-tiles-grid"></div>
-        </section>
-
         <!-- 5F. BEST SELLERS SECTION -->
-        <section id="bestSellersSection" style="margin-bottom:28px;">
+        <section id="bestSellersSection" style="padding-top:8px;margin-bottom:28px;">
           <div class="section-header">
             <div>
               <h2 class="section-title">Best Sellers</h2>
@@ -220,11 +191,13 @@
                 Filter simultaneously by Country of Origin, Category, Brand, Product Size, Availability, and Price in ILS (₪)
               </div>
             </div>
+          </div>
+          <div id="regionPillsContainer" class="region-strip"></div>
+          <div class="clear-filters-row">
             <button type="button" class="btn-outline" style="padding:6px 14px;font-size:0.82rem;" onclick="app.resetAllFilters()" data-i18n="clear_all_filters">
               Clear All Filters
             </button>
           </div>
-          <div id="regionPillsContainer" class="region-strip"></div>
 
           <div class="catalog-layout">
             <aside class="filter-sidebar" aria-label="Product Filters">

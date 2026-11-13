@@ -1423,7 +1423,7 @@ const app = {
         </div>
       </li>
       <li class="nav-item">
-        <button type="button" class="nav-link" onclick="app.scrollToSection('featuredCategoriesSection')">
+        <button type="button" class="nav-link" onclick="app.scrollToSection('catalog')">
           <span>SHOP BY CATEGORY</span>
           <span class="nav-chevron">▼</span>
         </button>
@@ -1446,7 +1446,6 @@ const app = {
           <span>BEST SELLERS</span>
         </button>
       </li>
-      ${deptMegaItemsHtml}
     `;
 
     if (mobileContainer) {
