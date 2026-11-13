@@ -1491,7 +1491,13 @@ const app = {
   scrollToSection(sectionId) {
     this.switchView('storefront', false);
     setTimeout(() => {
-      document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
+      const sectionEl = document.getElementById(sectionId);
+      if (!sectionEl) return;
+      const headingEl = sectionEl.querySelector('.section-title') || sectionEl;
+      const headerEl = document.querySelector('.site-header');
+      const headerHeight = headerEl ? headerEl.getBoundingClientRect().height : 0;
+      const targetTop = headingEl.getBoundingClientRect().top + window.scrollY - headerHeight - 18;
+      window.scrollTo({ top: Math.max(0, targetTop), behavior: 'smooth' });
     }, 60);
   },
 
@@ -2589,7 +2595,7 @@ const app = {
 
     const cart = state.cart;
     if (barEl) {
-      barEl.innerHTML = `<div style="color:var(--brand-forest);font-weight:700;">🇮🇱 Domestic Delivery Across Israel Only • All Prices Include 18% VAT (₪ ILS)</div>`;
+      barEl.innerHTML = `<div style="color:var(--brand-forest);font-weight:700;">Domestic Delivery Across Israel Only • All Prices Include 18% VAT (₪ ILS)</div>`;
     }
 
     if (!cart.items || cart.items.length === 0) {

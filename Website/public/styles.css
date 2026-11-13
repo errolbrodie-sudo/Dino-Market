@@ -220,9 +220,11 @@ button, input, select, textarea {
 
 .search-input-group {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   width: 100%;
   max-width: 100%;
+  height: 42px;
+  box-sizing: border-box;
   border: 2px solid var(--brand-forest);
   border-radius: var(--radius-medium);
   background: var(--background);
@@ -238,19 +240,26 @@ button, input, select, textarea {
   flex: 1 1 0%;
   min-width: 0;
   width: 100%;
+  height: 100%;
+  box-sizing: border-box;
   border: none;
-  padding: 10px 14px;
+  padding: 0 14px;
   font-size: 0.95rem;
   outline: none;
 }
 
 .search-submit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
   white-space: nowrap;
+  height: 100%;
+  box-sizing: border-box;
   background-color: var(--brand-forest);
   color: #FFFFFF;
   border: none;
-  padding: 10px 18px;
+  padding: 0 18px;
   font-family: var(--font-heading);
   font-weight: 700;
   cursor: pointer;
@@ -324,8 +333,37 @@ button, input, select, textarea {
   min-width: 0;
 }
 
+.header-cart-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.header-cart-stack .header-btn-cart {
+  justify-content: center;
+}
+
+.header-btn-delivery {
+  justify-content: center;
+  padding: 5px 12px;
+  font-size: 0.78rem;
+  border-color: var(--brand-gold);
+  background-color: #FFFDF5;
+  color: var(--brand-forest);
+  white-space: nowrap;
+}
+
+.header-btn-delivery:hover {
+  background-color: var(--brand-gold);
+  color: var(--brand-forest);
+  border-color: var(--brand-gold);
+}
+
 .lang-select-dropdown {
-  padding: 9px 12px;
+  height: 42px;
+  box-sizing: border-box;
+  padding: 0 12px;
   border-radius: var(--radius-medium);
   border: 2px solid var(--brand-gold);
   background: #FFFDF5;
@@ -333,6 +371,7 @@ button, input, select, textarea {
   font-family: var(--font-heading);
   font-weight: 700;
   font-size: 0.85rem;
+  line-height: 1;
   cursor: pointer;
   transition: all 0.15s ease;
 }
@@ -355,8 +394,16 @@ button, input, select, textarea {
   font-family: var(--font-heading);
   font-weight: 600;
   font-size: 0.86rem;
+  white-space: nowrap;
   cursor: pointer;
   transition: all 0.15s ease;
+}
+
+#adminHeaderBtn,
+#accountHeaderBtn {
+  height: 42px;
+  box-sizing: border-box;
+  padding: 0 14px;
 }
 
 .header-btn:hover {
@@ -663,6 +710,13 @@ button, input, select, textarea {
 /* ==========================================================================
    REGION PILLS & CATALOG LAYOUT
    ========================================================================== */
+#bestSellersSection,
+#specialOffersSection,
+#newArrivalsSection,
+#catalog {
+  scroll-margin-top: 185px;
+}
+
 .section-header {
   display: flex;
   align-items: flex-end;
@@ -731,7 +785,7 @@ button, input, select, textarea {
   padding: 18px;
   box-shadow: var(--shadow-card);
   position: sticky;
-  top: 152px;
+  top: 176px;
 }
 
 .filter-group {
@@ -1821,12 +1875,15 @@ button, input, select, textarea {
     width: 100%;
     max-width: 100%;
   }
+  .search-input-group {
+    height: 38px;
+  }
   .search-input {
-    padding: 8px 10px;
+    padding: 0 10px;
     font-size: 16px;
   }
   .search-submit-btn {
-    padding: 8px 12px;
+    padding: 0 12px;
     font-size: 0.82rem;
   }
   .predictive-dropdown {
@@ -1836,12 +1893,14 @@ button, input, select, textarea {
   .header-actions {
     order: 3;
     width: 100%;
+    align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 6px;
   }
   .lang-select-dropdown {
-    padding: 6px 6px;
+    height: 34px;
+    padding: 0 6px;
     font-size: 0.74rem;
     max-width: 112px;
     min-width: 0;
@@ -1855,13 +1914,29 @@ button, input, select, textarea {
     flex: 1 1 auto;
     justify-content: center;
   }
+  #adminHeaderBtn,
+  #accountHeaderBtn {
+    height: 34px;
+    padding: 0 8px;
+  }
   #accountHeaderLabel {
     max-width: 78px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  .header-actions button[aria-label="View Wishlist"] > span:not(.cart-count-pill),
+  .header-cart-stack {
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 4px;
+  }
+  .header-btn-delivery {
+    padding: 4px 6px;
+    font-size: 0.68rem;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.2;
+  }
   #headerCartTotal {
     display: none;
   }

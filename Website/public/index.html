@@ -34,7 +34,6 @@
   <div class="announcement-bar" role="region" aria-label="Store Announcement">
     <div class="announcement-inner">
       <div class="announcement-right">
-        <button type="button" onclick="app.showPolicyModal('shipping')">🇮🇱 Israel Delivery Information</button>
         <button type="button" onclick="app.quickDemoLogin('customer')">👤 Demo Customer</button>
         <button type="button" onclick="app.quickDemoLogin('admin')">🛡️ Admin Dashboard</button>
       </div>
@@ -75,7 +74,7 @@
         <div id="predictiveDropdown" class="predictive-dropdown" style="display:none;" role="listbox" aria-label="Search suggestions"></div>
       </div>
 
-      <!-- Header Controls: Language, Admin, Customer Account, Wishlist & Shopping Basket -->
+      <!-- Header Controls: Language, Admin, Customer Account, Shopping Basket & Israel Delivery Info -->
       <div class="header-actions">
         <select
           id="langSelector"
@@ -96,15 +95,16 @@
         <button type="button" id="accountHeaderBtn" class="header-btn" onclick="app.handleAccountClick()" aria-label="Customer Account">
           👤 <span id="accountHeaderLabel">Sign In / Account</span>
         </button>
-        <button type="button" class="header-btn" onclick="app.openWishlistModal()" aria-label="View Wishlist">
-          ❤️ <span>Wishlist</span>
-          <span id="headerWishlistCount" class="cart-count-pill" style="background:var(--brand-red);color:#FFF;">0</span>
-        </button>
-        <button type="button" class="header-btn header-btn-cart" onclick="app.toggleCartDrawer(true)" aria-label="Open Shopping Basket">
-          🛒 <span data-i18n="basket_label">Basket</span>
-          <span id="headerCartCount" class="cart-count-pill">0</span>
-          <span id="headerCartTotal" style="font-size:0.82rem;opacity:0.92;">₪0.00</span>
-        </button>
+        <div class="header-cart-stack">
+          <button type="button" class="header-btn header-btn-cart" onclick="app.toggleCartDrawer(true)" aria-label="Open Shopping Basket">
+            🛒 <span data-i18n="basket_label">Basket</span>
+            <span id="headerCartCount" class="cart-count-pill">0</span>
+            <span id="headerCartTotal" style="font-size:0.82rem;opacity:0.92;">₪0.00</span>
+          </button>
+          <button type="button" class="header-btn header-btn-delivery" onclick="app.showPolicyModal('shipping')">
+            Israel Delivery Information
+          </button>
+        </div>
       </div>
     </div>
 
@@ -130,7 +130,7 @@
               Explore authentic products from India, Thailand, Sri Lanka and the Philippines, delivered straight to your door in Israel. Browse authentic products by their country of origin, all stocked in Israel and delivered to Israeli addresses.
             </p>
             <div class="hero-cta-row">
-              <button type="button" class="btn-primary" onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})">
+              <button type="button" class="btn-primary" onclick="app.scrollToSection('catalog')">
                 SHOP NOW
               </button>
             </div>
