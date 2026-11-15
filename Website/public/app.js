@@ -1276,6 +1276,12 @@ const app = {
       state.allProducts = allData.products || getLocalProducts();
 
       this.renderNavigation();
+      this.syncHeaderHeight();
+      const headerEl = document.querySelector('.site-header');
+      if (headerEl && typeof ResizeObserver !== 'undefined') {
+        new ResizeObserver(() => this.syncHeaderHeight()).observe(headerEl);
+      }
+      window.addEventListener('resize', () => this.syncHeaderHeight());
       this.renderHomepageSections();
       this.renderRegionStrip();
       this.populateFilterDropdowns();
@@ -1293,6 +1299,16 @@ const app = {
       });
     } catch (err) {
       console.error('Initialization error:', err);
+    }
+  },
+
+  syncHeaderHeight() {
+    const headerEl = document.querySelector('.site-header');
+    if (headerEl) {
+      const h = Math.round(headerEl.getBoundingClientRect().height);
+      if (h > 0) {
+        document.documentElement.style.setProperty('--site-header-height', `${h}px`);
+      }
     }
   },
 
@@ -1796,6 +1812,7 @@ const app = {
   renderRegionalPage() {
     const container = document.getElementById('view-region');
     if (!container) return;
+    this.syncHeaderHeight();
     const reg = state.regions.find((r) => r.slug === state.activeRegionPage) || state.regions[0];
     const allProds = (state.allProducts.length > 0 ? state.allProducts : getLocalProducts()).filter(
       (p) => p.region_slug === reg.slug && p.status !== 'archived'
@@ -1806,11 +1823,11 @@ const app = {
     const regionSizes = Array.from(new Set(allProds.map((p) => p.size_label).filter(Boolean)));
 
     container.innerHTML = `
-      <div style="margin-bottom:16px;display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:10px;">
+      <div class="region-sticky-nav" role="navigation" aria-label="Select Region">
         ${state.regions
           .map(
             (r) =>
-              `<button type="button" class="${r.slug === reg.slug ? 'btn-primary' : 'btn-outline'}" style="padding:7px 16px;font-size:0.82rem;" onclick="app.openRegionalPage('${escapeHtml(r.slug)}')">${escapeHtml(r.flag_emoji || '')} ${escapeHtml(r.name)}</button>`
+              `<button type="button" class="${r.slug === reg.slug ? 'btn-primary' : 'btn-outline'}" style="padding:7px 16px;font-size:0.82rem;" onclick="app.openRegionalPage('${escapeHtml(r.slug)}')">${escapeHtml(r.name)}</button>`
           )
           .join('')}
       </div>
@@ -1819,8 +1836,7 @@ const app = {
       <div class="card-panel" style="background:linear-gradient(125deg, #1E3F20 0%, #2D5A27 100%);color:#FFF;padding:28px;border:none;margin-bottom:22px;">
         <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:24px;align-items:center;">
           <div>
-            <span class="hero-eyebrow">${escapeHtml(reg.flag_emoji || '')} REGIONAL SHOPPING PAGE • ${escapeHtml(reg.name.toUpperCase())}</span>
-            <h1 style="color:#FFF;margin:6px 0 10px;font-size:2rem;">Authentic Groceries from ${escapeHtml(reg.name)} (${escapeHtml(reg.name_he || '')})</h1>
+            <h1 style="color:#FFF;margin:0 0 10px;font-size:2rem;">Authentic Groceries from ${escapeHtml(reg.name)} (${escapeHtml(reg.name_he || '')})</h1>
             <p style="color:#F4EFE6;font-size:0.98rem;line-height:1.6;margin-bottom:14px;">
               ${escapeHtml(reg.description || reg.featured_highlight || '')}
             </p>

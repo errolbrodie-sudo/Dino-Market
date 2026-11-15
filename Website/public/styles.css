@@ -1175,8 +1175,28 @@ button, input, select, textarea {
   padding: 28px var(--spacing-lg) 64px;
 }
 
+.region-sticky-nav {
+  position: sticky;
+  top: var(--site-header-height, 146px);
+  z-index: 90;
+  background-color: rgba(247, 245, 236, 0.97);
+  backdrop-filter: blur(6px);
+  padding: 10px 16px;
+  margin: -16px 0 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .region-catalog-layout {
   padding-left: 16px;
+}
+
+.region-filter-sidebar {
+  top: calc(var(--site-header-height, 146px) + 66px);
 }
 
 .select-control {
