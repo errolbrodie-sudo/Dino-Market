@@ -2081,7 +2081,7 @@ const app = {
 
     container.innerHTML = `
       <!-- Mobile Kitchen Switcher (Desktop shows the 4 pills in the sticky header center slot) -->
-      <div class="region-strip" style="margin-bottom:20px;" role="navigation" aria-label="Switch Kitchen">
+      <div class="region-strip" style="margin-bottom:12px;" role="navigation" aria-label="Switch Kitchen">
         ${KITCHEN_ORDER.map((s) => {
           const item = KITCHEN_STOREFRONTS[s];
           return `
@@ -2155,7 +2155,7 @@ const app = {
       </section>
 
       <!-- 2. Dark Ink Gift Band ("Padala box" on /ph, etc.) -->
-      <section style="margin-bottom:32px;" aria-label="${escapeHtml(k.giftBand.title)}">
+      <section style="margin-bottom:20px;" aria-label="${escapeHtml(k.giftBand.title)}">
         <div class="promo-band promo-band-ink">
           <div class="kitchen-gift-band-body">
             <span class="travellers-eyebrow">${escapeHtml(k.giftBand.eyebrow)}</span>

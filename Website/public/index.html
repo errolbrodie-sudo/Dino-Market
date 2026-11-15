@@ -196,39 +196,49 @@
   <main id="mainContent">
     <!-- VIEW 1: REFRESHED HOMEPAGE (/) -->
     <div id="view-storefront">
-      <!-- 1. Hero Banner -->
-      <section class="home-hero" id="heroSection" aria-label="Dinu Market Banner">
+      <!-- 1. Four Regions Graphic (Each panel links to its region page) -->
+      <section class="home-hero" id="heroSection" aria-label="Shop by Region">
         <div class="container">
-          <div class="home-banner-wrap">
+          <div class="regions-graphic-banner">
             <img
-              src="images/brand/home-banner.jpg"
-              alt="Bringing the tastes of home to you — Your favorite food products from the Philippines, India, Sri Lanka, and Thailand."
-              class="home-banner-img"
+              src="images/brand/regions-graphic.jpg"
+              alt="Shop by region: Philippines (פיליפינים · Pilipinas), Thailand (תאילנד · ประเทศไทย), Sri Lanka (סרי לנקה · ශ්‍රී ලංකාව), and India (הודו · भारत)"
+              class="regions-graphic-img"
               width="1024"
-              height="434"
+              height="571"
             />
+            <div class="regions-graphic-links" dir="ltr">
+              <a
+                href="/ph"
+                class="regions-graphic-hotspot"
+                onclick="event.preventDefault(); app.openRegionalPage('philippines');"
+                aria-label="Philippines · פיליפינים · Pilipinas"
+                title="Philippines · Pilipinas"
+              ></a>
+              <a
+                href="/th"
+                class="regions-graphic-hotspot"
+                onclick="event.preventDefault(); app.openRegionalPage('thailand');"
+                aria-label="Thailand · תאילנד · ประเทศไทย"
+                title="Thailand · ประเทศไทย"
+              ></a>
+              <a
+                href="/lk"
+                class="regions-graphic-hotspot"
+                onclick="event.preventDefault(); app.openRegionalPage('sri-lanka');"
+                aria-label="Sri Lanka · סרי לנקה · ශ්‍රී ලංකාව"
+                title="Sri Lanka · ශ්‍රී ලංකාව"
+              ></a>
+              <a
+                href="/in"
+                class="regions-graphic-hotspot"
+                onclick="event.preventDefault(); app.openRegionalPage('india');"
+                aria-label="India · הודו · भारत"
+                title="India · भारत"
+              ></a>
+            </div>
           </div>
           <div class="hero-cta-row" id="heroRegionCtaRow">
-            <button type="button" class="hero-region-btn kitchen-ph" onclick="app.openRegionalPage('philippines')">
-              <span lang="en">Philippines</span>
-              <span class="hero-region-sep" aria-hidden="true">·</span>
-              <span lang="tl">Pilipinas</span>
-            </button>
-            <button type="button" class="hero-region-btn kitchen-th" onclick="app.openRegionalPage('thailand')">
-              <span lang="en">Thailand</span>
-              <span class="hero-region-sep" aria-hidden="true">·</span>
-              <span lang="th">ประเทศไทย</span>
-            </button>
-            <button type="button" class="hero-region-btn kitchen-in" onclick="app.openRegionalPage('india')">
-              <span lang="en">India</span>
-              <span class="hero-region-sep" aria-hidden="true">·</span>
-              <span lang="hi">भारत</span>
-            </button>
-            <button type="button" class="hero-region-btn kitchen-lk" onclick="app.openRegionalPage('sri-lanka')">
-              <span lang="en">Sri Lanka</span>
-              <span class="hero-region-sep" aria-hidden="true">·</span>
-              <span lang="si">ශ්‍රී ලංකාව</span>
-            </button>
             <button type="button" class="pill-control btn-cta-secondary" onclick="app.openShopView()">
               Browse all products
             </button>

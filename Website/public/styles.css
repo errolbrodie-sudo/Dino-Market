@@ -790,22 +790,48 @@ textarea {
    HOMEPAGE SECTIONS
    ========================================================================== */
 .home-hero {
-  padding: 24px 0 20px;
+  padding: 20px 0 16px;
 }
 
-.home-banner-wrap {
+.regions-graphic-banner {
+  position: relative;
   width: 100%;
   border-radius: 26px;
   overflow: hidden;
   border: 1px solid var(--dm-line);
-  margin-bottom: 18px;
-  background: var(--dm-ink);
+  margin-bottom: 16px;
+  background: var(--dm-cream);
 }
 
-.home-banner-img {
+.regions-graphic-img {
   width: 100%;
   height: auto;
   display: block;
+}
+
+.regions-graphic-links {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.regions-graphic-hotspot {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0);
+  transition: background-color 0.15s ease;
+}
+
+.regions-graphic-hotspot:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.regions-graphic-hotspot:focus-visible {
+  outline: 3px solid var(--dm-green);
+  outline-offset: -3px;
 }
 
 .hero-eyebrow-chili {
@@ -1009,18 +1035,26 @@ textarea {
   flex-wrap: wrap;
 }
 
-#travellersBandSection,
+#travellersBandSection {
+  padding: 6px 0 10px;
+}
+
 #dualPromoSection {
   padding: 12px 0 16px;
 }
 
 .promo-band.travellers-band {
-  border-radius: 20px;
-  padding: 20px 26px;
-  gap: 18px;
+  max-width: 760px;
+  margin: 0 auto;
+  border-radius: 14px;
+  padding: 10px 16px;
+  gap: 12px;
 }
 
-.travellers-band-body,
+.travellers-band-body {
+  max-width: 530px;
+}
+
 .kitchen-gift-band-body {
   max-width: 620px;
 }
@@ -1041,20 +1075,32 @@ textarea {
   margin-bottom: 4px;
 }
 
+.travellers-band .travellers-eyebrow {
+  font-size: 9.5px;
+  letter-spacing: 0.5px;
+  margin-bottom: 1px;
+}
+
 .travellers-title {
   font-family: 'Noto Sans Hebrew', var(--dm-font-display);
-  font-size: 23px;
+  font-size: 15.5px;
   font-weight: 800;
   color: var(--dm-white);
-  margin: 0 0 5px;
+  margin: 0 0 2px;
   line-height: 1.2;
 }
 
 .travellers-sub-en {
-  font-size: 14px;
+  font-size: 11.5px;
   color: rgba(255, 247, 234, 0.86);
   margin: 0;
-  line-height: 1.42;
+  line-height: 1.32;
+}
+
+.promo-band.travellers-band .btn-turmeric {
+  min-height: 34px;
+  padding: 5px 13px;
+  font-size: 0.78rem;
 }
 
 .dual-promo-grid {
@@ -1344,39 +1390,44 @@ textarea {
    KITCHEN STOREFRONT VIEW (/ph, /th, /in, /lk)
    ========================================================================== */
 .kitchen-hero-card {
-  border-radius: 36px;
-  padding: 36px 40px;
-  margin-bottom: 28px;
+  border-radius: 18px;
+  padding: 14px 20px;
+  margin-bottom: 16px;
   display: block;
+}
+
+.kitchen-hero-card .kitchen-badge-pill {
+  font-size: 10px;
+  padding: 3px 10px;
 }
 
 .kitchen-hero-toprow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 8px;
   flex-wrap: wrap;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 }
 
 .kitchen-lang-switcher {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   background: rgba(255, 255, 255, 0.58);
-  padding: 4px;
+  padding: 3px;
   border-radius: 999px;
 }
 
 .kitchen-lang-switcher button {
-  min-height: 36px;
-  padding: 6px 14px;
+  min-height: 28px;
+  padding: 3px 10px;
   border-radius: 999px;
   border: none;
   background: transparent;
   color: var(--dm-ink);
   font-weight: 700;
-  font-size: 14px;
+  font-size: 12px;
   cursor: pointer;
 }
 
@@ -1387,11 +1438,28 @@ textarea {
 
 .kitchen-hero-h1 {
   font-family: var(--dm-font-display);
-  font-size: clamp(38px, 4.8vw, 64px);
+  font-size: clamp(20px, 2.2vw, 26px);
   font-weight: 800;
-  line-height: 1.04;
+  line-height: 1.15;
   color: var(--dm-ink);
-  margin: 0 0 22px;
+  margin: 0 0 10px;
+}
+
+.kitchen-hero-card .hero-cta-row {
+  gap: 8px;
+}
+
+.kitchen-hero-card .btn-primary,
+.kitchen-hero-card .btn-whatsapp,
+.kitchen-hero-card .btn-cta-lg {
+  min-height: 38px;
+  padding: 6px 16px;
+  font-size: 0.85rem;
+}
+
+.kitchen-hero-card .btn-whatsapp svg {
+  width: 16px;
+  height: 16px;
 }
 
 .kitchen-hero-sub {
@@ -2241,13 +2309,13 @@ textarea {
   }
 
   .home-hero {
-    padding: 14px 0 14px;
+    padding: 12px 0 12px;
     text-align: left;
   }
 
-  .home-banner-wrap {
+  .regions-graphic-banner {
     border-radius: 18px;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
   }
 
   .hero-eyebrow-chili {
@@ -2369,15 +2437,19 @@ textarea {
     gap: 6px;
   }
 
-  #travellersBandSection,
+  #travellersBandSection {
+    padding: 4px 0 8px;
+  }
+
   #dualPromoSection {
     padding: 8px 0 12px;
   }
 
   .promo-band.travellers-band {
-    padding: 16px 18px;
-    border-radius: 18px;
-    gap: 12px;
+    max-width: 100%;
+    padding: 9px 13px;
+    border-radius: 13px;
+    gap: 7px;
     direction: ltr;
     align-items: flex-start;
     justify-content: flex-start;
@@ -2402,22 +2474,28 @@ textarea {
     margin-bottom: 2px;
   }
 
-  .travellers-band .travellers-title,
+  .travellers-band .travellers-eyebrow {
+    font-size: 9px;
+    margin-bottom: 1px;
+  }
+
   .band-title {
     font-size: 18.5px;
   }
 
   .travellers-band .travellers-title {
-    margin-bottom: 4px;
+    font-size: 14.5px;
+    margin-bottom: 2px;
   }
 
-  .travellers-sub-en,
   .band-copy {
     font-size: 13px;
     line-height: 1.38;
   }
 
   .travellers-sub-en {
+    font-size: 11px;
+    line-height: 1.3;
     direction: ltr;
     text-align: left;
     width: 100%;
@@ -2440,6 +2518,12 @@ textarea {
     font-size: 0.84rem;
   }
 
+  .promo-band.travellers-band .btn-turmeric {
+    min-height: 34px;
+    padding: 4px 12px;
+    font-size: 0.76rem;
+  }
+
   .hero-region-btn {
     min-height: 44px;
     padding: 8px 15px;
@@ -2447,10 +2531,28 @@ textarea {
   }
 
   .kitchen-hero-card {
-    padding: 24px 20px;
-    border-radius: 28px;
-    margin-bottom: 20px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    margin-bottom: 14px;
     text-align: left;
+  }
+
+  .kitchen-hero-toprow {
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+
+  .kitchen-hero-h1 {
+    font-size: 19px;
+    margin: 0 0 8px;
+  }
+
+  .kitchen-hero-card .btn-primary,
+  .kitchen-hero-card .btn-whatsapp,
+  .kitchen-hero-card .btn-cta-lg {
+    min-height: 36px;
+    padding: 5px 14px;
+    font-size: 0.82rem;
   }
 
   .aisle-chips-grid,
