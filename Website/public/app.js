@@ -20,20 +20,21 @@ const state = {
   promotionalOffers: JSON.parse(localStorage.getItem('dinu_promo_offers') || '[]'),
   cart: JSON.parse(localStorage.getItem('dinu_cart_fallback') || '{"items":[],"item_count":0,"subtotal_ils":0,"discounted_subtotal_ils":0,"discount_amount_ils":0,"shipping_cost_ils":25,"vat_included_ils":0,"total_ils":0,"zone_name":"Gush Dan & Tel Aviv Metro"}'),
   products: [],
+  regionProducts: [],
   allProducts: [],
   vendors: [],
   activeRegionPage: null,
   activeRegionalPage: 'philippines',
   regionalPageLimit: 8,
   regionPageFilters: {
-    aisle: '',
+    region: 'philippines',
     category: '',
+    subcategory: '',
     vendor: '',
     size: '',
-    inStock: false,
+    dietary: '',
     maxPrice: 150,
-    sort: 'featured',
-    pageSize: 12
+    sort: 'featured'
   },
   filters: {
     category: '',
@@ -2024,18 +2025,17 @@ const app = {
     state.activeRegionPage = normalized;
     state.activeRegionalPage = normalized;
     state.regionPageFilters = {
-      aisle: '',
+      region: normalized,
       category: '',
+      subcategory: '',
       vendor: '',
       size: '',
-      inStock: false,
+      dietary: '',
       maxPrice: 150,
-      sort: 'featured',
-      pageSize: 8
+      sort: 'featured'
     };
 
     const k = KITCHEN_STOREFRONTS[normalized];
-    // Step 5: Default the page language to the kitchen's language, with toggle to English or Hebrew
     state.lang = k.lang;
     document.documentElement.lang = state.lang;
     document.documentElement.dir = 'ltr';
@@ -2045,14 +2045,13 @@ const app = {
     this.renderRegionalPage();
   },
 
-  selectKitchenAisle(aisleId) {
-    if (state.regionPageFilters.aisle === aisleId) {
-      state.regionPageFilters.aisle = '';
-    } else {
-      state.regionPageFilters.aisle = aisleId;
-    }
-    this.renderRegionalPage();
-    document.getElementById('kitchenFavouritesSection')?.scrollIntoView({ behavior: 'smooth' });
+  scrollToRegionCatalog() {
+    const sectionEl = document.getElementById('regionCatalogSection');
+    if (!sectionEl) return;
+    const headerEl = document.querySelector('.site-header');
+    const headerHeight = headerEl ? headerEl.getBoundingClientRect().height : 0;
+    const targetTop = sectionEl.getBoundingClientRect().top + window.scrollY - headerHeight - 18;
+    window.scrollTo({ top: Math.max(0, targetTop), behavior: 'smooth' });
   },
 
   renderRegionalPage() {
@@ -2061,16 +2060,24 @@ const app = {
     const slug = state.activeRegionPage || 'philippines';
     const k = KITCHEN_STOREFRONTS[slug] || KITCHEN_STOREFRONTS.philippines;
 
+    if (typeof state.regionPageFilters.region === 'undefined') {
+      state.regionPageFilters.region = slug;
+    }
+
     const activeLang = [k.lang, 'en', 'he'].includes(state.lang) ? state.lang : k.lang;
     const activeDir = activeLang === 'he' ? 'rtl' : 'ltr';
     const heroTitle = k.heroTitle[activeLang] || k.heroTitle[k.lang];
-    const heroSub = k.heroSubcopy[activeLang] || k.heroSubcopy[k.lang];
     const shopLabel = k.shopBtnLabel[activeLang] || k.shopBtnLabel.en;
     const waLabel = k.whatsappBtnLabel[activeLang] || k.whatsappBtnLabel.en;
-    const aislesTitle = k.aislesHeading[activeLang] || k.aislesHeading.en;
-    const favTitle = k.favouritesHeading[activeLang] || k.favouritesHeading.en;
     const waKitchenUrl = getWhatsAppUrl(k.slug);
     const waGiftUrl = getWhatsAppUrl(k.slug, k.giftBand.whatsappText);
+
+    const departments = state.navigation.filter((c) => c.slug !== 'shop-by-region');
+    const selectedCat = state.regionPageFilters.category || '';
+    const foundCat = state.navigation.find((c) => c.slug === selectedCat);
+    const subcats = foundCat && !foundCat.slug.includes('region') ? foundCat.subcategories : [];
+    const selectedReg = state.regionPageFilters.region;
+    const maxPriceVal = Number(state.regionPageFilters.maxPrice || 150);
 
     container.innerHTML = `
       <!-- Mobile Kitchen Switcher (Desktop shows the 4 pills in the sticky header center slot) -->
@@ -2090,139 +2097,65 @@ const app = {
         }).join('')}
       </div>
 
-      <!-- 1. Kitchen Tint Hero Card (36px radius) -->
+      <!-- 1. Kitchen Tint Hero Card (Single-column, heading + CTA buttons only) -->
       <section class="kitchen-hero-card ${k.tintClass}">
-        <div>
-          <div class="kitchen-hero-toprow">
-            <span class="kitchen-badge-pill" style="color:${k.tintColor};margin-bottom:0;" lang="${escapeHtml(k.lang)}">
-              ${escapeHtml(k.heroBadge)}
-            </span>
-            <div class="kitchen-lang-switcher" role="group" aria-label="Storefront language">
-              <button
-                type="button"
-                lang="${escapeHtml(k.lang)}"
-                class="${activeLang === k.lang ? 'active' : ''}"
-                onclick="app.setKitchenViewLang('${escapeHtml(k.lang)}')"
-              >${escapeHtml(k.langButtonLabel)}</button>
-              <button
-                type="button"
-                lang="en"
-                class="${activeLang === 'en' ? 'active' : ''}"
-                onclick="app.setKitchenViewLang('en')"
-              >English</button>
-              <button
-                type="button"
-                lang="he"
-                dir="rtl"
-                class="${activeLang === 'he' ? 'active' : ''}"
-                onclick="app.setKitchenViewLang('he')"
-              >עברית</button>
-            </div>
-          </div>
-
-          <h1 class="kitchen-hero-h1" lang="${escapeHtml(activeLang)}" dir="${activeDir}">
-            ${escapeHtml(heroTitle)}
-          </h1>
-          <p class="kitchen-hero-sub" lang="${escapeHtml(activeLang)}" dir="${activeDir}">
-            ${escapeHtml(heroSub)}
-          </p>
-          ${
-            activeLang !== 'en'
-              ? `<p style="font-size:15px;color:var(--dm-text-2);margin:-12px 0 22px;" lang="en" dir="ltr">${escapeHtml(k.heroSubcopy.en)}</p>`
-              : ''
-          }
-
-          <div class="hero-cta-row">
+        <div class="kitchen-hero-toprow">
+          <span class="kitchen-badge-pill" style="color:${k.tintColor};margin-bottom:0;" lang="${escapeHtml(k.lang)}">
+            ${escapeHtml(k.heroBadge)}
+          </span>
+          <div class="kitchen-lang-switcher" role="group" aria-label="Storefront language">
             <button
               type="button"
-              class="btn-primary btn-cta-lg"
-              lang="${escapeHtml(activeLang)}"
-              onclick="document.getElementById('kitchenFavouritesSection')?.scrollIntoView({behavior:'smooth'})"
-            >
-              ${escapeHtml(shopLabel)}
-            </button>
-            <a
-              href="${escapeHtml(waKitchenUrl)}"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn-whatsapp btn-cta-lg"
-              lang="${escapeHtml(activeLang)}"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm5.82 14.01c-.24.68-1.41 1.3-1.95 1.38-.5.08-1.13.11-1.83-.11-.42-.13-.97-.31-1.67-.61-2.94-1.27-4.86-4.24-5.01-4.44-.15-.2-1.2-1.59-1.2-3.04 0-1.45.76-2.16 1.03-2.46.27-.3.59-.37.79-.37.2 0 .4.01.57.01.18 0 .43-.07.67.51.24.59.83 2.03.9 2.18.07.15.12.32.02.52-.1.2-.15.32-.3.49-.15.17-.31.38-.45.51-.15.15-.3.31-.13.61.17.3.76 1.25 1.63 2.02 1.12 1 2.06 1.31 2.36 1.46.3.15.47.12.64-.07.17-.2.74-.86.94-1.16.2-.3.4-.25.67-.15.27.1 1.73.82 2.03.97.3.15.5.22.57.35.07.12.07.72-.17 1.4z"/>
-              </svg>
-              <span>${escapeHtml(waLabel)}</span>
-            </a>
+              lang="${escapeHtml(k.lang)}"
+              class="${activeLang === k.lang ? 'active' : ''}"
+              onclick="app.setKitchenViewLang('${escapeHtml(k.lang)}')"
+            >${escapeHtml(k.langButtonLabel)}</button>
+            <button
+              type="button"
+              lang="en"
+              class="${activeLang === 'en' ? 'active' : ''}"
+              onclick="app.setKitchenViewLang('en')"
+            >English</button>
+            <button
+              type="button"
+              lang="he"
+              dir="rtl"
+              class="${activeLang === 'he' ? 'active' : ''}"
+              onclick="app.setKitchenViewLang('he')"
+            >עברית</button>
           </div>
         </div>
 
-        <div class="kitchen-hero-visual" style="background:${k.softBg};" aria-label="${escapeHtml(k.name)} pantry selection">
-          ${k.packshots
-            .slice(0, 4)
-            .map(
-              (src) => `
-              <div class="kitchen-hero-visual-tile">
-                <img src="${escapeHtml(src)}" alt="${escapeHtml(k.name)} pantry staple" />
-              </div>
-            `
-            )
-            .join('')}
-        </div>
-      </section>
+        <h1 class="kitchen-hero-h1" lang="${escapeHtml(activeLang)}" dir="${activeDir}">
+          ${escapeHtml(heroTitle)}
+        </h1>
 
-      <!-- 2. Community-Named Aisle Chips -->
-      <section style="margin-bottom:40px;" aria-labelledby="kitchenAislesHeading">
-        <div class="section-head-row" style="margin-bottom:16px;">
-          <div>
-            <h2 class="section-h2" id="kitchenAislesHeading" lang="${escapeHtml(activeLang)}" dir="${activeDir}" style="font-size:32px;">
-              ${escapeHtml(aislesTitle)}
-            </h2>
-            <p class="section-lead">Tap an aisle to filter favourites, or browse all four kitchens in one basket.</p>
-          </div>
-          ${
-            state.regionPageFilters.aisle
-              ? `<button type="button" class="pill-control" onclick="app.selectKitchenAisle('')">Show all aisles</button>`
-              : ''
-          }
-        </div>
-
-        <div class="aisle-chips-grid">
-          ${k.aisles
-            .map(
-              (aisle) => `
-              <button
-                type="button"
-                class="aisle-chip-card ${state.regionPageFilters.aisle === aisle.id ? 'active' : ''}"
-                onclick="app.selectKitchenAisle('${escapeHtml(aisle.id)}')"
-              >
-                <span class="aisle-chip-name">${escapeHtml(aisle.name)}</span>
-                <span class="aisle-chip-brands">${escapeHtml(aisle.brands)}</span>
-              </button>
-            `
-            )
-            .join('')}
-        </div>
-      </section>
-
-      <!-- 3. Favourites Grid (up to 8 best sellers filtered by country of origin) -->
-      <section id="kitchenFavouritesSection" style="margin-bottom:44px;" aria-labelledby="kitchenFavHeading">
-        <div class="section-head-row" style="margin-bottom:20px;">
-          <div>
-            <h2 class="section-h2" id="kitchenFavHeading" lang="${escapeHtml(activeLang)}" dir="${activeDir}" style="font-size:32px;">
-              ${escapeHtml(favTitle)}
-            </h2>
-            <p class="section-lead" id="regPageCountBadge"></p>
-          </div>
-          <button type="button" class="pill-control" onclick="app.selectRegion('${escapeHtml(slug)}', true)">
-            Filter in full shop →
+        <div class="hero-cta-row">
+          <button
+            type="button"
+            class="btn-primary btn-cta-lg"
+            lang="${escapeHtml(activeLang)}"
+            onclick="app.scrollToRegionCatalog()"
+          >
+            ${escapeHtml(shopLabel)}
           </button>
+          <a
+            href="${escapeHtml(waKitchenUrl)}"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-whatsapp btn-cta-lg"
+            lang="${escapeHtml(activeLang)}"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm5.82 14.01c-.24.68-1.41 1.3-1.95 1.38-.5.08-1.13.11-1.83-.11-.42-.13-.97-.31-1.67-.61-2.94-1.27-4.86-4.24-5.01-4.44-.15-.2-1.2-1.59-1.2-3.04 0-1.45.76-2.16 1.03-2.46.27-.3.59-.37.79-.37.2 0 .4.01.57.01.18 0 .43-.07.67.51.24.59.83 2.03.9 2.18.07.15.12.32.02.52-.1.2-.15.32-.3.49-.15.17-.31.38-.45.51-.15.15-.3.31-.13.61.17.3.76 1.25 1.63 2.02 1.12 1 2.06 1.31 2.36 1.46.3.15.47.12.64-.07.17-.2.74-.86.94-1.16.2-.3.4-.25.67-.15.27.1 1.73.82 2.03.97.3.15.5.22.57.35.07.12.07.72-.17 1.4z"/>
+            </svg>
+            <span>${escapeHtml(waLabel)}</span>
+          </a>
         </div>
-
-        <div id="regionalPageProductsGrid" class="product-grid"></div>
       </section>
 
-      <!-- 4. Dark Ink Gift Band ("Padala box" on /ph, etc.) -->
-      <section aria-label="${escapeHtml(k.giftBand.title)}">
+      <!-- 2. Dark Ink Gift Band ("Padala box" on /ph, etc.) -->
+      <section style="margin-bottom:32px;" aria-label="${escapeHtml(k.giftBand.title)}">
         <div class="promo-band promo-band-ink">
           <div class="kitchen-gift-band-body">
             <span class="travellers-eyebrow">${escapeHtml(k.giftBand.eyebrow)}</span>
@@ -2241,76 +2174,304 @@ const app = {
           </div>
         </div>
       </section>
+
+      <!-- 3. Reproduced Full-Shop Filter & Product Catalogue Structure (auto-selecting page region) -->
+      <section id="regionCatalogSection" aria-label="${escapeHtml(k.name)} Product Catalogue">
+        <div id="regRegionPillsContainer" class="region-strip"></div>
+        <div class="clear-filters-row">
+          <button type="button" class="pill-control" onclick="app.resetRegionalCatalogFilters()">
+            ${escapeHtml(t('clear_all_filters'))}
+          </button>
+        </div>
+
+        <div class="catalog-layout">
+          <aside class="filter-sidebar" aria-label="Product Filters">
+            <div class="filter-group">
+              <label class="filter-label" for="regFilterRegionSelect">Kitchen</label>
+              <select id="regFilterRegionSelect" class="select-control" onchange="app.selectRegionalCatalogRegion(this.value)">
+                <option value="" ${selectedReg === '' ? 'selected' : ''}>All 4 Kitchens (Philippines, Thailand, India, Sri Lanka)</option>
+                <option value="philippines" ${selectedReg === 'philippines' ? 'selected' : ''}>Philippines</option>
+                <option value="thailand" ${selectedReg === 'thailand' ? 'selected' : ''}>Thailand</option>
+                <option value="india" ${selectedReg === 'india' ? 'selected' : ''}>India</option>
+                <option value="sri-lanka" ${selectedReg === 'sri-lanka' ? 'selected' : ''}>Sri Lanka</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label class="filter-label" for="regFilterCategorySelect">${escapeHtml(t('filter_dept_title'))}</label>
+              <select id="regFilterCategorySelect" class="select-control" onchange="app.onRegionalDepartmentChange(this.value)">
+                <option value="">All Categories</option>
+                ${departments
+                  .map(
+                    (d) =>
+                      `<option value="${escapeHtml(d.slug)}" ${selectedCat === d.slug ? 'selected' : ''}>${escapeHtml(getCategoryLabel(d))}</option>`
+                  )
+                  .join('')}
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label class="filter-label" for="regFilterSubcategorySelect">${escapeHtml(t('filter_subcat_title'))}</label>
+              <select id="regFilterSubcategorySelect" class="select-control" onchange="app.applyRegionalCatalogFilters()">
+                <option value="">All Subcategories</option>
+                ${subcats
+                  .map(
+                    (s) =>
+                      `<option value="${escapeHtml(s.slug)}" ${state.regionPageFilters.subcategory === s.slug ? 'selected' : ''}>${escapeHtml(s.name)}</option>`
+                  )
+                  .join('')}
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label class="filter-label" for="regFilterVendorSelect">${escapeHtml(t('filter_brand_title'))}</label>
+              <select id="regFilterVendorSelect" class="select-control" onchange="app.applyRegionalCatalogFilters()">
+                <option value="">All Brands</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label class="filter-label" for="regFilterSizeSelect">Pack Size</label>
+              <select id="regFilterSizeSelect" class="select-control" onchange="app.applyRegionalCatalogFilters()">
+                <option value="" ${!state.regionPageFilters.size ? 'selected' : ''}>All Sizes</option>
+                <option value="250g" ${state.regionPageFilters.size === '250g' ? 'selected' : ''}>250g</option>
+                <option value="500g" ${state.regionPageFilters.size === '500g' ? 'selected' : ''}>500g</option>
+                <option value="1000 ml" ${state.regionPageFilters.size === '1000 ml' ? 'selected' : ''}>1000 ml (1 Liter)</option>
+                <option value="1 kg" ${state.regionPageFilters.size === '1 kg' ? 'selected' : ''}>1 kg</option>
+                <option value="5 kg" ${state.regionPageFilters.size === '5 kg' ? 'selected' : ''}>5 kg</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label class="filter-label" for="regFilterDietarySelect">${escapeHtml(t('filter_dietary_title'))}</label>
+              <select id="regFilterDietarySelect" class="select-control" onchange="app.applyRegionalCatalogFilters()">
+                <option value="" ${!state.regionPageFilters.dietary ? 'selected' : ''}>All Dietary Types</option>
+                <option value="Kosher" ${state.regionPageFilters.dietary === 'Kosher' ? 'selected' : ''}>Kosher Certified</option>
+                <option value="Vegan" ${state.regionPageFilters.dietary === 'Vegan' ? 'selected' : ''}>Vegan</option>
+                <option value="Vegetarian" ${state.regionPageFilters.dietary === 'Vegetarian' ? 'selected' : ''}>Vegetarian</option>
+                <option value="Gluten-Free" ${state.regionPageFilters.dietary === 'Gluten-Free' ? 'selected' : ''}>Gluten-Free</option>
+              </select>
+            </div>
+
+            <div class="filter-group" style="border-bottom:none;margin-bottom:0;padding-bottom:0;">
+              <label class="filter-label" for="regFilterMaxPriceRange">
+                <span>${escapeHtml(t('filter_max_price'))}</span> <strong id="regMaxPriceLabel">₪${maxPriceVal}</strong>
+              </label>
+              <input
+                type="range"
+                id="regFilterMaxPriceRange"
+                min="10"
+                max="150"
+                step="5"
+                value="${maxPriceVal}"
+                style="width:100%;accent-color:var(--dm-green);"
+                oninput="document.getElementById('regMaxPriceLabel').textContent='₪'+this.value; app.applyRegionalCatalogFilters();"
+              />
+            </div>
+          </aside>
+
+          <section aria-label="Product Catalogue Results">
+            <div class="catalog-toolbar">
+              <div>
+                <strong id="regActiveCatalogHeading" class="catalog-active-heading">All Products</strong>
+                <span id="regCatalogCountBadge" class="catalog-count-meta"></span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <label for="regSortOrderSelect" style="font-size:14px;font-weight:600;">${escapeHtml(t('sort_by_label'))}</label>
+                <select id="regSortOrderSelect" class="select-control" onchange="state.regionPageFilters.sort=this.value; app.loadRegionalCatalogProducts();">
+                  <option value="featured" ${state.regionPageFilters.sort === 'featured' ? 'selected' : ''}>Most Popular</option>
+                  <option value="price-asc" ${state.regionPageFilters.sort === 'price-asc' ? 'selected' : ''}>Price: Low to High (₪)</option>
+                  <option value="price-desc" ${state.regionPageFilters.sort === 'price-desc' ? 'selected' : ''}>Price: High to Low (₪)</option>
+                  <option value="newest" ${state.regionPageFilters.sort === 'newest' ? 'selected' : ''}>Back in Stock / Newest</option>
+                  <option value="title-asc" ${state.regionPageFilters.sort === 'title-asc' ? 'selected' : ''}>Alphabetical (A–Z)</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="regProductGridContainer" class="product-grid catalog-product-grid"></div>
+          </section>
+        </div>
+      </section>
     `;
 
-    this.renderRegionalPageProducts();
+    this.renderRegionalCatalogStrip();
+    this.loadRegionalCatalogProducts();
     this.syncHeaderHeight();
   },
 
-  renderRegionalPageProducts() {
-    const grid = document.getElementById('regionalPageProductsGrid');
-    const badge = document.getElementById('regPageCountBadge');
-    if (!grid) return;
+  renderRegionalCatalogStrip() {
+    const container = document.getElementById('regRegionPillsContainer');
+    if (!container) return;
+    const activeReg = state.regionPageFilters.region;
+    const allPill = `
+      <button type="button" class="region-pill ${!activeReg ? 'active' : ''}" onclick="app.selectRegionalCatalogRegion('')">
+        ${escapeHtml(t('all_4_regions'))}
+      </button>
+    `;
+    const pills = KITCHEN_ORDER.map((slug) => {
+      const reg = state.regions.find((r) => r.slug === slug) || { slug, name: KITCHEN_STOREFRONTS[slug].name };
+      return `
+        <button
+          type="button"
+          data-kitchen="${escapeHtml(slug)}"
+          class="region-pill ${activeReg === slug ? 'active' : ''}"
+          onclick="app.selectRegionalCatalogRegion('${escapeHtml(slug)}')"
+        >
+          <span>${escapeHtml(getRegionLabel(reg))}</span>
+        </button>
+      `;
+    }).join('');
+    container.innerHTML = allPill + pills;
+  },
 
-    const slug = state.activeRegionPage || 'philippines';
-    const k = KITCHEN_STOREFRONTS[slug] || KITCHEN_STOREFRONTS.philippines;
-    const allActive = (state.allProducts.length > 0 ? state.allProducts : getLocalProducts()).filter(
-      (p) => p.status !== 'archived'
-    );
+  selectRegionalCatalogRegion(regionSlug) {
+    state.regionPageFilters.region = regionSlug;
+    const regSelect = document.getElementById('regFilterRegionSelect');
+    if (regSelect) regSelect.value = regionSlug;
+    this.renderRegionalCatalogStrip();
+    this.loadRegionalCatalogProducts();
+  },
 
-    let countryItems = allActive.filter((p) => p.region_slug === slug);
-    const activeAisle = k.aisles.find((a) => a.id === state.regionPageFilters.aisle);
-    if (activeAisle) {
-      countryItems = countryItems.filter((p) => activeAisle.categories.includes(p.category_slug));
+  onRegionalDepartmentChange(catSlug) {
+    state.regionPageFilters.category = catSlug;
+    state.regionPageFilters.subcategory = '';
+    const subSelect = document.getElementById('regFilterSubcategorySelect');
+    if (subSelect) {
+      const found = state.navigation.find((c) => c.slug === catSlug);
+      const subs = found && !found.slug.includes('region') ? found.subcategories : [];
+      subSelect.innerHTML =
+        `<option value="">All Subcategories</option>` +
+        subs.map((s) => `<option value="${escapeHtml(s.slug)}">${escapeHtml(s.name)}</option>`).join('');
     }
+    this.applyRegionalCatalogFilters();
+  },
 
-    countryItems.sort((a, b) => Number(b.is_best_seller || 0) - Number(a.is_best_seller || 0) || Number(b.sales_count || 0) - Number(a.sales_count || 0));
-    const displayItems = countryItems.slice(0, 8);
+  resetRegionalCatalogFilters(reload = true) {
+    const defaultRegion = state.activeRegionPage || 'philippines';
+    state.regionPageFilters = {
+      region: defaultRegion,
+      category: '',
+      subcategory: '',
+      vendor: '',
+      size: '',
+      dietary: '',
+      maxPrice: 150,
+      sort: 'featured'
+    };
+    if (document.getElementById('regFilterRegionSelect')) document.getElementById('regFilterRegionSelect').value = defaultRegion;
+    if (document.getElementById('regFilterCategorySelect')) document.getElementById('regFilterCategorySelect').value = '';
+    if (document.getElementById('regFilterSubcategorySelect')) {
+      document.getElementById('regFilterSubcategorySelect').innerHTML = '<option value="">All Subcategories</option>';
+    }
+    if (document.getElementById('regFilterSizeSelect')) document.getElementById('regFilterSizeSelect').value = '';
+    if (document.getElementById('regFilterDietarySelect')) document.getElementById('regFilterDietarySelect').value = '';
+    if (document.getElementById('regFilterVendorSelect')) document.getElementById('regFilterVendorSelect').value = '';
+    if (document.getElementById('regFilterMaxPriceRange')) document.getElementById('regFilterMaxPriceRange').value = '150';
+    if (document.getElementById('regMaxPriceLabel')) document.getElementById('regMaxPriceLabel').textContent = '₪150';
+    if (document.getElementById('regSortOrderSelect')) document.getElementById('regSortOrderSelect').value = 'featured';
 
-    const waAislePrompt = activeAisle
-      ? `${WHATSAPP_GREETINGS[slug]} ${activeAisle.name} (${activeAisle.brands})`
-      : WHATSAPP_GREETINGS[slug];
-    const waUrl = getWhatsAppUrl(slug, waAislePrompt);
+    this.renderRegionalCatalogStrip();
+    if (reload) this.loadRegionalCatalogProducts();
+  },
 
-    if (badge) {
-      if (activeAisle) {
-        badge.textContent = `Filtered by aisle: ${activeAisle.name} · Mix all 4 kitchens in 1 basket`;
-      } else {
-        badge.textContent =
-          displayItems.length > 0
-            ? `${displayItems.length} ${k.name} shelf favourite(s) ready for next-day delivery across Israel`
-            : `Fresh ${k.name} shipment unpacking — send your list on WhatsApp or mix from all 4 kitchens below`;
+  applyRegionalCatalogFilters() {
+    const regSelect = document.getElementById('regFilterRegionSelect');
+    state.regionPageFilters.region = regSelect ? regSelect.value : (state.regionPageFilters.region ?? '');
+    state.regionPageFilters.category = document.getElementById('regFilterCategorySelect')?.value || '';
+    state.regionPageFilters.subcategory = document.getElementById('regFilterSubcategorySelect')?.value || '';
+    state.regionPageFilters.size = document.getElementById('regFilterSizeSelect')?.value || '';
+    state.regionPageFilters.dietary = document.getElementById('regFilterDietarySelect')?.value || '';
+    state.regionPageFilters.vendor = document.getElementById('regFilterVendorSelect')?.value || '';
+    state.regionPageFilters.maxPrice = Number(document.getElementById('regFilterMaxPriceRange')?.value || 150);
+    state.regionPageFilters.sort = document.getElementById('regSortOrderSelect')?.value || 'featured';
+    this.renderRegionalCatalogStrip();
+    this.loadRegionalCatalogProducts();
+  },
+
+  async loadRegionalCatalogProducts() {
+    const f = state.regionPageFilters;
+    const params = new URLSearchParams();
+    if (f.category) params.set('category', f.category);
+    if (f.subcategory) params.set('subcategory', f.subcategory);
+    if (f.region) params.set('region', f.region);
+    if (f.vendor) params.set('vendor', f.vendor);
+    if (f.size) params.set('size', f.size);
+    if (f.dietary) params.set('dietary', f.dietary);
+    params.set('maxPrice', String(f.maxPrice || 150));
+    params.set('sort', f.sort || 'featured');
+
+    const data = await apiFetch(`/api/products?${params.toString()}`);
+    let prods = data.products || [];
+    if (f.size) {
+      prods = prods.filter((p) => p.size_label === f.size);
+    }
+    state.regionProducts = prods;
+
+    const vendorSel = document.getElementById('regFilterVendorSelect');
+    if (vendorSel) {
+      const allVendors =
+        state.vendors && state.vendors.length > 0
+          ? state.vendors
+          : data.facets?.vendors && data.facets.vendors.length > 0
+          ? data.facets.vendors
+          : Array.from(new Set((state.allProducts || []).map((p) => p.vendor_brand).filter(Boolean))).sort();
+      if (vendorSel.options.length <= 1 && allVendors.length > 0) {
+        vendorSel.innerHTML =
+          `<option value="">All Brands (${allVendors.length})</option>` +
+          allVendors
+            .map(
+              (v) =>
+                `<option value="${escapeHtml(v)}" ${f.vendor === v ? 'selected' : ''}>${escapeHtml(v)}</option>`
+            )
+            .join('');
       }
     }
 
-    const requestCardHtml = `
-      <article class="product-card" style="background:var(--dm-cream);border:1.5px solid var(--dm-line-strong);justify-content:space-between;">
-        <div>
-          <span class="kitchen-badge-pill" style="color:${k.tintColor};margin-bottom:12px;">ORDER BY MESSAGE</span>
-          <h3 style="font-size:1.2rem;margin:0 0 8px;">Looking for a specific ${escapeHtml(k.name)} brand?</h3>
-          <p style="font-size:15px;color:var(--dm-text-2);margin:0 0 16px;">
-            ${
-              activeAisle
-                ? `Message us for <strong>${escapeHtml(activeAisle.brands)}</strong> and we will pack it from our warehouse shelf today.`
-                : `Send your ${escapeHtml(k.name)} grocery list on WhatsApp and we will pack your box for tomorrow's courier.`
-            }
-          </p>
-        </div>
-        <a href="${escapeHtml(waUrl)}" target="_blank" rel="noopener noreferrer" class="btn-whatsapp" style="width:100%;">
-          Ask on WhatsApp →
-        </a>
-      </article>
-    `;
+    this.renderRegionalPageProducts();
+  },
 
-    if (displayItems.length === 0) {
-      const crossKitchen = allActive.slice(0, 3).map((p) => this.renderProductCardHtml(p, 'regcross')).join('');
-      grid.innerHTML = requestCardHtml + crossKitchen;
+  renderRegionalPageProducts() {
+    const grid = document.getElementById('regProductGridContainer');
+    const heading = document.getElementById('regActiveCatalogHeading');
+    const countBadge = document.getElementById('regCatalogCountBadge');
+    if (!grid) return;
+
+    const f = state.regionPageFilters;
+    const parts = [];
+    if (f.category) {
+      const cat = state.navigation.find((c) => c.slug === f.category);
+      if (cat) parts.push(getCategoryLabel(cat));
+    }
+    if (f.subcategory) parts.push(f.subcategory.replace(/-/g, ' '));
+    if (f.region) {
+      const reg = state.regions.find((r) => r.slug === f.region) || {
+        slug: f.region,
+        name: KITCHEN_STOREFRONTS[f.region]?.name || f.region
+      };
+      parts.push(getRegionLabel(reg));
+    }
+    if (f.dietary) parts.push(f.dietary);
+    if (f.size) parts.push(`Size: ${f.size}`);
+
+    const list = state.regionProducts || [];
+    if (heading) heading.textContent = parts.length > 0 ? parts.join(' · ') : t('all_products_heading');
+    if (countBadge) countBadge.textContent = `(${list.length} items)`;
+
+    if (list.length === 0) {
+      grid.innerHTML = `
+        <div class="catalog-empty-state">
+          <h3>No matching items in this filter</h3>
+          <p class="catalog-empty-copy">Clear filters to browse this kitchen, select All 4 Kitchens, or message us on WhatsApp if you're looking for a specific brand.</p>
+          <div class="catalog-empty-actions">
+            <button type="button" class="btn-primary" onclick="app.resetRegionalCatalogFilters()">${escapeHtml(t('clear_all_filters'))}</button>
+            <a href="${escapeHtml(getWhatsAppUrl(f.region || state.activeRegionPage))}" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">Ask on WhatsApp</a>
+          </div>
+        </div>
+      `;
       return;
     }
 
-    grid.innerHTML =
-      displayItems.map((p) => this.renderProductCardHtml(p, 'regpage')).join('') +
-      (displayItems.length < 4 ? requestCardHtml : '');
+    grid.innerHTML = list.map((p) => this.renderProductCardHtml(p, 'regcat')).join('');
   },
 
   renderRegionStrip() {

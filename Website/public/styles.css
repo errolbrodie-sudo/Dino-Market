@@ -790,7 +790,22 @@ textarea {
    HOMEPAGE SECTIONS
    ========================================================================== */
 .home-hero {
-  padding: 48px 0 36px;
+  padding: 24px 0 20px;
+}
+
+.home-banner-wrap {
+  width: 100%;
+  border-radius: 26px;
+  overflow: hidden;
+  border: 1px solid var(--dm-line);
+  margin-bottom: 18px;
+  background: var(--dm-ink);
+}
+
+.home-banner-img {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
 .hero-eyebrow-chili {
@@ -822,8 +837,36 @@ textarea {
 
 .hero-cta-row {
   display: flex;
+  align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 10px;
+}
+
+.hero-region-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 50px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(26, 20, 16, 0.2);
+  font-family: var(--dm-font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--dm-ink);
+  cursor: pointer;
+  transition: border-color 0.15s ease, filter 0.15s ease;
+}
+
+.hero-region-btn:hover {
+  border-color: var(--dm-ink);
+  filter: brightness(0.96);
+}
+
+.hero-region-sep {
+  opacity: 0.55;
+  font-weight: 600;
 }
 
 .page-section {
@@ -1302,12 +1345,9 @@ textarea {
    ========================================================================== */
 .kitchen-hero-card {
   border-radius: 36px;
-  padding: 40px;
-  margin-bottom: 36px;
-  display: grid;
-  grid-template-columns: 1.25fr 0.95fr;
-  gap: 32px;
-  align-items: center;
+  padding: 36px 40px;
+  margin-bottom: 28px;
+  display: block;
 }
 
 .kitchen-hero-toprow {
@@ -1351,7 +1391,7 @@ textarea {
   font-weight: 800;
   line-height: 1.04;
   color: var(--dm-ink);
-  margin: 0 0 14px;
+  margin: 0 0 22px;
 }
 
 .kitchen-hero-sub {
@@ -2201,8 +2241,13 @@ textarea {
   }
 
   .home-hero {
-    padding: 28px 0 20px;
+    padding: 14px 0 14px;
     text-align: left;
+  }
+
+  .home-banner-wrap {
+    border-radius: 18px;
+    margin-bottom: 14px;
   }
 
   .hero-eyebrow-chili {
@@ -2395,9 +2440,16 @@ textarea {
     font-size: 0.84rem;
   }
 
+  .hero-region-btn {
+    min-height: 44px;
+    padding: 8px 15px;
+    font-size: 0.88rem;
+  }
+
   .kitchen-hero-card {
     padding: 24px 20px;
     border-radius: 28px;
+    margin-bottom: 20px;
     text-align: left;
   }
 

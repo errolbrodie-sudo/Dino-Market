@@ -196,35 +196,43 @@
   <main id="mainContent">
     <!-- VIEW 1: REFRESHED HOMEPAGE (/) -->
     <div id="view-storefront">
-      <!-- 1. Hero -->
-      <section class="home-hero" id="heroSection">
+      <!-- 1. Hero Banner -->
+      <section class="home-hero" id="heroSection" aria-label="Dinu Market Banner">
         <div class="container">
-          <div class="hero-eyebrow-chili">4 KITCHENS · 1 BASKET · DELIVERED IN ISRAEL</div>
-          <h1 class="home-hero-title display" id="heroHeadlineText">Taste of home, at your door tomorrow.</h1>
-          <p class="home-hero-subcopy" id="heroSubtext">
-            Filipino, Thai, Indian and Sri Lankan pantry staples stocked in Israel — mix all four kitchens in one basket, delivered nationwide.
-          </p>
-          <div class="hero-cta-row">
-            <button type="button" class="btn-primary btn-cta-lg" onclick="document.getElementById('kitchenPickerSection')?.scrollIntoView({behavior:'smooth'})">
-              Pick your kitchen
+          <div class="home-banner-wrap">
+            <img
+              src="images/brand/home-banner.jpg"
+              alt="Bringing the tastes of home to you — Your favorite food products from the Philippines, India, Sri Lanka, and Thailand."
+              class="home-banner-img"
+              width="1024"
+              height="434"
+            />
+          </div>
+          <div class="hero-cta-row" id="heroRegionCtaRow">
+            <button type="button" class="hero-region-btn kitchen-ph" onclick="app.openRegionalPage('philippines')">
+              <span lang="en">Philippines</span>
+              <span class="hero-region-sep" aria-hidden="true">·</span>
+              <span lang="tl">Pilipinas</span>
+            </button>
+            <button type="button" class="hero-region-btn kitchen-th" onclick="app.openRegionalPage('thailand')">
+              <span lang="en">Thailand</span>
+              <span class="hero-region-sep" aria-hidden="true">·</span>
+              <span lang="th">ประเทศไทย</span>
+            </button>
+            <button type="button" class="hero-region-btn kitchen-in" onclick="app.openRegionalPage('india')">
+              <span lang="en">India</span>
+              <span class="hero-region-sep" aria-hidden="true">·</span>
+              <span lang="hi">भारत</span>
+            </button>
+            <button type="button" class="hero-region-btn kitchen-lk" onclick="app.openRegionalPage('sri-lanka')">
+              <span lang="en">Sri Lanka</span>
+              <span class="hero-region-sep" aria-hidden="true">·</span>
+              <span lang="si">ශ්‍රී ලංකාව</span>
             </button>
             <button type="button" class="pill-control btn-cta-secondary" onclick="app.openShopView()">
               Browse all products
             </button>
           </div>
-        </div>
-      </section>
-
-      <!-- 2. Kitchen Picker (Philippines, Thailand, India, Sri Lanka) -->
-      <section class="page-section" id="kitchenPickerSection" aria-labelledby="kitchenPickerHeading">
-        <div class="container">
-          <div class="section-head-row">
-            <div>
-              <h2 class="section-h2" id="kitchenPickerHeading">Four home kitchens, one basket</h2>
-              <p class="section-lead">Step into your kitchen for the brands and aisles you grew up with.</p>
-            </div>
-          </div>
-          <div id="kitchenPickerGrid" class="kitchen-picker-grid"></div>
         </div>
       </section>
 
