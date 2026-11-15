@@ -2224,14 +2224,14 @@ const app = {
       <!-- 4. Dark Ink Gift Band ("Padala box" on /ph, etc.) -->
       <section aria-label="${escapeHtml(k.giftBand.title)}">
         <div class="promo-band promo-band-ink">
-          <div style="max-width:680px;">
+          <div class="kitchen-gift-band-body">
             <span class="travellers-eyebrow">${escapeHtml(k.giftBand.eyebrow)}</span>
-            <h2 class="band-title" style="color:var(--dm-white);margin-bottom:10px;">${escapeHtml(k.giftBand.title)}</h2>
-            <p style="font-size:17px;color:rgba(255,247,234,0.88);margin:0;">
+            <h2 class="band-title">${escapeHtml(k.giftBand.title)}</h2>
+            <p class="band-copy">
               ${escapeHtml(k.giftBand.copy)}
             </p>
           </div>
-          <div style="display:flex;flex-wrap:wrap;gap:12px;">
+          <div class="kitchen-gift-band-actions">
             <button type="button" class="btn-turmeric" onclick="app.openGiftBoxFlow('${escapeHtml(slug)}')">
               ${escapeHtml(k.giftBand.cta)}
             </button>
