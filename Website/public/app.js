@@ -1648,7 +1648,7 @@ const app = {
       setCookie('dinu_lang', state.lang, 365);
     }
     document.documentElement.lang = state.lang;
-    document.documentElement.dir = state.lang === 'he' ? 'rtl' : 'ltr';
+    document.documentElement.dir = 'ltr';
 
     const sel = document.getElementById('langSelector');
     if (sel && sel.value !== state.lang) sel.value = state.lang;
@@ -1660,19 +1660,30 @@ const app = {
 
     this.updateLanguagePillUi();
 
+    const isHebrew = state.lang === 'he';
     document.querySelectorAll('[data-i18n]').forEach((el) => {
       const key = el.getAttribute('data-i18n');
       if (key) {
         el.textContent = t(key);
+        el.setAttribute('lang', state.lang);
+        el.setAttribute('dir', isHebrew ? 'rtl' : 'ltr');
       }
     });
 
     const searchInput = document.getElementById('globalSearchInput');
-    if (searchInput) searchInput.placeholder = t('search_placeholder');
+    if (searchInput) {
+      searchInput.placeholder = t('search_placeholder');
+      searchInput.dir = isHebrew ? 'rtl' : 'ltr';
+    }
     const mobSearchInput = document.getElementById('mobileSearchInput');
-    if (mobSearchInput) mobSearchInput.placeholder = t('search_placeholder');
+    if (mobSearchInput) {
+      mobSearchInput.placeholder = t('search_placeholder');
+      mobSearchInput.dir = isHebrew ? 'rtl' : 'ltr';
+    }
     document.querySelectorAll('.search-submit-btn').forEach((sb) => {
       sb.textContent = t('search_btn');
+      sb.setAttribute('lang', state.lang);
+      sb.setAttribute('dir', isHebrew ? 'rtl' : 'ltr');
     });
 
     this.syncWhatsAppLinks();
@@ -1849,32 +1860,34 @@ const app = {
     const kitchenCfg = KITCHEN_STOREFRONTS[p.region_slug] || KITCHEN_STOREFRONTS.india;
     const reg = state.regions.find((r) => r.slug === p.region_slug);
     const countryName = reg ? getRegionLabel(reg) : kitchenCfg.name;
+    const isHeBadge = state.lang === 'he' && Boolean(reg?.name_he);
     const inCartItem = (state.cart.items || []).find((ci) => ci.product_id === p.id && ci.variant_code === 'single');
     const localizedTitle = getProductLocalizedTitle(p);
+    const isHeTitle = state.lang === 'he' && Boolean(p.title_he);
     const hasGenuineDiscount = p.compare_at_price_ils && Number(p.compare_at_price_ils) > Number(p.price_ils);
     const sizeBadge = p.size_label || (p.net_weight_grams >= 1000 ? `${p.net_weight_grams / 1000} kg` : `${p.net_weight_grams}g`);
 
     return `
       <article class="product-card">
         <div class="product-card-media" onclick="app.openPdpModal('${escapeHtml(p.slug)}')">
-          <span class="country-pill-badge ${escapeHtml(kitchenCfg.badgeTintClass)}">${escapeHtml(countryName)}</span>
+          <span class="country-pill-badge ${escapeHtml(kitchenCfg.badgeTintClass)}" lang="${isHeBadge ? 'he' : 'en'}" dir="${isHeBadge ? 'rtl' : 'ltr'}">${escapeHtml(countryName)}</span>
           ${
             hasGenuineDiscount
-              ? `<span class="badge-sale">SAVE ${p.discount_percent}%</span>`
+              ? `<span class="badge-sale" lang="en" dir="ltr">SAVE ${p.discount_percent}%</span>`
               : ''
           }
           <img src="${escapeHtml(p.primary_image_url)}" alt="${escapeHtml(localizedTitle)}" loading="lazy" />
         </div>
 
         <div class="product-card-body">
-          <div class="product-meta-top">
+          <div class="product-meta-top" lang="en" dir="ltr">
             <span>${escapeHtml(p.vendor_brand)}</span>
             <span>${escapeHtml(sizeBadge)}</span>
           </div>
-          <h3 class="product-title" onclick="app.openPdpModal('${escapeHtml(p.slug)}')">${escapeHtml(localizedTitle)}</h3>
+          <h3 class="product-title" lang="${isHeTitle ? 'he' : 'en'}" dir="${isHeTitle ? 'rtl' : 'ltr'}" onclick="app.openPdpModal('${escapeHtml(p.slug)}')">${escapeHtml(localizedTitle)}</h3>
 
           <div class="product-card-footer">
-            <div>
+            <div lang="en" dir="ltr">
               <div>
                 <span class="price-current">₪${Number(p.price_ils).toFixed(2)}</span>
                 ${
@@ -1890,9 +1903,9 @@ const app = {
               inCartItem
                 ? `
                   <div class="inline-qty-stepper" onclick="event.stopPropagation()">
-                    <button type="button" onclick="app.updateCartItemQuantity('${escapeHtml(inCartItem.cart_item_id)}', ${inCartItem.quantity - 1})" aria-label="Decrease quantity">−</button>
+                    <button type="button" class="qty-step-btn" onclick="app.updateCartItemQuantity('${escapeHtml(inCartItem.cart_item_id)}', ${inCartItem.quantity - 1})" aria-label="Decrease quantity">−</button>
                     <span>${inCartItem.quantity}</span>
-                    <button type="button" onclick="app.updateCartItemQuantity('${escapeHtml(inCartItem.cart_item_id)}', ${inCartItem.quantity + 1})" aria-label="Increase quantity">+</button>
+                    <button type="button" class="qty-step-btn" onclick="app.updateCartItemQuantity('${escapeHtml(inCartItem.cart_item_id)}', ${inCartItem.quantity + 1})" aria-label="Increase quantity">+</button>
                   </div>
                 `
                 : p.stock_quantity > 0
@@ -2515,10 +2528,10 @@ const app = {
 
     if (state.products.length === 0) {
       grid.innerHTML = `
-        <div style="grid-column: 1 / -1; background:var(--dm-white); padding:40px; text-align:center; border-radius:22px; border:1px solid var(--dm-line);">
+        <div class="catalog-empty-state">
           <h3>No matching items in this filter</h3>
-          <p style="color:var(--dm-text-2);max-width:460px;margin:8px auto 18px;">Clear filters to browse all four kitchens, or message us on WhatsApp if you're looking for a specific brand.</p>
-          <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
+          <p class="catalog-empty-copy">Clear filters to browse all four kitchens, or message us on WhatsApp if you're looking for a specific brand.</p>
+          <div class="catalog-empty-actions">
             <button type="button" class="btn-primary" onclick="app.resetAllFilters()">${escapeHtml(t('clear_all_filters'))}</button>
             <a href="${escapeHtml(getWhatsAppUrl())}" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">Ask on WhatsApp</a>
           </div>
@@ -2692,7 +2705,7 @@ const app = {
                     ? `<span style="text-decoration:line-through;color:var(--dm-muted);font-size:1rem;">₪${Number(p.compare_at_price_ils).toFixed(2)}</span>`
                     : ''
                 }
-                <span style="margin-left:auto;font-weight:700;font-size:14px;color:${p.stock_quantity > 0 ? 'var(--dm-green)' : 'var(--dm-chili)'};">
+                <span class="pdp-stock-badge" style="color:${p.stock_quantity > 0 ? 'var(--dm-green)' : 'var(--dm-chili)'};">
                   ${p.stock_quantity > 0 ? `In stock (${p.stock_quantity} available)` : 'Out of stock'}
                 </span>
               </div>
@@ -2970,7 +2983,7 @@ const app = {
 
     if (!cart.items || cart.items.length === 0) {
       itemsEl.innerHTML = `
-        <div style="text-align:center;padding:48px 16px;">
+        <div class="cart-empty-state">
           <h4 style="font-size:1.25rem;margin-bottom:8px;">Your basket is empty</h4>
           <p style="font-size:15px;color:var(--dm-text-2);margin-bottom:20px;">
             Mix groceries from the Philippines, Thailand, India and Sri Lanka in one basket — delivered tomorrow across Israel.
@@ -2991,14 +3004,14 @@ const app = {
             <div style="font-weight:600;font-size:15px;line-height:1.3;">${escapeHtml(item.title)}</div>
             <div style="font-size:14px;color:var(--dm-muted);margin:2px 0 8px;">${escapeHtml(item.variant_label)} · ₪${Number(item.unit_price_ils).toFixed(2)}</div>
             <div class="inline-qty-stepper" style="height:38px;">
-              <button type="button" style="height:38px;width:34px;" onclick="app.updateCartItemQuantity('${escapeHtml(item.cart_item_id)}', ${item.quantity - 1})" aria-label="Decrease quantity">−</button>
+              <button type="button" class="qty-step-btn" style="height:38px;width:34px;" onclick="app.updateCartItemQuantity('${escapeHtml(item.cart_item_id)}', ${item.quantity - 1})" aria-label="Decrease quantity">−</button>
               <span>${item.quantity}</span>
-              <button type="button" style="height:38px;width:34px;" onclick="app.updateCartItemQuantity('${escapeHtml(item.cart_item_id)}', ${item.quantity + 1})" aria-label="Increase quantity">+</button>
+              <button type="button" class="qty-step-btn" style="height:38px;width:34px;" onclick="app.updateCartItemQuantity('${escapeHtml(item.cart_item_id)}', ${item.quantity + 1})" aria-label="Increase quantity">+</button>
             </div>
           </div>
-          <div style="text-align:right;">
+          <div class="cart-line-end">
             <div style="font-family:var(--dm-font-display);font-weight:800;color:var(--dm-ink);">₪${Number(item.line_total_ils).toFixed(2)}</div>
-            <button type="button" style="background:none;border:none;color:var(--dm-chili);font-size:14px;font-weight:600;cursor:pointer;margin-top:8px;min-height:36px;" onclick="app.updateCartItemQuantity('${escapeHtml(item.cart_item_id)}', 0)">Remove</button>
+            <button type="button" style="background:none;border:none;color:var(--dm-chili);font-size:14px;font-weight:600;cursor:pointer;margin-top:8px;min-height:36px;padding:0;" onclick="app.updateCartItemQuantity('${escapeHtml(item.cart_item_id)}', 0)">Remove</button>
           </div>
         </div>
       `
@@ -3126,8 +3139,8 @@ const app = {
 
     content.innerHTML = `
       <button type="button" class="modal-close-btn" onclick="app.closeGenericModal()" aria-label="Close modal">×</button>
-      <div style="text-align:center;margin-bottom:16px;">
-        <img src="images/brand/dinu-logo.png" alt="Dinu Market" style="height:64px;width:auto;margin:0 auto;object-fit:contain;" />
+      <div class="auth-modal-head">
+        <img src="images/brand/dinu-logo.png" alt="Dinu Market" class="auth-modal-logo" />
         <h3 style="margin:8px 0 4px;">${mode === 'register' ? 'Create Your Dinu Market Account' : 'Sign In to Dinu Market'}</h3>
         <p style="font-size:14px;color:var(--dm-text-2);margin:0;">
           Any items currently in your basket are automatically kept when you sign in.
@@ -3422,7 +3435,7 @@ const app = {
             </tbody>
           </table>
 
-          <div style="display:flex;gap:12px;justify-content:flex-end;">
+          <div class="modal-actions-end">
             ${
               state.user
                 ? `<button type="button" class="btn-outline" onclick="state.checkout.last_confirmed_order=null; app.switchView('account');">
@@ -4532,7 +4545,7 @@ const app = {
       <button type="button" class="modal-close-btn" onclick="app.closeGenericModal()">✕</button>
       <h3>${escapeHtml(p.title)}</h3>
       <div style="font-size:0.9rem;line-height:1.6;">${p.html}</div>
-      <div style="margin-top:18px;text-align:right;">
+      <div class="modal-actions-end" style="margin-top:18px;">
         <button type="button" class="btn-primary" onclick="app.closeGenericModal()">Close</button>
       </div>
     `;

@@ -1909,6 +1909,63 @@ textarea {
   font-weight: 600;
 }
 
+/* Reusable state & modal alignment classes */
+.catalog-empty-state {
+  grid-column: 1 / -1;
+  background: var(--dm-white);
+  padding: 40px;
+  text-align: center;
+  border-radius: 22px;
+  border: 1px solid var(--dm-line);
+}
+
+.catalog-empty-copy {
+  color: var(--dm-text-2);
+  max-width: 460px;
+  margin: 8px auto 18px;
+}
+
+.catalog-empty-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.pdp-stock-badge {
+  margin-left: auto;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.cart-empty-state {
+  text-align: center;
+  padding: 48px 16px;
+}
+
+.cart-line-end {
+  text-align: right;
+}
+
+.auth-modal-head {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.auth-modal-logo {
+  height: 64px;
+  width: auto;
+  margin: 0 auto;
+  object-fit: contain;
+}
+
+.modal-actions-end {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
 /* ==========================================================================
    RESPONSIVE BREAKPOINTS (Tablet & Mobile)
    ========================================================================== */
@@ -1953,6 +2010,62 @@ textarea {
   body {
     font-size: 15px;
     padding-bottom: 96px;
+    direction: ltr;
+    text-align: left;
+  }
+
+  /* Keep all English (and LTR) text strictly left-aligned across the cellular interface;
+     preserve RTL alignment strictly for Hebrew (:lang(he)) elements */
+  h1:not(:lang(he)),
+  h2:not(:lang(he)),
+  h3:not(:lang(he)),
+  h4:not(:lang(he)),
+  h5:not(:lang(he)),
+  h6:not(:lang(he)),
+  p:not(:lang(he)),
+  li:not(:lang(he)),
+  label:not(:lang(he)),
+  td:not(:lang(he)),
+  th:not(:lang(he)),
+  input:not([dir="rtl"]),
+  select:not([dir="rtl"]),
+  textarea:not([dir="rtl"]),
+  [lang="en"],
+  [dir="ltr"] {
+    direction: ltr;
+    text-align: left;
+  }
+
+  :lang(he),
+  [dir="rtl"]:lang(he) {
+    direction: rtl;
+    text-align: right;
+  }
+
+  /* Left-align text inside pill/CTA buttons on cellular while keeping symbol/icon circles centered */
+  .btn-primary:not(:lang(he)),
+  .btn-whatsapp:not(:lang(he)),
+  .btn-turmeric:not(:lang(he)),
+  .btn-ink:not(:lang(he)),
+  .pill-control:not(:lang(he)),
+  .btn-outline:not(:lang(he)),
+  .btn-secondary:not(:lang(he)),
+  .region-pill:not(:lang(he)),
+  .kitchen-nav-pill:not(:lang(he)),
+  .announcement-right button {
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .icon-pill-btn,
+  .mobile-menu-btn,
+  .add-circle-btn,
+  .modal-close-btn,
+  .drawer-close-btn,
+  .qty-step-btn,
+  .cart-count-pill {
+    justify-content: center;
+    text-align: center;
   }
 
   .delivery-copy-desktop {
@@ -1962,11 +2075,25 @@ textarea {
   .delivery-copy-mobile {
     display: inline;
     font-size: 13px;
+    direction: ltr;
+    text-align: left;
   }
 
   .announcement-inner {
-    justify-content: space-between;
-    gap: 6px;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 6px 10px;
+    text-align: left;
+  }
+
+  .announcement-copy {
+    width: 100%;
+    text-align: left;
+  }
+
+  .announcement-right {
+    justify-self: start;
+    justify-content: flex-start;
   }
 
   .announcement-right button {
@@ -1998,6 +2125,10 @@ textarea {
     height: 38px;
   }
 
+  .brand-wordmark {
+    text-align: left;
+  }
+
   .brand-wordmark-dinu {
     font-size: 1.25rem;
   }
@@ -2014,15 +2145,34 @@ textarea {
 
   .home-hero {
     padding: 28px 0 20px;
+    text-align: left;
   }
 
   .hero-eyebrow-chili {
     font-size: 11px;
+    text-align: left;
   }
 
   .home-hero-subcopy {
     font-size: 15px;
     margin-bottom: 18px;
+    text-align: left;
+  }
+
+  .hero-cta-row,
+  .section-head-row,
+  .kitchen-hero-toprow,
+  .catalog-toolbar,
+  .footer-bottom-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .hero-cta-row {
+    flex-direction: row;
+    flex-wrap: wrap;
   }
 
   .section-h2 {
@@ -2039,17 +2189,22 @@ textarea {
     min-height: 170px;
     padding: 16px;
     border-radius: 22px;
+    text-align: left;
+    align-items: flex-start;
   }
 
   .kitchen-badge-pill {
     font-size: 11px;
     padding: 4px 10px;
     margin-bottom: 10px;
+    align-self: flex-start;
+    text-align: left;
   }
 
   .kitchen-card-title {
     font-size: 22px;
     margin-bottom: 0;
+    text-align: left;
   }
 
   .kitchen-card-title:lang(th),
@@ -2064,7 +2219,7 @@ textarea {
     display: none;
   }
 
-  /* Products go 2 per row, 14px product title */
+  /* Products go 2 per row, 14px product title, left-aligned metadata */
   .product-grid,
   .catalog-layout .product-grid,
   .catalog-product-grid,
@@ -2076,6 +2231,7 @@ textarea {
   .product-card {
     padding: 10px;
     border-radius: 18px;
+    text-align: left;
   }
 
   .product-card-media {
@@ -2083,13 +2239,55 @@ textarea {
     margin-bottom: 8px;
   }
 
+  .product-meta-top {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 2px;
+    text-align: left;
+  }
+
   .product-title {
     font-size: 14px;
   }
 
+  /* Travellers Ink Band & Promo Bands: Hebrew lines stay RTL, English copy & CTA left-aligned */
   .promo-band {
     padding: 26px 22px;
     border-radius: 28px;
+    text-align: left;
+  }
+
+  .travellers-band {
+    direction: ltr;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  .travellers-band-body {
+    width: 100%;
+  }
+
+  .travellers-eyebrow,
+  .travellers-title {
+    display: block;
+    width: 100%;
+    direction: rtl;
+    text-align: right;
+  }
+
+  .travellers-sub-en {
+    direction: ltr;
+    text-align: left;
+    width: 100%;
+  }
+
+  .travellers-band-cta {
+    direction: ltr;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    text-align: left;
   }
 
   .travellers-title,
@@ -2100,6 +2298,7 @@ textarea {
   .kitchen-hero-card {
     padding: 24px 20px;
     border-radius: 28px;
+    text-align: left;
   }
 
   .aisle-chips-grid,
@@ -2108,13 +2307,50 @@ textarea {
     grid-template-columns: 1fr;
   }
 
+  .catalog-empty-state,
+  .cart-empty-state,
+  .cart-line-end,
+  .auth-modal-head,
+  .checkout-step-chip {
+    text-align: left;
+  }
+
+  .catalog-empty-copy {
+    margin: 8px 0 18px;
+  }
+
+  .catalog-empty-actions,
+  .modal-actions-end {
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .auth-modal-logo {
+    margin: 0;
+  }
+
+  .pdp-stock-badge {
+    margin-left: 0;
+    width: 100%;
+    text-align: left;
+  }
+
+  .checkout-step-chip {
+    padding: 8px 12px;
+  }
+
   .mobile-whatsapp-fab {
     display: inline-flex;
+    padding: 0 20px;
   }
 
   .toast-container {
     bottom: 88px;
     left: 16px;
     right: 16px;
+  }
+
+  .toast-msg {
+    text-align: left;
   }
 }
