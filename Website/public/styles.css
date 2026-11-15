@@ -1847,6 +1847,12 @@ button, input, select, textarea {
   }
 }
 
+@media (max-width: 767px) {
+  #heroSection {
+    display: none;
+  }
+}
+
 @media (max-width: 600px) {
   .announcement-bar {
     padding: 6px 10px;

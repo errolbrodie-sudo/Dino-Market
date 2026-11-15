@@ -1592,10 +1592,11 @@ const app = {
     return `
       <article class="product-card">
         <div class="product-card-media" onclick="app.openPdpModal('${escapeHtml(p.slug)}')">
-          <div class="badge-stack-left">
-            ${p.is_authentic_photo ? `<span class="badge-authentic">${escapeHtml(t('real_shelf_badge'))}</span>` : ''}
-            ${hasGenuineDiscount ? `<span class="badge-sale">SAVE ${p.discount_percent}%</span>` : ''}
-          </div>
+          ${
+            hasGenuineDiscount
+              ? `<div class="badge-stack-left"><span class="badge-sale">SAVE ${p.discount_percent}%</span></div>`
+              : ''
+          }
           <span class="badge-region-right">${reg ? escapeHtml(getRegionLabel(reg)) : escapeHtml(p.region_slug?.toUpperCase() || 'INDIA')}</span>
           <button
             type="button"
@@ -1615,15 +1616,9 @@ const app = {
             <span style="background:var(--surface);border:1px solid var(--border);padding:1px 7px;border-radius:4px;font-size:0.72rem;font-weight:800;color:var(--brand-forest);">${escapeHtml(sizeBadge)}</span>
           </div>
           <h3 class="product-title" onclick="app.openPdpModal('${escapeHtml(p.slug)}')">${escapeHtml(localizedTitle)}</h3>
-          <div class="product-title-he">${escapeHtml(p.title_he || '')}</div>
 
           <div class="product-rating-row">
-            ${
-              p.stock_quantity > 0
-                ? `<span style="color:var(--brand-green-mid);font-weight:700;font-size:0.76rem;">● ${escapeHtml(t('in_stock'))} (${p.stock_quantity})</span>`
-                : `<span style="color:var(--brand-red);font-weight:700;font-size:0.76rem;">● ${escapeHtml(t('out_of_stock'))}</span>`
-            }
-            <span style="margin-left:auto;font-size:0.73rem;color:var(--text-secondary);">Origin: ${escapeHtml((reg?.name || p.region_slug || 'India').toUpperCase())}</span>
+            <span style="font-size:0.73rem;color:var(--text-secondary);">Origin: ${escapeHtml((reg?.name || p.region_slug || 'India').toUpperCase())}</span>
           </div>
 
           <div class="product-price-block">
