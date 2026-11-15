@@ -1055,6 +1055,10 @@ textarea {
   max-width: 530px;
 }
 
+.kitchen-gift-band-section {
+  margin-bottom: 20px;
+}
+
 .kitchen-gift-band-body {
   max-width: 620px;
 }
@@ -2589,6 +2593,44 @@ textarea {
   }
 
   .promo-band.travellers-band .btn-turmeric {
+    min-height: 34px;
+    padding: 4px 12px;
+    font-size: 0.76rem;
+  }
+
+  .kitchen-gift-band-section {
+    margin-bottom: 14px;
+  }
+
+  .promo-band.kitchen-gift-band {
+    padding: 9px 13px;
+    border-radius: 13px;
+    gap: 7px;
+    text-align: left;
+  }
+
+  .promo-band.kitchen-gift-band .travellers-eyebrow {
+    font-size: 9px;
+    margin-bottom: 1px;
+  }
+
+  .promo-band.kitchen-gift-band .band-title {
+    font-size: 14.5px;
+    margin: 0 0 2px;
+  }
+
+  .promo-band.kitchen-gift-band .band-copy {
+    font-size: 11px;
+    line-height: 1.3;
+  }
+
+  .promo-band.kitchen-gift-band .kitchen-gift-band-actions {
+    gap: 6px;
+  }
+
+  .promo-band.kitchen-gift-band .btn-turmeric,
+  .promo-band.kitchen-gift-band .btn-whatsapp,
+  .promo-band.kitchen-gift-band .btn-cta-lg {
     min-height: 34px;
     padding: 4px 12px;
     font-size: 0.76rem;

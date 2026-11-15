@@ -2155,8 +2155,8 @@ const app = {
       </section>
 
       <!-- 2. Dark Ink Gift Band ("Padala box" on /ph, etc.) -->
-      <section style="margin-bottom:20px;" aria-label="${escapeHtml(k.giftBand.title)}">
-        <div class="promo-band promo-band-ink">
+      <section class="kitchen-gift-band-section" aria-label="${escapeHtml(k.giftBand.title)}">
+        <div class="promo-band promo-band-ink kitchen-gift-band">
           <div class="kitchen-gift-band-body">
             <span class="travellers-eyebrow">${escapeHtml(k.giftBand.eyebrow)}</span>
             <h2 class="band-title">${escapeHtml(k.giftBand.title)}</h2>
