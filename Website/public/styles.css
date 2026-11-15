@@ -1040,7 +1040,7 @@ textarea {
 }
 
 #dualPromoSection {
-  padding: 12px 0 16px;
+  padding: 6px 0 14px;
 }
 
 .promo-band.travellers-band {
@@ -1106,7 +1106,44 @@ textarea {
 .dual-promo-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 12px;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+#dualPromoSection .promo-band {
+  padding: 11px 16px;
+  border-radius: 14px;
+  gap: 4px;
+}
+
+#dualPromoSection .band-label-caps {
+  font-size: 9.5px;
+  letter-spacing: 0.5px;
+}
+
+#dualPromoSection .band-title {
+  font-size: 16px;
+  line-height: 1.2;
+}
+
+#dualPromoSection .band-copy {
+  font-size: 11.5px;
+  line-height: 1.32;
+  margin: 0 0 2px;
+}
+
+#dualPromoSection .btn-ink,
+#dualPromoSection .btn-whatsapp,
+#dualPromoSection .btn-cta-lg {
+  min-height: 34px;
+  padding: 5px 13px;
+  font-size: 0.78rem;
+}
+
+#dualPromoSection .btn-whatsapp svg {
+  width: 14px;
+  height: 14px;
 }
 
 .promo-band-turmeric {
@@ -2442,7 +2479,40 @@ textarea {
   }
 
   #dualPromoSection {
-    padding: 8px 0 12px;
+    padding: 4px 0 10px;
+  }
+
+  #dualPromoSection .dual-promo-grid {
+    max-width: 100%;
+    gap: 10px;
+  }
+
+  #dualPromoSection .promo-band {
+    padding: 10px 13px;
+    border-radius: 13px;
+    gap: 4px;
+  }
+
+  #dualPromoSection .band-label-caps {
+    font-size: 9px;
+    margin-bottom: 0;
+  }
+
+  #dualPromoSection .band-title {
+    font-size: 15px;
+  }
+
+  #dualPromoSection .band-copy {
+    font-size: 11.5px;
+    line-height: 1.3;
+  }
+
+  #dualPromoSection .btn-ink,
+  #dualPromoSection .btn-whatsapp,
+  #dualPromoSection .btn-cta-lg {
+    min-height: 34px;
+    padding: 4px 12px;
+    font-size: 0.76rem;
   }
 
   .promo-band.travellers-band {
