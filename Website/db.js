@@ -615,7 +615,7 @@ const SEED_PRODUCTS = [
     vendor_brand: 'Silver Swan',
     category_slug: 'sauce-seasoning',
     subcategory_slug: 'soy-sauces',
-    region_slug: 'india',
+    region_slug: 'philippines',
     short_description: 'Rich, savory soy sauce in a 1-liter handled jug, essential for stir-fries, marinades, rice dishes, and dipping sauces.',
     description: 'Silver Swan Special Soy Sauce delivers deep umami and balanced salinity in a generous 1000 ml handled bottle for everyday cooking, marinades, and table dipping.',
     ingredients: 'Water, Soybean Extract, Wheat, Iodized Salt, Caramel Color, Less than 0.1% Potassium Sorbate as preservative.',
@@ -860,7 +860,7 @@ function seedAndSyncDatabase() {
       rating_average, rating_count, sales_count, is_authentic_photo, is_featured, is_active, created_at
     ) VALUES (
       ?, ?, ?, ?, ?, ?, ?,
-      ?, ?, 'india', ?, ?,
+      ?, ?, ?, ?, ?,
       ?, ?, ?, ?, ?, ?,
       ?, ?, ?, ?,
       ?, ?, ?, ?,
@@ -871,7 +871,7 @@ function seedAndSyncDatabase() {
       sku = excluded.sku,
       title = excluded.title,
       title_he = excluded.title_he,
-      region_slug = 'india',
+      region_slug = excluded.region_slug,
       short_description = excluded.short_description,
       description = excluded.description,
       i18n_json = excluded.i18n_json,
@@ -898,6 +898,7 @@ function seedAndSyncDatabase() {
       p.vendor_brand,
       p.category_slug,
       p.subcategory_slug,
+      p.region_slug || 'india',
       p.short_description,
       p.description,
       p.ingredients || '',
@@ -940,8 +941,8 @@ function seedAndSyncDatabase() {
     }
   });
 
-  // Ensure any remaining products in the table are assigned to 'india'
-  db.exec(`UPDATE products SET region_slug = 'india';`);
+  // Ensure Silver Swan maps to philippines and Indian items map to india
+  db.exec(`UPDATE products SET region_slug = 'philippines' WHERE slug = 'silver-swan-special-soy-sauce-1000ml';`);
 
   // 4. Seed Configurable Israeli Shipping Zones if empty
   const zoneCount = db.prepare('SELECT COUNT(*) AS cnt FROM shipping_zones').get().cnt;
@@ -969,23 +970,29 @@ function seedAndSyncDatabase() {
     insertDisc.run(crypto.randomUUID(), 'FREESHIP', 'Free Standard Delivery Across Israel (Orders ₪120+)', 'free_shipping', 0, 120);
   }
 
-  // 6. Seed Default Store Settings if empty
-  const setCount = db.prepare('SELECT COUNT(*) AS cnt FROM store_settings').get().cnt;
-  if (setCount === 0) {
-    db.prepare(`INSERT INTO store_settings (key, value_json) VALUES (?, ?)`).run(
-      'payment_config',
-      JSON.stringify({
-        gateway_primary: 'PayPlus Israel (PCI-DSS Level 1)',
-        gateway_secondary: 'PayPal Commerce',
-        supported_methods: ['credit_card', 'bit', 'apple_pay', 'google_pay', 'paypal'],
-        supported_cards: ['Visa', 'Mastercard', 'American Express', 'Isracard', 'Diners'],
-        max_installments: 3,
-        min_order_for_installments_ils: 200,
-        vat_rate_percent: 18,
-        auto_tax_invoice: true
-      })
-    );
-  }
+  // 6. Seed Default Store Settings if empty & ensure live delivery/contact settings exist
+  const existingPayRow = db.prepare("SELECT value_json FROM store_settings WHERE key = 'payment_config'").get();
+  const basePayConfig = {
+    gateway_primary: 'PayPlus Israel (PCI-DSS Level 1)',
+    gateway_secondary: 'PayPal Commerce',
+    supported_methods: ['credit_card', 'bit', 'apple_pay', 'google_pay', 'paypal'],
+    supported_cards: ['Visa', 'Mastercard', 'American Express', 'Isracard', 'Diners'],
+    max_installments: 3,
+    min_order_for_installments_ils: 200,
+    vat_rate_percent: 18,
+    auto_tax_invoice: true,
+    order_cutoff_time: '14:00',
+    support_email: 'support@dinumarket.co.il',
+    support_phone: '054-812-4900',
+    whatsapp_e164: '972548124900'
+  };
+  const mergedPayConfig = existingPayRow
+    ? { ...basePayConfig, ...JSON.parse(existingPayRow.value_json || '{}') }
+    : basePayConfig;
+  db.prepare(`INSERT OR REPLACE INTO store_settings (key, value_json) VALUES (?, ?)`).run(
+    'payment_config',
+    JSON.stringify(mergedPayConfig)
+  );
 
   // 7. Seed Demo Admin & Customer Accounts if empty
   const userCount = db.prepare('SELECT COUNT(*) AS cnt FROM users').get().cnt;

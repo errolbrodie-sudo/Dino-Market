@@ -8,6 +8,8 @@
 
 const state = {
   lang: 'en',
+  userExplicitLang: false,
+  currentView: 'storefront',
   navigation: [],
   regions: [],
   shippingZones: [],
@@ -20,12 +22,24 @@ const state = {
   products: [],
   allProducts: [],
   vendors: [],
-  activeRegionalPage: 'india',
-  regionalPageLimit: 4,
+  activeRegionPage: null,
+  activeRegionalPage: 'philippines',
+  regionalPageLimit: 8,
+  regionPageFilters: {
+    aisle: '',
+    category: '',
+    vendor: '',
+    size: '',
+    inStock: false,
+    maxPrice: 150,
+    sort: 'featured',
+    pageSize: 12
+  },
   filters: {
     category: '',
     subcategory: '',
     region: '',
+    tripBox: false,
     size: '',
     q: '',
     vendor: '',
@@ -67,53 +81,362 @@ const state = {
   adminData: null
 };
 
+function getCookie(name) {
+  const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const match = document.cookie.match(new RegExp('(?:^|;\\s*)' + escaped + '=([^;]*)'));
+  return match ? decodeURIComponent(match[1]) : '';
+}
+
+function setCookie(name, value, days = 365) {
+  const maxAge = Math.max(0, Math.floor(days * 86400));
+  document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=${maxAge}; SameSite=Lax`;
+}
+
+const KITCHEN_ORDER = ['philippines', 'thailand', 'india', 'sri-lanka'];
+
+const KITCHEN_PATH_TO_SLUG = {
+  '/ph': 'philippines',
+  '/th': 'thailand',
+  '/in': 'india',
+  '/lk': 'sri-lanka'
+};
+
+const KITCHEN_SLUG_TO_PATH = {
+  philippines: '/ph',
+  thailand: '/th',
+  india: '/in',
+  'sri-lanka': '/lk'
+};
+
+const WHATSAPP_GREETINGS = {
+  philippines: 'Kumusta Dinu, gusto ko pong umorder sa Filipino store:',
+  tl: 'Kumusta Dinu, gusto ko pong umorder sa Filipino store:',
+  thailand: 'สวัสดี Dinu ฉันต้องการสั่งซื้อสินค้าไทย:',
+  th: 'สวัสดี Dinu ฉันต้องการสั่งซื้อสินค้าไทย:',
+  india: 'नमस्ते Dinu, मैं भारतीय ग्रोसरी ऑर्डर करना चाहता/चाहती हूँ:',
+  hi: 'नमस्ते Dinu, मैं भारतीय ग्रोसरी ऑर्डर करना चाहता/चाहती हूँ:',
+  'sri-lanka': 'ආයුබෝවන් Dinu, මට ශ්‍රී ලාංකික භාණ්ඩ ඇණවුම් කිරීමට අවශ්‍යයි:',
+  si: 'ආයුබෝවන් Dinu, මට ශ්‍රී ලාංකික භාණ්ඩ ඇණවුම් කිරීමට අවශ්‍යයි:',
+  he: 'היי דינו, אשמח להזמין משלוח:',
+  en: "Hi Dinu, I'd like to order:"
+};
+
+function getSupportDetails() {
+  const cfg = state.paymentConfig || {};
+  const zone0 = (state.shippingZones && state.shippingZones[0]) || {};
+  const freeZone = (state.shippingZones || []).find((z) => Number(z.free_threshold_ils) > 0) || zone0;
+  return {
+    cutoff: cfg.order_cutoff_time || '14:00',
+    freeThreshold: Number(freeZone.free_threshold_ils || cfg.free_delivery_threshold_ils || 250),
+    email: cfg.support_email || 'support@dinumarket.co.il',
+    phoneDisplay: cfg.support_phone || '054-812-4900',
+    whatsappE164: String(cfg.whatsapp_e164 || '972548124900').replace(/\D/g, '') || '972548124900'
+  };
+}
+
+function getWhatsAppUrl(contextKey, customText) {
+  const { whatsappE164 } = getSupportDetails();
+  const key = contextKey || (state.currentView === 'region' && state.activeRegionPage ? state.activeRegionPage : state.lang) || 'en';
+  const greeting = customText || WHATSAPP_GREETINGS[key] || WHATSAPP_GREETINGS[state.lang] || WHATSAPP_GREETINGS.en;
+  return `https://wa.me/${whatsappE164}?text=${encodeURIComponent(greeting)}`;
+}
+
+const KITCHEN_STOREFRONTS = {
+  philippines: {
+    slug: 'philippines',
+    path: '/ph',
+    name: 'Philippines',
+    nativeName: 'Pilipinas',
+    lang: 'tl',
+    langButtonLabel: 'Filipino',
+    tintClass: 'kitchen-ph',
+    badgeTintClass: 'tint-philippines',
+    softBg: 'var(--dm-ph-soft)',
+    tintColor: 'var(--dm-ph)',
+    cardHeadline: 'Lasang bahay, dito sa Israel.',
+    cardSubcopy: 'Your Sunday sinigang, Lucky Me pancit canton & Silver Swan sawsawan — delivered Friday.',
+    cardCta: 'Mamili sa Filipino store →',
+    heroBadge: 'TINDAHAN NG PINOY · PHILIPPINES',
+    heroTitle: {
+      tl: 'Lasang bahay, dito sa Israel.',
+      en: 'Taste of home, right here in Israel.',
+      he: 'הטעם של הבית בפיליפינים, אצלכם מחר בדלת.'
+    },
+    heroSubcopy: {
+      tl: 'Pang-Sunday sinigang, Lucky Me pancit canton, Silver Swan toyo at paboritong merienda — nasa bodega na sa Israel at ihahatid bukas.',
+      en: 'Your Sunday sinigang, Lucky Me pancit canton, Silver Swan sawsawan and day-off merienda — stocked in Israel and at your door tomorrow.',
+      he: 'כל המוצרים האהובים מהמטבח הפיליפיני — Silver Swan, Lucky Me, חטיפי מריינדה ומרכיבים לסיניגנג במשלוח מהיר לכל הארץ.'
+    },
+    shopBtnLabel: {
+      tl: 'Mamili ngayon',
+      en: 'Shop now',
+      he: 'לקנייה בחנות'
+    },
+    whatsappBtnLabel: {
+      tl: 'Umorder sa WhatsApp',
+      en: 'Order on WhatsApp',
+      he: 'הזמנה בוואטסאפ'
+    },
+    packshots: [
+      'images/products/silver-swan-soy-sauce-front.jpg',
+      'images/products/silver-swan-soy-sauce-back.jpg',
+      'images/products/lal-qilla-basmati-rice-front.jpg',
+      'images/products/gorus-cookies-front.jpg'
+    ],
+    aislesHeading: {
+      tl: 'Mamili ayon sa pasilyo',
+      en: 'Shop the Filipino aisles',
+      he: 'קנייה לפי מחלקות המטבח הפיליפיני'
+    },
+    aisles: [
+      { id: 'pancit', name: 'Pancit & noodles', brands: 'Lucky Me, Payless, bihon & canton', categories: ['instant-foods', 'pantry'] },
+      { id: 'sawsawan', name: 'Sawsawan', brands: 'Silver Swan, Datu Puti, Mang Tomas, UFC', categories: ['sauce-seasoning'] },
+      { id: 'merienda', name: 'Merienda', brands: 'SkyFlakes, Boy Bawang, Regent, Oishi', categories: ['snacks'] },
+      { id: 'ube', name: 'Ube & matamis', brands: 'Ube halaya, halo-halo jars & polvoron', categories: ['sweets'] },
+      { id: 'delata', name: 'De lata & bigas', brands: 'Century Tuna, Argentina, jasmine rice', categories: ['canned-jarred-goods', 'pantry'] },
+      { id: 'sinigang', name: 'Sinigang kit', brands: 'Knorr sampalok, gabi mix & patis', categories: ['sauce-seasoning', 'instant-foods'] }
+    ],
+    favouritesHeading: {
+      tl: 'Mga paborito sa kusina',
+      en: 'Filipino kitchen favourites',
+      he: 'הנמכרים ביותר מהפיליפינים'
+    },
+    giftBand: {
+      eyebrow: 'PADALA CARE PACKAGE · ISRAEL DELIVERY',
+      title: 'Padala box',
+      copy: 'Send a day-off care box packed with Silver Swan, Lucky Me, Boy Bawang and a handwritten note to a friend anywhere in Israel.',
+      cta: 'Send a Padala box →',
+      whatsappText: 'Kumusta Dinu, gusto ko pong magpadala ng Padala gift box sa kaibigan ko sa Israel:'
+    }
+  },
+  thailand: {
+    slug: 'thailand',
+    path: '/th',
+    name: 'Thailand',
+    nativeName: 'ประเทศไทย',
+    lang: 'th',
+    langButtonLabel: 'ไทย',
+    tintClass: 'kitchen-th',
+    badgeTintClass: 'tint-thailand',
+    softBg: 'var(--dm-th-soft)',
+    tintColor: 'var(--dm-th)',
+    cardHeadline: 'รสชาติบ้านเรา ส่งถึงอิสราเอล',
+    cardSubcopy: 'Mama tom yum, Mae Ploy curry pastes, Chaokoh coconut milk & Thai Hom Mali rice.',
+    cardCta: 'เข้าสู่ร้านของชำไทย →',
+    heroBadge: 'ครัวไทยในอิสราเอล · THAILAND',
+    heroTitle: {
+      th: 'รสชาติบ้านเรา ส่งถึงอิสราเอล',
+      en: "Our home's taste, delivered across Israel.",
+      he: 'הטעם האמיתי של תאילנד, מחר אצלכם בדלת.'
+    },
+    heroSubcopy: {
+      th: 'มาม่าต้มยำกุ้ง พริกแกงแม่พลอย กะทิชาวเกาะ น้ำปลาแท้ และข้าวหอมมะลิ พร้อมส่งจากคลังในอิสราเอลถึงหน้าบ้านพรุ่งนี้',
+      en: 'Mama tom yum noodles, Mae Ploy curry pastes, Chaokoh coconut milk and Hom Mali jasmine rice — ready in our Israel warehouse for tomorrow.',
+      he: 'אטריות Mama, משחות קארי Mae Ploy, חלב קוקוס, רוטב דגים ואורז יסמין תאילנדי — במלאי בישראל למשלוח מהיר.'
+    },
+    shopBtnLabel: {
+      th: 'ช้อปสินค้าเลย',
+      en: 'Shop now',
+      he: 'לקנייה בחנות'
+    },
+    whatsappBtnLabel: {
+      th: 'สั่งทาง WhatsApp',
+      en: 'Order on WhatsApp',
+      he: 'הזמנה בוואטסאפ'
+    },
+    packshots: [
+      'images/products/silver-swan-soy-sauce-front.jpg',
+      'images/products/lal-qilla-basmati-rice-front.jpg',
+      'images/products/flavorz-jaggery-front.jpg',
+      'images/products/rusky-atta-toast-front.jpg'
+    ],
+    aislesHeading: {
+      th: 'เลือกช้อปตามมุมโปรดคนไทย',
+      en: 'Shop the Thai kitchen aisles',
+      he: 'קנייה לפי מחלקות המטבח התאילנדי'
+    },
+    aisles: [
+      { id: 'mama', name: 'Mama & sen lek', brands: 'Mama tom yum, WaiWai, rice stick & glass noodles', categories: ['instant-foods', 'pantry'] },
+      { id: 'gaeng', name: 'Khrueang gaeng & kati', brands: 'Mae Ploy, Lobo, Chaokoh & Aroy-D coconut', categories: ['sauce-seasoning', 'canned-jarred-goods'] },
+      { id: 'nampla', name: 'Nam pla & wok sauces', brands: 'Squid Brand, Healthy Boy, Golden Mountain, Pantai', categories: ['sauce-seasoning'] },
+      { id: 'somtam', name: 'Som tam pantry', brands: 'Palm sugar, tamarind paste, roasted chili & lime', categories: ['pantry', 'sauce-seasoning'] },
+      { id: 'hommali', name: 'Khao hom mali', brands: 'Thai Hom Mali jasmine rice & glutinous sticky rice', categories: ['pantry'] },
+      { id: 'chatramue', name: 'Khanom & Cha Thai', brands: 'ChaTraMue Thai tea, Tao Kae Noi & Koh-Kae', categories: ['drinks', 'snacks'] }
+    ],
+    favouritesHeading: {
+      th: 'สินค้ายอดฮิตประจำครัวไทย',
+      en: 'Thai kitchen favourites',
+      he: 'המועדפים מהמטבח התאילנדי'
+    },
+    giftBand: {
+      eyebrow: 'THAI CARE PACKAGE · ISRAEL DELIVERY',
+      title: 'Klong Khong Fak (Thai Care Box)',
+      copy: 'Send a comfort box of Mama noodles, ChaTraMue Thai tea and crunchy snacks with a note to friends anywhere in Israel.',
+      cta: 'Send a Thai box →',
+      whatsappText: 'สวัสดี Dinu ฉันต้องการส่งกล่องของฝากไทยให้เพื่อนในอิสราเอล:'
+    }
+  },
+  india: {
+    slug: 'india',
+    path: '/in',
+    name: 'India',
+    nativeName: 'भारत',
+    lang: 'hi',
+    langButtonLabel: 'हिन्दी',
+    tintClass: 'kitchen-in',
+    badgeTintClass: 'tint-india',
+    softBg: 'var(--dm-in-soft)',
+    tintColor: 'var(--dm-in)',
+    cardHeadline: 'घर का स्वाद, अब इज़राइल में।',
+    cardSubcopy: "Evening chai with Haldiram's Gorus & Rusky, Lal Qilla 5kg basmati, Gulab Jamun & natural gur.",
+    cardCta: 'भारतीय स्टोर देखें →',
+    heroBadge: 'भारतीय रसोई · INDIA',
+    heroTitle: {
+      hi: 'घर का स्वाद, अब इज़राइल में।',
+      en: 'Taste of home, now in Israel.',
+      he: 'הטעם של הודו, אצלכם בבית כבר מחר.'
+    },
+    heroSubcopy: {
+      hi: 'शाम की चाय के लिए हल्दीराम बिस्किट और रस्क, लाल किला बासमती चावल, गुलाब जामुन और शुद्ध गुड़ — इज़राइल में कल आपके दरवाज़े पर।',
+      en: "Evening chai with Haldiram's Gorus & Rusky atta toast, Lal Qilla 5kg sella basmati, Gulab Jamun and unrefined gur — at your door tomorrow.",
+      he: 'ביסקוויטים וחטיפי Haldiram’s לצ׳אי של אחר הצהריים, אורז בסמטי Lal Qilla 5 ק״ג, גולאב ג׳אמון וג׳אגרי טבעי במשלוח מהיר.'
+    },
+    shopBtnLabel: {
+      hi: 'अभी खरीदें',
+      en: 'Shop now',
+      he: 'לקנייה בחנות'
+    },
+    whatsappBtnLabel: {
+      hi: 'WhatsApp पर ऑर्डर करें',
+      en: 'Order on WhatsApp',
+      he: 'הזמנה בוואטסאפ'
+    },
+    packshots: [
+      'images/products/haldirams-gulab-jamun-front.jpg',
+      'images/products/lal-qilla-basmati-rice-front.jpg',
+      'images/products/gorus-cookies-front.jpg',
+      'images/products/flavorz-jaggery-front.jpg'
+    ],
+    aislesHeading: {
+      hi: 'अपनी पसंद की गली चुनें',
+      en: 'Shop the Indian kitchen aisles',
+      he: 'קנייה לפי מחלקות המטבח ההודי'
+    },
+    aisles: [
+      { id: 'namkeen', name: 'Chai-time & namkeen', brands: "Haldiram's Gorus, Rusky atta toast, Parle-G & bhujia", categories: ['snacks', 'sweets'] },
+      { id: 'mithai', name: 'Mithai & gur', brands: "Haldiram's Gulab Jamun, soan papdi & Flavorz jaggery", categories: ['canned-jarred-goods', 'pantry', 'sweets'] },
+      { id: 'basmati', name: 'Basmati, atta & dal', brands: 'Lal Qilla 5kg sella, chakki atta, toor & chana dal', categories: ['pantry'] },
+      { id: 'masala', name: 'Masala & tadka', brands: 'MDH, Everest, whole garam masala, jeera & hing', categories: ['sauce-seasoning'] },
+      { id: 'achaar', name: 'Achaar, chutney & papad', brands: "Mother's Recipe mango pickle, Lijjat papad & ghee", categories: ['canned-jarred-goods', 'sauce-seasoning'] },
+      { id: 'chai', name: 'Masala chai & sharbat', brands: 'Wagh Bakri, Taj Mahal, Rooh Afza & cardamom tea', categories: ['drinks'] }
+    ],
+    favouritesHeading: {
+      hi: 'भारतीय रसोई की पहली पसंद',
+      en: 'Indian kitchen favourites',
+      he: 'הנמכרים ביותר מהודו'
+    },
+    giftBand: {
+      eyebrow: 'MITHAI & CHAI CARE BOX · ISRAEL DELIVERY',
+      title: 'Mithai & Chai Gift Box',
+      copy: "Send Haldiram's Gulab Jamun, crunchy Gorus cookies and natural jaggery cubes with a personal note anywhere in Israel.",
+      cta: 'Send a Mithai box →',
+      whatsappText: 'नमस्ते Dinu, मैं अपने दोस्त के लिए इज़राइल में मिठाई गिफ्ट बॉक्स भेजना चाहता/चाहती हूँ:'
+    }
+  },
+  'sri-lanka': {
+    slug: 'sri-lanka',
+    path: '/lk',
+    name: 'Sri Lanka',
+    nativeName: 'ශ්‍රී ලංකාව',
+    lang: 'si',
+    langButtonLabel: 'සිංහල',
+    tintClass: 'kitchen-lk',
+    badgeTintClass: 'tint-sri-lanka',
+    softBg: 'var(--dm-lk-soft)',
+    tintColor: 'var(--dm-lk)',
+    cardHeadline: 'ගෙදර රසය, ඊශ්‍රායලයේදී.',
+    cardSubcopy: 'Sunday rice & curry with Maliban biscuits, Ceylon kahata tea, katta sambol & roasted thuna paha.',
+    cardCta: 'ශ්‍රී ලාංකික කඩේට →',
+    heroBadge: 'අපේ ලංකා කඩේ · SRI LANKA',
+    heroTitle: {
+      si: 'ගෙදර රසය, ඊශ්‍රායලයේදී.',
+      en: 'Taste of home, here in Israel.',
+      he: 'הטעם של סרי לנקה, אצלכם בדלת מחר.'
+    },
+    heroSubcopy: {
+      si: 'ඉරිදා බත් සහ ව්‍යංජන සඳහා Maliban බිස්කට්, සිලෝන් තේ, කට්ට සම්බෝල, බැදපු තුනපහ සහ කීරි සම්බා — හෙටම ඔබේ නිවසට.',
+      en: 'Your Sunday rice and curry table — Maliban Lemon Puff, Ceylon kahata tea, katta sambol and roasted curry powder delivered tomorrow.',
+      he: 'תה ציילון אמיתי, ביסקוויטים של Maliban, סמבול, תבליני קארי קלויים וחלב קוקוס מסרי לנקה במשלוח לכל רחבי ישראל.'
+    },
+    shopBtnLabel: {
+      si: 'දැන් මිලදී ගන්න',
+      en: 'Shop now',
+      he: 'לקנייה בחנות'
+    },
+    whatsappBtnLabel: {
+      si: 'WhatsApp මගින් ඇණවුම් කරන්න',
+      en: 'Order on WhatsApp',
+      he: 'הזמנה בוואטסאפ'
+    },
+    packshots: [
+      'images/products/flavorz-jaggery-front.jpg',
+      'images/products/gorus-cookies-front.jpg',
+      'images/products/lal-qilla-basmati-rice-front.jpg',
+      'images/products/rusky-atta-toast-front.jpg'
+    ],
+    aislesHeading: {
+      si: 'අපේ කඩේ අංශ අනුව තෝරන්න',
+      en: 'Shop the Sri Lankan aisles',
+      he: 'קנייה לפי מחלקות המטבח הסרי לנקי'
+    },
+    aisles: [
+      { id: 'shorteats', name: 'Biscuits & short-eats', brands: 'Maliban Lemon Puff, Munchee Cream Cracker & murukku', categories: ['snacks', 'sweets'] },
+      { id: 'samba', name: 'Samba haal & hoppers', brands: 'Keeri Samba, red raw rice, string hopper & appa flour', categories: ['pantry'] },
+      { id: 'thunapaha', name: 'Thuna paha & badapu', brands: 'McCurrie, Wijaya roasted curry powder, goraka & pandan', categories: ['sauce-seasoning'] },
+      { id: 'sambol', name: 'Sambol & moju jars', brands: 'MD katta sambol, seeni sambol, brinjal moju & Maldive fish', categories: ['canned-jarred-goods', 'sauce-seasoning'] },
+      { id: 'polkiri', name: 'Pol kiri & kithul', brands: 'Maggi coconut milk powder, kithul treacle & hakuru', categories: ['pantry', 'sweets'] },
+      { id: 'ceylontea', name: 'Ceylon kahata & EGB', brands: 'Dilmah, Zesta kahata, Elephant House ginger beer & Milo', categories: ['drinks'] }
+    ],
+    favouritesHeading: {
+      si: 'අපේ ජනප්‍රියම භාණ්ඩ',
+      en: 'Sri Lankan kitchen favourites',
+      he: 'המועדפים מסרי לנקה'
+    },
+    giftBand: {
+      eyebrow: 'GEDARA CARE PACKAGE · ISRAEL DELIVERY',
+      title: 'Gedara Tea-Time Box',
+      copy: 'Send Maliban biscuits, Ceylon tea and sweet jaggery treats with a personal note to a friend anywhere in Israel.',
+      cta: 'Send a Gedara box →',
+      whatsappText: 'ආයුබෝවන් Dinu, මට ඊශ්‍රායලයේ මිතුරෙකුට Gedara තෑගි පෙට්ටියක් යැවීමට අවශ්‍යයි:'
+    }
+  }
+};
+
 const I18N_DICTIONARY = {
   en: {
-    sign_in_register: 'Sign In / Register',
-    admin_dashboard: 'Admin Dashboard',
+    sign_in_register: 'Sign In',
+    admin_dashboard: 'Admin',
     basket_label: 'Basket',
-    search_placeholder: "Search Haldiram’s, Basmati Rice, Soy Sauce, Gulab Jamun, Jaggery, or Barcode...",
-    search_btn: '🔍 Search',
-    hero_badge: 'ISRAEL’S SPECIALTY ASIAN & INDIAN GROCER',
-    hero_title: 'Authentic Flavors from India, Thailand, Sri Lanka & the Philippines',
-    hero_subtitle: 'Explore authentic products from India, Thailand, Sri Lanka and the Philippines, delivered straight to your door in Israel. Browse authentic products by their country of origin, all stocked in Israel and delivered to Israeli addresses.',
-    hero_btn_authentic: '📸 View Real Photographed Store Inventory (6 Items)',
-    hero_btn_sale: '🔥 Shop Current Sale Deals',
-    hero_btn_all: 'Browse Full Catalogue',
-    hero_card_sub: 'Official Importer & Nationwide Delivery • Kosher & Hebrew Nutritional Labels • Persistent Account Basket',
-    trust_1_title: 'Nationwide Israel Delivery',
-    trust_1_sub: 'Gush Dan, Sharon, Jerusalem, North, South & Lockers',
-    trust_2_title: 'Persistent & Synced Basket',
-    trust_2_sub: 'Browse freely; your basket merges when you sign in',
-    trust_3_title: 'Israeli & Global Payments',
-    trust_3_sub: 'Visa, Mastercard, Amex, Isracard, Bit, Apple/Google Pay',
-    trust_4_title: 'Full Hebrew & Allergen Labels',
-    trust_4_sub: 'Unit prices per 100g/100ml & Ministry of Health badges',
-    region_section_title: 'Shop by Region & Culinary Origin',
-    region_section_sub: 'Select India, Thailand, Sri Lanka, or the Philippines to filter products from that region',
-    clear_all_filters: 'Clear All Filters',
-    all_4_regions: 'All 4 Regions',
-    filter_quick_title: 'Quick Inventory Filters',
-    filter_authentic: 'Real Photographed Shelf Items',
-    filter_in_stock: '✅ In Stock Only',
-    filter_on_sale: '🔥 On Sale / Discounted',
-    filter_dept_title: 'Main Department',
+    search_placeholder: "Search Lucky Me, Mama, Haldiram's, Silver Swan, Maliban...",
+    search_btn: 'Search',
+    clear_all_filters: 'Clear all filters',
+    all_4_regions: 'All 4 Kitchens',
+    filter_authentic: 'Warehouse Photographed Items',
+    filter_in_stock: 'In Stock Only',
+    filter_on_sale: 'Special Offers',
+    filter_dept_title: 'Aisle / Category',
     filter_subcat_title: 'Subcategory',
-    filter_dietary_title: 'Dietary & Certification',
-    filter_brand_title: 'Brand / Vendor',
-    filter_max_price: 'Maximum Price (₪ ILS):',
+    filter_dietary_title: 'Dietary',
+    filter_brand_title: 'Brand',
+    filter_max_price: 'Max Price (₪ ILS):',
     sort_by_label: 'Sort by:',
-    all_products_heading: 'All Dinu Market Products',
-    add_to_basket: '🛒 Add to Basket',
-    in_basket: 'in Basket',
-    in_stock: 'In Stock',
-    out_of_stock: 'Out of Stock',
-    real_shelf_badge: '📸 REAL SHELF PHOTO',
-    footer_about_text: 'Bringing authentic specialty foods from India, Thailand, Sri Lanka, and the Philippines directly to kitchens across Israel.',
-    footer_depts_title: 'Grocery Departments',
-    footer_link_regions: 'Shop by Region (India, Thailand, Sri Lanka & Philippines)',
+    all_products_heading: 'All 4 Kitchens',
+    add_to_basket: 'Add to Basket',
+    in_basket: 'in basket',
+    in_stock: 'In stock',
+    out_of_stock: 'Out of stock',
     categories: {
-      'shop-by-region': 'Shop by Region',
+      'shop-by-region': 'Shop by Kitchen',
       sweets: 'Sweets',
       snacks: 'Snacks',
       pantry: 'Pantry',
@@ -123,119 +446,75 @@ const I18N_DICTIONARY = {
       'instant-foods': 'Instant Foods'
     },
     regions: {
-      india: 'India',
+      philippines: 'Philippines',
       thailand: 'Thailand',
-      'sri-lanka': 'Sri Lanka',
-      philippines: 'Philippines'
+      india: 'India',
+      'sri-lanka': 'Sri Lanka'
     }
   },
   he: {
-    sign_in_register: 'התחברות / הרשמה',
-    admin_dashboard: 'לוח בקרה למנהל',
-    basket_label: 'סל קניות',
-    search_placeholder: 'חיפוש האלדירם, אורז בסמטי, רוטב סויה, גולאב ג׳אמון, ג׳אגרי או ברקוד...',
-    search_btn: '🔍 חיפוש',
-    hero_badge: 'המרכול האסייתי וההודי המוביל בישראל',
-    hero_title: 'טעמים אותנטיים מהודו, תאילנד, סרי לנקה והפיליפינים',
-    hero_subtitle: 'קנו ממבחר המחסן הישראלי שלנו במלאי זמין המיובא מהודו, תאילנד, סרי לנקה והפיליפינים.',
-    hero_btn_authentic: '📸 צפו במלאי המצולם שלנו (6 פריטים)',
-    hero_btn_sale: '🔥 מבצעים והנחות',
-    hero_btn_all: 'לכל הקטלוג',
-    hero_card_sub: 'יבואן רשמי ומשלוחים לכל הארץ • סימון תזונתי בעברית וכשרות • סל קניות מסונכרן',
-    trust_1_title: 'משלוחים לכל רחבי ישראל',
-    trust_1_sub: 'גוש דן, השרון, ירושלים, צפון, דרום ולוקרים',
-    trust_2_title: 'סל קניות שמור ומסונכרן',
-    trust_2_sub: 'הסל נשמר אוטומטית ומתמזג בעת ההתחברות לחשבון',
-    trust_3_title: 'אמצעי תשלום ישראליים ובינלאומיים',
-    trust_3_sub: 'Visa, Mastercard, Amex, Isracard, Bit, Apple/Google Pay',
-    trust_4_title: 'סימון תזונתי ואלרגנים מלא בעברית',
-    trust_4_sub: 'מחיר ל-100 גרם/מ״ל וסימון משרד הבריאות',
-    region_section_title: 'קנייה לפי מדינה ומקור קולינרי',
-    region_section_sub: 'בחרו הודו, תאילנד, סרי לנקה או הפיליפינים לסינון מוצרים מאותו אזור',
-    clear_all_filters: 'נקה את כל המסננים',
-    all_4_regions: 'כל 4 המדינות',
-    filter_quick_title: 'סינון מהיר',
-    filter_authentic: 'מוצרים עם תמונות מדף אמיתיות',
-    filter_in_stock: '✅ במלאי בלבד',
-    filter_on_sale: '🔥 במבצע / הנחה',
-    filter_dept_title: 'מחלקה ראשית',
+    sign_in_register: 'התחברות',
+    admin_dashboard: 'ניהול',
+    basket_label: 'סל',
+    search_placeholder: 'חיפוש Lucky Me, Mama, Haldiram’s, Silver Swan, Maliban...',
+    search_btn: 'חיפוש',
+    clear_all_filters: 'נקה מסננים',
+    all_4_regions: 'כל 4 המטבחים',
+    filter_authentic: 'מוצרים במלאי מצולם',
+    filter_in_stock: 'במלאי בלבד',
+    filter_on_sale: 'במבצע',
+    filter_dept_title: 'מחלקה',
     filter_subcat_title: 'תת-קטגוריה',
     filter_dietary_title: 'תזונה וכשרות',
-    filter_brand_title: 'מותג / יצרן',
+    filter_brand_title: 'מותג',
     filter_max_price: 'מחיר מקסימלי (₪):',
     sort_by_label: 'מיון לפי:',
-    all_products_heading: 'כל מוצרי דינו מרקט',
-    add_to_basket: '🛒 הוסף לסל',
+    all_products_heading: 'כל מוצרי Dinu Market',
+    add_to_basket: 'הוסף לסל',
     in_basket: 'בסל',
     in_stock: 'במלאי',
     out_of_stock: 'אזל מהמלאי',
-    real_shelf_badge: '📸 צילום מדף אמיתי',
-    footer_about_text: 'מביאים מוצרי מזון אותנטיים מהודו, תאילנד, סרי לנקה והפיליפינים ישירות למטבחים בכל רחבי ישראל.',
-    footer_depts_title: 'מחלקות החנות',
-    footer_link_regions: 'קנייה לפי מדינה (הודו, תאילנד, סרי לנקה והפיליפינים)',
     categories: {
-      'shop-by-region': 'קנייה לפי מדינה',
+      'shop-by-region': 'לפי מטבח',
       sweets: 'ממתקים וקינוחים',
       snacks: 'חטיפים מלוחים',
-      pantry: 'מזווה ובישול',
+      pantry: 'מזווה ואורז',
       drinks: 'משקאות ותה',
       'canned-jarred-goods': 'שימורים וצנצנות',
       'sauce-seasoning': 'רטבים ותבלינים',
-      'instant-foods': 'אוכל מהיר וראמן'
+      'instant-foods': 'נודלס ואוכל מהיר'
     },
     regions: {
-      india: 'הודו',
+      philippines: 'הפיליפינים',
       thailand: 'תאילנד',
-      'sri-lanka': 'סרי לנקה',
-      philippines: 'הפיליפינים'
+      india: 'הודו',
+      'sri-lanka': 'סרי לנקה'
     }
   },
   hi: {
-    sign_in_register: 'साइन इन / पंजीकरण',
-    admin_dashboard: 'व्यवस्थापक डैशबोर्ड',
+    sign_in_register: 'साइन इन',
+    admin_dashboard: 'एडमिन',
     basket_label: 'टोकरी',
-    search_placeholder: 'हल्दीराम, बासमती चावल, सोया सॉस, गुलाब जामुन या गुड़ खोजें...',
-    search_btn: '🔍 खोजें',
-    hero_badge: 'इज़राइल का प्रमुख भारतीय और एशियाई किराना स्टोर',
-    hero_title: 'भारत, थाईलैंड, श्रीलंका और फिलीपींस के प्रामाणिक स्वाद',
-    hero_subtitle: 'भारत, थाईलैंड, श्रीलंका और फिलीपींस से मंगाए गए हमारे इज़राइल गोदाम के असली उत्पादों की खरीदारी करें।',
-    hero_btn_authentic: '📸 असली स्टोर उत्पाद देखें (6 आइटम)',
-    hero_btn_sale: '🔥 विशेष छूट वाले ऑफ़र',
-    hero_btn_all: 'पूरा कैटलॉग देखें',
-    hero_card_sub: 'आधिकारिक आयातक और पूरे इज़राइल में डिलीवरी • कोशर और हिब्रू पोषण लेबल • सुरक्षित खाता टोकरी',
-    trust_1_title: 'पूरे इज़राइल में डिलीवरी',
-    trust_1_sub: 'गुश दान, शेरोन, यरुशलम, उत्तर, दक्षिण और लॉकर',
-    trust_2_title: 'सिंक की गई शॉपिंग टोकरी',
-    trust_2_sub: 'साइन इन करने पर आपकी टोकरी सुरक्षित रहती है',
-    trust_3_title: 'इज़राइली और वैश्विक भुगतान',
-    trust_3_sub: 'Visa, Mastercard, Amex, Isracard, Bit, Apple/Google Pay',
-    trust_4_title: 'पूर्ण हिब्रू और एलर्जी लेबल',
-    trust_4_sub: 'प्रति 100 ग्राम/मिली मूल्य और स्वास्थ्य मंत्रालय मानक',
-    region_section_title: 'क्षेत्र और पाक मूल के अनुसार खरीदारी करें',
-    region_section_sub: 'उत्पादों को फ़िल्टर करने के लिए भारत, थाईलैंड, श्रीलंका या फिलीपींस चुनें',
+    search_placeholder: 'Haldiram’s, Lal Qilla बासमती, Rusky, Gulab Jamun, गुड़ खोजें...',
+    search_btn: 'खोजें',
     clear_all_filters: 'सभी फ़िल्टर हटाएं',
-    all_4_regions: 'सभी 4 क्षेत्र',
-    filter_quick_title: 'त्वरित इन्वेंट्री फ़िल्टर',
-    filter_authentic: 'असली फ़ोटो वाले स्टोर आइटम',
-    filter_in_stock: '✅ केवल स्टॉक में उपलब्ध',
-    filter_on_sale: '🔥 छूट / सेल पर उपलब्ध',
-    filter_dept_title: 'मुख्य विभाग',
+    all_4_regions: 'सभी 4 रसोई',
+    filter_authentic: 'असली स्टोर आइटम',
+    filter_in_stock: 'केवल स्टॉक में',
+    filter_on_sale: 'विशेष छूट',
+    filter_dept_title: 'गली / श्रेणी',
     filter_subcat_title: 'उप-श्रेणी',
-    filter_dietary_title: 'आहार और प्रमाणन',
-    filter_brand_title: 'ब्रांड / विक्रेता',
+    filter_dietary_title: 'आहार',
+    filter_brand_title: 'ब्रांड',
     filter_max_price: 'अधिकतम मूल्य (₪ ILS):',
     sort_by_label: 'क्रमबद्ध करें:',
-    all_products_heading: 'सभी दीनू मार्केट उत्पाद',
-    add_to_basket: '🛒 टोकरी में डालें',
+    all_products_heading: 'सभी Dinu Market उत्पाद',
+    add_to_basket: 'टोकरी में डालें',
     in_basket: 'टोकरी में',
     in_stock: 'स्टॉक में',
     out_of_stock: 'स्टॉक समाप्त',
-    real_shelf_badge: '📸 असली स्टोर फ़ोटो',
-    footer_about_text: 'भारत, थाईलैंड, श्रीलंका और फिलीपींस के प्रामाणिक खाद्य पदार्थ सीधे इज़राइल के घरों तक पहुँचाना।',
-    footer_depts_title: 'किराना विभाग',
-    footer_link_regions: 'क्षेत्र के अनुसार खरीदारी (भारत, थाईलैंड, श्रीलंका, फिलीपींस)',
     categories: {
-      'shop-by-region': 'क्षेत्र के अनुसार खरीदारी',
+      'shop-by-region': 'रसोई के अनुसार',
       sweets: 'मिठाइयाँ',
       snacks: 'नाश्ता और स्नैक्स',
       pantry: 'पैंट्री और अनाज',
@@ -245,193 +524,127 @@ const I18N_DICTIONARY = {
       'instant-foods': 'इंस्टेंट फूड्स'
     },
     regions: {
-      india: 'भारत',
+      philippines: 'फिलीपींस',
       thailand: 'थाईलैंड',
-      'sri-lanka': 'श्रीलंका',
-      philippines: 'फिलीपींस'
+      india: 'भारत',
+      'sri-lanka': 'श्रीलंका'
     }
   },
   th: {
-    sign_in_register: 'เข้าสู่ระบบ / สมัครสมาชิก',
-    admin_dashboard: 'แดชบอร์ดผู้ดูแลระบบ',
-    basket_label: 'ตะกร้าสินค้า',
-    search_placeholder: 'ค้นหา Haldiram, ข้าวบาสมาติ, ซีอิ๊ว, กุหลาบจามุน, น้ำตาลก้อน...',
-    search_btn: '🔍 ค้นหา',
-    hero_badge: 'ซูเปอร์มาร์เก็ตอาหารเอเชียและอินเดียชั้นนำในอิสราเอล',
-    hero_title: 'รสชาติแท้จาก อินเดีย ไทย ศรีลังกา และฟิลิปปินส์',
-    hero_subtitle: 'ช้อปสินค้าพร้อมส่งจากคลังสินค้าในอิสราเอลที่คัดสรรจากอินเดีย ไทย ศรีลังกา และฟิลิปปินส์',
-    hero_btn_authentic: '📸 ดูสินค้าจริงในคลัง (6 รายการ)',
-    hero_btn_sale: '🔥 โปรโมชั่นลดราคาพิเศษ',
-    hero_btn_all: 'ดูสินค้าทั้งหมด',
-    hero_card_sub: 'ผู้นำเข้าอย่างเป็นทางการ จัดส่งทั่วอิสราเอล • ฉลากโภชนาการภาษาฮีบรูและโคเชอร์ • ตะกร้าสินค้าซิงค์อัตโนมัติ',
-    trust_1_title: 'จัดส่งทั่วประเทศอิสราเอล',
-    trust_1_sub: 'กุชดาน ชารอน เยรูซาเล็ม ภาคเหนือ ภาคใต้ และตู้ล็อกเกอร์',
-    trust_2_title: 'บันทึกตะกร้าสินค้าอัตโนมัติ',
-    trust_2_sub: 'เลือกชมได้อิสระ ตะกร้าจะซิงค์ทันทีเมื่อเข้าสู่ระบบ',
-    trust_3_title: 'รองรับการชำระเงินในอิสราเอลและสากล',
-    trust_3_sub: 'Visa, Mastercard, Amex, Isracard, Bit, Apple/Google Pay',
-    trust_4_title: 'ฉลากภาษาฮีบรูและข้อมูลภูมิแพ้ครบถ้วน',
-    trust_4_sub: 'แสดงราคาต่อ 100 กรัม/มล. ตามมาตรฐานกระทรวงสาธารณสุข',
-    region_section_title: 'เลือกช้อปตามภูมิภาคและต้นกำเนิดอาหาร',
-    region_section_sub: 'เลือก อินเดีย ไทย ศรีลังกา หรือฟิลิปปินส์ เพื่อกรองสินค้าจากภูมิภาคนั้น',
+    sign_in_register: 'เข้าสู่ระบบ',
+    admin_dashboard: 'ผู้ดูแล',
+    basket_label: 'ตะกร้า',
+    search_placeholder: 'ค้นหา มาม่า, แม่พลอย, กะทิชาวเกาะ, ข้าวหอมมะลิ, น้ำปลา...',
+    search_btn: 'ค้นหา',
     clear_all_filters: 'ล้างตัวกรองทั้งหมด',
-    all_4_regions: 'ทั้งหมด 4 ภูมิภาค',
-    filter_quick_title: 'ตัวกรองสินค้าด่วน',
-    filter_authentic: 'ภาพถ่ายสินค้าจริงจากคลัง',
-    filter_in_stock: '✅ มีสินค้าพร้อมส่งเท่านั้น',
-    filter_on_sale: '🔥 สินค้าลดราคา',
-    filter_dept_title: 'หมวดหมู่หลัก',
+    all_4_regions: 'ครบทั้ง 4 ครัว',
+    filter_authentic: 'สินค้าพร้อมส่งในคลัง',
+    filter_in_stock: 'มีสินค้าเท่านั้น',
+    filter_on_sale: 'โปรโมชั่น',
+    filter_dept_title: 'หมวดหมู่',
     filter_subcat_title: 'หมวดหมู่ย่อย',
-    filter_dietary_title: 'การรับรองและโภชนาการ',
-    filter_brand_title: 'แบรนด์ / ผู้ผลิต',
+    filter_dietary_title: 'โภชนาการ',
+    filter_brand_title: 'แบรนด์',
     filter_max_price: 'ราคาสูงสุด (₪ ILS):',
     sort_by_label: 'เรียงตาม:',
-    all_products_heading: 'สินค้า Dinu Market ทั้งหมด',
-    add_to_basket: '🛒 เพิ่มลงตะกร้า',
-    in_basket: 'ชิ้นในตะกร้า',
+    all_products_heading: 'สินค้าทั้งหมด',
+    add_to_basket: 'เพิ่มลงตะกร้า',
+    in_basket: 'ในตะกร้า',
     in_stock: 'มีสินค้า',
     out_of_stock: 'สินค้าหมด',
-    real_shelf_badge: '📸 ภาพถ่ายสินค้าจริง',
-    footer_about_text: 'นำเสนออาหารและวัตถุดิบแท้จาก อินเดีย ไทย ศรีลังกา และฟิลิปปินส์ ส่งตรงถึงครัวทั่วอิสราเอล',
-    footer_depts_title: 'แผนกสินค้าอุปโภคบริโภค',
-    footer_link_regions: 'ช้อปตามภูมิภาค (อินเดีย, ไทย, ศรีลังกา และฟิลิปปินส์)',
     categories: {
-      'shop-by-region': 'ช้อปตามภูมิภาค',
+      'shop-by-region': 'เลือกตามครัว',
       sweets: 'ขนมหวาน',
       snacks: 'ขนมขบเคี้ยว',
       pantry: 'วัตถุดิบและข้าวสาร',
-      drinks: 'เครื่องดื่ม',
+      drinks: 'เครื่องดื่มและชา',
       'canned-jarred-goods': 'อาหารกระป๋อง',
-      'sauce-seasoning': 'ซอสและเครื่องปรุงรส',
-      'instant-foods': 'อาหารกึ่งสำเร็จรูป'
+      'sauce-seasoning': 'ซอสและพริกแกง',
+      'instant-foods': 'บะหมี่กึ่งสำเร็จรูป'
     },
     regions: {
-      india: 'อินเดีย',
+      philippines: 'ฟิลิปปินส์',
       thailand: 'ไทย',
-      'sri-lanka': 'ศรีลังกา',
-      philippines: 'ฟิลิปปินส์'
+      india: 'อินเดีย',
+      'sri-lanka': 'ศรีลังกา'
     }
   },
   si: {
-    sign_in_register: 'පිවිසෙන්න / ලියාපදිංචි වන්න',
-    admin_dashboard: 'පරිපාලක පුවරුව',
-    basket_label: 'බාස්කට්ටුව',
-    search_placeholder: 'Haldiram, බාස්මතී සහල්, සෝයා සෝස්, ගුලාබ් ජමුන් හෝ හකුරු සොයන්න...',
-    search_btn: '🔍 සොයන්න',
-    hero_badge: 'ඊශ්‍රායලයේ ප්‍රමුඛතම ආසියානු සහ ඉන්දියානු සුපිරි වෙළඳසැල',
-    hero_title: 'ඉන්දියාව, තායිලන්තය, ශ්‍රී ලංකාව සහ පිලිපීනයෙන් සැබෑ රසයන්',
-    hero_subtitle: 'ඉන්දියාව, තායිලන්තය, ශ්‍රී ලංකාව සහ පිලිපීනයෙන් ගෙන්වන ලද අපගේ ඊශ්‍රායල ගබඩාවේ ඇති සැබෑ භාණ්ඩ මිලදී ගන්න.',
-    hero_btn_authentic: '📸 සැබෑ ඡායාරූප සහිත භාණ්ඩ බලන්න (6)',
-    hero_btn_sale: '🔥 විශේෂ වට්ටම් දීමනා',
-    hero_btn_all: 'සියලුම භාණ්ඩ බලන්න',
-    hero_card_sub: 'නිල ආනයනකරු සහ ඊශ්‍රායලය පුරා බෙදාහැරීම • කොෂර් සහ හීබෲ පෝෂණ ලේබල් • සුරක්ෂිත බාස්කට්ටුව',
-    trust_1_title: 'ඊශ්‍රායලය පුරා බෙදාහැරීම',
-    trust_1_sub: 'ගුෂ් ඩෑන්, ෂැරොන්, ජෙරුසලම, උතුර, දකුණ සහ ලොකර්',
-    trust_2_title: 'සුරක්ෂිත සාප්පු බාස්කට්ටුව',
-    trust_2_sub: 'ඔබ ගිණුමට පිවිසෙන විට බාස්කට්ටුව ස්වයංක්‍රීයව සම්බන්ධ වේ',
-    trust_3_title: 'ඊශ්‍රායල සහ ගෝලීය ගෙවීම් ක්‍රම',
-    trust_3_sub: 'Visa, Mastercard, Amex, Isracard, Bit, Apple/Google Pay',
-    trust_4_title: 'සම්පූර්ණ හීබෲ සහ අසාත්මිකතා ලේබල්',
-    trust_4_sub: '100g/100ml සඳහා මිල සහ සෞඛ්‍ය අමාත්‍යාංශ ප්‍රමිතීන්',
-    region_section_title: 'කලාපය සහ ආහාර සම්භවය අනුව මිලදී ගන්න',
-    region_section_sub: 'භාණ්ඩ තේරීමට ඉන්දියාව, තායිලන්තය, ශ්‍රී ලංකාව හෝ පිලිපීනය තෝරන්න',
-    clear_all_filters: 'සියලුම පෙරහන් ඉවත් කරන්න',
-    all_4_regions: 'කලාප 4ම',
-    filter_quick_title: 'ඉක්මන් භාණ්ඩ පෙරහන්',
-    filter_authentic: 'සැබෑ ඡායාරූප සහිත භාණ්ඩ',
-    filter_in_stock: '✅ තොගයේ ඇති භාණ්ඩ පමණක්',
-    filter_on_sale: '🔥 වට්ටම් සහිත භාණ්ඩ',
-    filter_dept_title: 'ප්‍රධාන අංශය',
+    sign_in_register: 'පිවිසෙන්න',
+    admin_dashboard: 'පරිපාලක',
+    basket_label: 'බාස්කට්',
+    search_placeholder: 'Maliban, සිලෝන් තේ, සම්බෝල, බාස්මතී සහල් හෝ හකුරු සොයන්න...',
+    search_btn: 'සොයන්න',
+    clear_all_filters: 'සියලු පෙරහන් ඉවත් කරන්න',
+    all_4_regions: 'මුළුතැන්ගෙයි 4ම',
+    filter_authentic: 'ගබඩාවේ ඇති භාණ්ඩ',
+    filter_in_stock: 'තොගයේ ඇති පමණක්',
+    filter_on_sale: 'වට්ටම් සහිත',
+    filter_dept_title: 'අංශය',
     filter_subcat_title: 'උප කාණ්ඩය',
-    filter_dietary_title: 'ආහාර සහතික කිරීම්',
+    filter_dietary_title: 'ආහාර වර්ගය',
     filter_brand_title: 'වෙළඳ නාමය',
     filter_max_price: 'උපරිම මිල (₪ ILS):',
     sort_by_label: 'පෙළගස්වන්න:',
-    all_products_heading: 'සියලුම Dinu Market භාණ්ඩ',
-    add_to_basket: '🛒 බාස්කට්ටුවට එක් කරන්න',
+    all_products_heading: 'සියලුම භාණ්ඩ',
+    add_to_basket: 'බාස්කට්ටුවට',
     in_basket: 'බාස්කට්ටුවේ',
     in_stock: 'තොගයේ ඇත',
     out_of_stock: 'තොග අවසන්',
-    real_shelf_badge: '📸 සැබෑ ඡායාරූපය',
-    footer_about_text: 'ඉන්දියාව, තායිලන්තය, ශ්‍රී ලංකාව සහ පිලිපීනයේ සැබෑ ආහාර ද්‍රව්‍ය ඊශ්‍රායලයේ සෑම නිවසකටම ගෙන ඒම.',
-    footer_depts_title: 'භාණ්ඩ අංශ',
-    footer_link_regions: 'කලාපය අනුව මිලදී ගන්න (ඉන්දියාව, තායිලන්තය, ශ්‍රී ලංකාව, පිලිපීනය)',
     categories: {
-      'shop-by-region': 'කලාපය අනුව මිලදී ගන්න',
+      'shop-by-region': 'රට අනුව',
       sweets: 'රසකැවිලි',
       snacks: 'කෙටි ආහාර',
-      pantry: 'සහල් සහ අත්‍යවශ්‍ය ද්‍රව්‍ය',
-      drinks: 'බීම වර්ග',
-      'canned-jarred-goods': 'ටින් කළ ආහාර',
-      'sauce-seasoning': 'සෝස් සහ කුළුබඩු',
+      pantry: 'සහල් සහ පිටි',
+      drinks: 'තේ සහ බීම',
+      'canned-jarred-goods': 'ටින් සහ බෝතල් කළ',
+      'sauce-seasoning': 'සෝස් සහ තුනපහ',
       'instant-foods': 'ක්ෂණික ආහාර'
     },
     regions: {
-      india: 'ඉන්දියාව',
+      philippines: 'පිලිපීනය',
       thailand: 'තායිලන්තය',
-      'sri-lanka': 'ශ්‍රී ලංකාව',
-      philippines: 'පිලිපීනය'
+      india: 'ඉන්දියාව',
+      'sri-lanka': 'ශ්‍රී ලංකාව'
     }
   },
   tl: {
-    sign_in_register: 'Mag-Sign In / Magrehistro',
-    admin_dashboard: 'Admin Dashboard',
+    sign_in_register: 'Mag-Sign In',
+    admin_dashboard: 'Admin',
     basket_label: 'Basket',
-    search_placeholder: 'Maghanap ng Haldiram’s, Basmati Rice, Silver Swan Soy Sauce, Gulab Jamun...',
-    search_btn: '🔍 Hanapin',
-    hero_badge: 'PANGUNAHING ASIAN AT INDIAN GROCER SA ISRAEL',
-    hero_title: 'Tunay na Panlasa mula sa India, Thailand, Sri Lanka at Pilipinas',
-    hero_subtitle: 'Mamili sa aming tunay na imbentaryo sa bodega sa Israel na nagmula sa India, Thailand, Sri Lanka, at Pilipinas.',
-    hero_btn_authentic: '📸 Tingnan ang Tunay na Litrato ng Produkto (6 Items)',
-    hero_btn_sale: '🔥 Mamili ng Sale at Diskwento',
-    hero_btn_all: 'Tingnan ang Buong Katalogo',
-    hero_card_sub: 'Opisyal na Importer at Nationwide Delivery sa Israel • Kosher at Hebrew Labels • Naka-sync na Basket',
-    trust_1_title: 'Delivery sa Buong Israel',
-    trust_1_sub: 'Gush Dan, Sharon, Jerusalem, North, South at Lockers',
-    trust_2_title: 'Naka-save at Synced na Basket',
-    trust_2_sub: 'Malayang mamili; ang iyong basket ay nagsi-sync pag-sign in',
-    trust_3_title: 'Israeli at Pandaigdigang Bayad',
-    trust_3_sub: 'Visa, Mastercard, Amex, Isracard, Bit, Apple/Google Pay',
-    trust_4_title: 'Kumpletong Hebrew at Allergen Labels',
-    trust_4_sub: 'Presyo kada 100g/100ml at Ministry of Health badges',
-    region_section_title: 'Mamili ayon sa Rehiyon at Pinagmulan',
-    region_section_sub: 'Piliin ang India, Thailand, Sri Lanka, o Pilipinas upang salain ang mga produkto',
-    clear_all_filters: 'I-clear ang Lahat ng Filter',
-    all_4_regions: 'Lahat ng 4 na Rehiyon',
-    filter_quick_title: 'Mabilisang Filter ng Imbentaryo',
-    filter_authentic: 'Mga Produktong may Tunay na Litrato',
-    filter_in_stock: '✅ May Stock Lamang',
-    filter_on_sale: '🔥 Naka-Sale / May Diskwento',
-    filter_dept_title: 'Pangunahing Departamento',
+    search_placeholder: 'Maghanap ng Lucky Me, Silver Swan, Datu Puti, SkyFlakes, bigas...',
+    search_btn: 'Hanapin',
+    clear_all_filters: 'I-clear ang mga filter',
+    all_4_regions: 'Lahat ng 4 na Kusina',
+    filter_authentic: 'Mga Produktong Nasa Bodega',
+    filter_in_stock: 'May Stock Lamang',
+    filter_on_sale: 'Naka-Sale',
+    filter_dept_title: 'Pasilyo / Kategorya',
     filter_subcat_title: 'Subkategorya',
-    filter_dietary_title: 'Dietary at Sertipikasyon',
+    filter_dietary_title: 'Dietary',
     filter_brand_title: 'Brand / Tatak',
     filter_max_price: 'Pinakamataas na Presyo (₪ ILS):',
     sort_by_label: 'Ayusin ayon sa:',
-    all_products_heading: 'Lahat ng Produkto sa Dinu Market',
-    add_to_basket: '🛒 Idagdag sa Basket',
-    in_basket: 'sa Basket',
-    in_stock: 'May Stock',
-    out_of_stock: 'Ubos na ang Stock',
-    real_shelf_badge: '📸 TUNAY NA LITRATO',
-    footer_about_text: 'Nagdadala ng mga tunay na pagkain at sangkap mula sa India, Thailand, Sri Lanka, at Pilipinas diretso sa mga kusina sa buong Israel.',
-    footer_depts_title: 'Mga Departamento ng Grocery',
-    footer_link_regions: 'Mamili ayon sa Rehiyon (India, Thailand, Sri Lanka at Pilipinas)',
+    all_products_heading: 'Lahat ng Produkto',
+    add_to_basket: 'Idagdag sa Basket',
+    in_basket: 'sa basket',
+    in_stock: 'May stock',
+    out_of_stock: 'Ubos na',
     categories: {
-      'shop-by-region': 'Mamili ayon sa Rehiyon',
-      sweets: 'Matatamis',
-      snacks: 'Meryenda at Snacks',
-      pantry: 'Pantry, Bigas at Asukal',
+      'shop-by-region': 'Mamili ayon sa Kusina',
+      sweets: 'Ube at Matamis',
+      snacks: 'Merienda at Snacks',
+      pantry: 'Bigas at Pantry',
       drinks: 'Mga Inumin',
-      'canned-jarred-goods': 'De-Lata at Naka-Garapon',
-      'sauce-seasoning': 'Toyo, Sarsa at Pampalasa',
-      'instant-foods': 'Instant Noodles at Pagkain'
+      'canned-jarred-goods': 'De Lata at Garapon',
+      'sauce-seasoning': 'Sawsawan at Pampalasa',
+      'instant-foods': 'Pancit at Instant Noodles'
     },
     regions: {
-      india: 'India',
+      philippines: 'Pilipinas',
       thailand: 'Thailand',
-      'sri-lanka': 'Sri Lanka',
-      philippines: 'Pilipinas'
+      india: 'India',
+      'sri-lanka': 'Sri Lanka'
     }
   }
 };
@@ -488,44 +701,44 @@ function showToast(message) {
 
 const STATIC_FALLBACK_REGIONS = [
   {
-    name: 'India',
-    name_he: 'הודו',
-    slug: 'india',
-    iso_code: 'IN',
-    flag_emoji: '🇮🇳',
-    hero_headline: 'Authentic Flavours of India',
-    description: 'Explore traditional Indian bakery cookies, crispy whole-wheat rusks, natural unrefined cane jaggery, cardamom-steeped Gulab Jamun, and aged extra-long Basmati rice delivered across Israel.',
-    tile_image: 'images/products/lal-qilla-basmati-rice-front.jpg'
+    name: 'Philippines',
+    name_he: 'הפיליפינים',
+    slug: 'philippines',
+    iso_code: 'PH',
+    flag_emoji: '',
+    hero_headline: 'Lasang bahay, dito sa Israel.',
+    description: 'Your Sunday sinigang, Lucky Me pancit canton, Silver Swan sawsawan and day-off merienda delivered across Israel.',
+    tile_image: 'images/products/silver-swan-soy-sauce-front.jpg'
   },
   {
     name: 'Thailand',
     name_he: 'תאילנד',
     slug: 'thailand',
     iso_code: 'TH',
-    flag_emoji: '🇹🇭',
-    hero_headline: 'Authentic Flavours of Thailand',
-    description: 'Explore aromatic Thai kitchen staples, curry pastes, coconut milks, jasmine rice, and wok sauces delivered across Israel.',
+    flag_emoji: '',
+    hero_headline: 'รสชาติบ้านเรา ส่งถึงอิสราเอล',
+    description: 'Mama tom yum, Mae Ploy curry pastes, Chaokoh coconut milk and Hom Mali jasmine rice delivered across Israel.',
     tile_image: 'images/brand/dinu-logo.png'
+  },
+  {
+    name: 'India',
+    name_he: 'הודו',
+    slug: 'india',
+    iso_code: 'IN',
+    flag_emoji: '',
+    hero_headline: 'घर का स्वाद, अब इज़राइल में।',
+    description: "Haldiram's biscuits and Gulab Jamun, Lal Qilla aged basmati rice, Rusky atta toast and natural cane jaggery delivered across Israel.",
+    tile_image: 'images/products/lal-qilla-basmati-rice-front.jpg'
   },
   {
     name: 'Sri Lanka',
     name_he: 'סרי לנקה',
     slug: 'sri-lanka',
     iso_code: 'LK',
-    flag_emoji: '🇱🇰',
-    hero_headline: 'Authentic Flavours of Sri Lanka',
-    description: 'Explore pure Ceylon teas, whole island spices, coconut sambols, and Sri Lankan culinary essentials delivered across Israel.',
+    flag_emoji: '',
+    hero_headline: 'ගෙදර රසය, ඊශ්‍රායලයේදී.',
+    description: 'Maliban biscuits, pure Ceylon kahata tea, katta sambol and roasted island curry spices delivered across Israel.',
     tile_image: 'images/brand/dinu-logo.png'
-  },
-  {
-    name: 'Philippines',
-    name_he: 'הפיליפינים',
-    slug: 'philippines',
-    iso_code: 'PH',
-    flag_emoji: '🇵🇭',
-    hero_headline: 'Authentic Flavours of the Philippines',
-    description: 'Explore beloved Filipino pantry staples, soy and vinegar marinades, noodles, and tropical treats delivered across Israel.',
-    tile_image: 'images/products/silver-swan-soy-sauce-front.jpg'
   }
 ];
 
@@ -921,12 +1134,18 @@ function recalculateLocalCart() {
     standard_rate_ils: 25,
     express_rate_ils: 45,
     locker_rate_ils: 15,
-    free_threshold_ils: 0
+    free_threshold_ils: 250
   };
   cart.zone_name = zone.name_en;
   let ship = zone.standard_rate_ils || 25;
   if (state.checkout.delivery_method === 'express') ship = zone.express_rate_ils || 45;
   if (state.checkout.delivery_method === 'locker') ship = zone.locker_rate_ils || 15;
+  if (zone.free_threshold_ils > 0 && cart.discounted_subtotal_ils >= zone.free_threshold_ils && state.checkout.delivery_method !== 'express') {
+    ship = 0;
+    cart.qualifies_for_free_shipping = true;
+  } else {
+    cart.qualifies_for_free_shipping = false;
+  }
   if (cart.discount_code === 'FREESHIP') ship = 0;
   cart.shipping_cost_ils = count === 0 ? 0 : ship;
   cart.total_ils = count === 0 ? 0 : Number((cart.discounted_subtotal_ils + cart.shipping_cost_ils).toFixed(2));
@@ -952,10 +1171,10 @@ async function apiFetch(url, options = {}) {
   } catch (err) {
     const prods = getLocalProducts();
     const defaultZones = [
-      { zone_code: 'IL-Z1', name_en: 'Gush Dan & Tel Aviv Metro', name_he: 'גוש דן ותל אביב', standard_rate_ils: 25, express_rate_ils: 45, locker_rate_ils: 15, free_threshold_ils: 0, estimated_days: '1–2 business days (Israel Only)' },
-      { zone_code: 'IL-Z2', name_en: 'Sharon, Central & Shfela', name_he: 'השרון, מרכז והשפלה', standard_rate_ils: 29, express_rate_ils: 49, locker_rate_ils: 19, free_threshold_ils: 0, estimated_days: '1–3 business days (Israel Only)' },
-      { zone_code: 'IL-Z3', name_en: 'Jerusalem, Haifa & North', name_he: 'ירושלים, חיפה והצפון', standard_rate_ils: 32, express_rate_ils: 55, locker_rate_ils: 19, free_threshold_ils: 0, estimated_days: '2–3 business days (Israel Only)' },
-      { zone_code: 'IL-Z4', name_en: 'Beersheba & South', name_he: 'באר שבע והדרום', standard_rate_ils: 35, express_rate_ils: 59, locker_rate_ils: 22, free_threshold_ils: 0, estimated_days: '2–4 business days (Israel Only)' }
+      { zone_code: 'IL-Z1', name_en: 'Gush Dan & Tel Aviv Metro', name_he: 'גוש דן ותל אביב', standard_rate_ils: 25, express_rate_ils: 45, locker_rate_ils: 15, free_threshold_ils: 250, estimated_days: '1–2 business days (Israel Only)' },
+      { zone_code: 'IL-Z2', name_en: 'Sharon, Central & Shfela', name_he: 'השרון, מרכז והשפלה', standard_rate_ils: 29, express_rate_ils: 49, locker_rate_ils: 19, free_threshold_ils: 250, estimated_days: '1–3 business days (Israel Only)' },
+      { zone_code: 'IL-Z3', name_en: 'Jerusalem, Haifa & North', name_he: 'ירושלים, חיפה והצפון', standard_rate_ils: 32, express_rate_ils: 55, locker_rate_ils: 19, free_threshold_ils: 280, estimated_days: '2–3 business days (Israel Only)' },
+      { zone_code: 'IL-Z4', name_en: 'Beersheba & South', name_he: 'באר שבע והדרום', standard_rate_ils: 35, express_rate_ils: 59, locker_rate_ils: 22, free_threshold_ils: 300, estimated_days: '2–4 business days (Israel Only)' }
     ];
     if (url.startsWith('/api/bootstrap')) {
       if (!state.shippingZones || state.shippingZones.length === 0) state.shippingZones = defaultZones;
@@ -963,7 +1182,12 @@ async function apiFetch(url, options = {}) {
         navigation: STATIC_FALLBACK_NAVIGATION,
         regions: STATIC_FALLBACK_REGIONS,
         shipping_zones: state.shippingZones,
-        payment_config: {},
+        payment_config: {
+          order_cutoff_time: '14:00',
+          support_email: 'support@dinumarket.co.il',
+          support_phone: '054-812-4900',
+          whatsapp_e164: '972548124900'
+        },
         user: state.user,
         cart: recalculateLocalCart()
       };
@@ -1265,8 +1489,11 @@ const app = {
   async init() {
     try {
       const boot = await apiFetch('/api/bootstrap');
-      state.navigation = boot.navigation || [];
-      state.regions = boot.regions || [];
+      state.navigation = boot.navigation || STATIC_FALLBACK_NAVIGATION;
+      const rawRegions = boot.regions && boot.regions.length > 0 ? boot.regions : STATIC_FALLBACK_REGIONS;
+      state.regions = KITCHEN_ORDER.map(
+        (slug) => rawRegions.find((r) => r.slug === slug) || STATIC_FALLBACK_REGIONS.find((r) => r.slug === slug)
+      ).filter(Boolean);
       state.shippingZones = boot.shipping_zones || [];
       state.paymentConfig = boot.payment_config || {};
       state.user = boot.user || null;
@@ -1275,31 +1502,88 @@ const app = {
       const allData = await apiFetch('/api/products?maxPrice=9999');
       state.allProducts = allData.products || getLocalProducts();
 
-      this.renderNavigation();
+      const savedCookieLang = getCookie('dinu_lang');
+      if (savedCookieLang && I18N_DICTIONARY[savedCookieLang]) {
+        state.lang = savedCookieLang;
+        state.userExplicitLang = true;
+      }
+
+      this.syncLiveDeliveryBanner();
+      this.setLanguage(state.lang, false);
       this.syncHeaderHeight();
       const headerEl = document.querySelector('.site-header');
       if (headerEl && typeof ResizeObserver !== 'undefined') {
         new ResizeObserver(() => this.syncHeaderHeight()).observe(headerEl);
       }
       window.addEventListener('resize', () => this.syncHeaderHeight());
-      this.renderHomepageSections();
-      this.renderRegionStrip();
-      this.populateFilterDropdowns();
-      this.updateHeaderState();
-      this.renderCartDrawer();
       await this.loadProducts();
 
-      // Close predictive search when clicking outside
+      this.applyLocationRoute(window.location.pathname, false);
+      window.addEventListener('popstate', () => {
+        this.applyLocationRoute(window.location.pathname, false);
+      });
+
       document.addEventListener('click', (e) => {
         const sc = document.querySelector('.search-container');
         const dd = document.getElementById('predictiveDropdown');
         if (sc && dd && !sc.contains(e.target)) {
           dd.style.display = 'none';
         }
+        const lc = document.getElementById('langPillContainer');
+        const lm = document.getElementById('langMenuPopover');
+        const lb = document.getElementById('langPillBtn');
+        if (lc && lm && !lc.contains(e.target)) {
+          lm.style.display = 'none';
+          if (lb) lb.setAttribute('aria-expanded', 'false');
+        }
       });
     } catch (err) {
       console.error('Initialization error:', err);
     }
+  },
+
+  applyLocationRoute(pathname, scrollToTop = true) {
+    const cleanPath = (pathname || '/').replace(/\/+$/, '') || '/';
+    if (KITCHEN_PATH_TO_SLUG[cleanPath]) {
+      this.openRegionalPage(KITCHEN_PATH_TO_SLUG[cleanPath], false);
+      return;
+    }
+    if (cleanPath === '/shop') {
+      this.switchView('shop', scrollToTop, false);
+      return;
+    }
+    state.activeRegionPage = null;
+    this.switchView('storefront', scrollToTop, false);
+  },
+
+  syncLiveDeliveryBanner() {
+    const { cutoff, freeThreshold, email, phoneDisplay, whatsappE164 } = getSupportDetails();
+    const cutDesk = document.getElementById('liveCutoffDesktop');
+    const cutMob = document.getElementById('liveCutoffMobile');
+    const freeEl = document.getElementById('liveFreeThresh');
+    if (cutDesk) cutDesk.textContent = cutoff;
+    if (cutMob) cutMob.textContent = cutoff;
+    if (freeEl) freeEl.textContent = String(freeThreshold);
+
+    const footerEmail = document.getElementById('footerSupportEmail');
+    if (footerEmail) {
+      footerEmail.textContent = email;
+      footerEmail.href = `mailto:${email}`;
+    }
+    const footerPhone = document.getElementById('footerSupportPhone');
+    if (footerPhone) {
+      footerPhone.textContent = phoneDisplay;
+      footerPhone.href = `tel:+${whatsappE164}`;
+    }
+  },
+
+  syncWhatsAppLinks() {
+    const contextKey = state.currentView === 'region' && state.activeRegionPage ? state.activeRegionPage : state.lang;
+    const url = getWhatsAppUrl(contextKey);
+    ['headerWhatsappBtn', 'homeWhatsappBandBtn', 'footerWhatsappLink', 'mobileFloatingWhatsapp'].forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) el.href = url;
+    });
   },
 
   syncHeaderHeight() {
@@ -1315,13 +1599,11 @@ const app = {
   updateHeaderState() {
     const countEl = document.getElementById('headerCartCount');
     const totalEl = document.getElementById('headerCartTotal');
-    const wishEl = document.getElementById('headerWishlistCount');
     const accLabel = document.getElementById('accountHeaderLabel');
     const adminBtn = document.getElementById('adminHeaderBtn');
 
     if (countEl) countEl.textContent = state.cart.item_count || 0;
     if (totalEl) totalEl.textContent = `₪${Number(state.cart.total_ils || 0).toFixed(2)}`;
-    if (wishEl) wishEl.textContent = (state.wishlist || []).length;
 
     if (state.user) {
       if (accLabel) accLabel.textContent = state.user.full_name.split(' ')[0];
@@ -1338,11 +1620,45 @@ const app = {
     }
   },
 
-  setLanguage(langCode) {
+  toggleLanguageMenu(e) {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('langMenuPopover');
+    const btn = document.getElementById('langPillBtn');
+    if (!menu) return;
+    const isOpen = menu.style.display === 'flex';
+    menu.style.display = isOpen ? 'none' : 'flex';
+    if (btn) btn.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+  },
+
+  updateLanguagePillUi() {
+    const pillLbl = document.getElementById('langPillLabel');
+    if (!pillLbl) return;
+    const codeUpper = (state.lang || 'en').toUpperCase();
+    if (state.lang === 'he') {
+      pillLbl.innerHTML = `<span lang="he" dir="rtl">עב</span> · EN`;
+    } else {
+      pillLbl.innerHTML = `${escapeHtml(codeUpper)} · <span lang="he" dir="rtl">עב</span>`;
+    }
+  },
+
+  setLanguage(langCode, saveCookie = true) {
     state.lang = I18N_DICTIONARY[langCode] ? langCode : 'en';
+    if (saveCookie) {
+      state.userExplicitLang = true;
+      setCookie('dinu_lang', state.lang, 365);
+    }
     document.documentElement.lang = state.lang;
+    document.documentElement.dir = state.lang === 'he' ? 'rtl' : 'ltr';
+
     const sel = document.getElementById('langSelector');
     if (sel && sel.value !== state.lang) sel.value = state.lang;
+
+    const menu = document.getElementById('langMenuPopover');
+    const btn = document.getElementById('langPillBtn');
+    if (menu) menu.style.display = 'none';
+    if (btn) btn.setAttribute('aria-expanded', 'false');
+
+    this.updateLanguagePillUi();
 
     document.querySelectorAll('[data-i18n]').forEach((el) => {
       const key = el.getAttribute('data-i18n');
@@ -1353,155 +1669,123 @@ const app = {
 
     const searchInput = document.getElementById('globalSearchInput');
     if (searchInput) searchInput.placeholder = t('search_placeholder');
-    const searchBtn = document.querySelector('.search-submit-btn');
-    if (searchBtn) searchBtn.textContent = t('search_btn');
+    const mobSearchInput = document.getElementById('mobileSearchInput');
+    if (mobSearchInput) mobSearchInput.placeholder = t('search_placeholder');
+    document.querySelectorAll('.search-submit-btn').forEach((sb) => {
+      sb.textContent = t('search_btn');
+    });
 
+    this.syncWhatsAppLinks();
     this.updateHeaderState();
     this.renderNavigation();
+    this.renderHeaderKitchenPills();
     this.renderHomepageSections();
     this.renderRegionStrip();
     this.populateFilterDropdowns();
     this.renderProductGrid();
     this.renderCartDrawer();
+    if (state.currentView === 'region' && state.activeRegionPage) {
+      this.renderRegionalPage();
+    }
   },
 
-  // =========================================================================
-  // SECTION 4: TOP NAVIGATION STRUCTURE
-  // HOME | SHOP BY REGION ▼ | SHOP BY CATEGORY ▼ | SPECIAL OFFERS | NEW ARRIVALS | BEST SELLERS | ABOUT US | CONTACT US
-  // =========================================================================
+  setKitchenViewLang(langCode) {
+    this.setLanguage(langCode, true);
+  },
+
+  toggleMobileSearch() {
+    const drawer = document.getElementById('mobileSearchDrawer');
+    if (!drawer) return;
+    const isHidden = drawer.style.display === 'none' || !drawer.style.display;
+    drawer.style.display = isHidden ? 'block' : 'none';
+    this.syncHeaderHeight();
+    if (isHidden) {
+      document.getElementById('mobileSearchInput')?.focus();
+    }
+  },
+
+  handleMobileSearchSubmit(e) {
+    e.preventDefault();
+    const input = document.getElementById('mobileSearchInput');
+    const q = (input?.value || '').trim();
+    const globalInput = document.getElementById('globalSearchInput');
+    if (globalInput) globalInput.value = q;
+    const drawer = document.getElementById('mobileSearchDrawer');
+    if (drawer) drawer.style.display = 'none';
+    state.filters.tripBox = false;
+    state.filters.q = q;
+    this.switchView('shop', true);
+    this.loadProducts();
+  },
+
+  renderHeaderKitchenPills() {
+    const slot = document.getElementById('headerKitchenPillsSlot');
+    if (!slot) return;
+    slot.innerHTML = KITCHEN_ORDER.map((slug) => {
+      const k = KITCHEN_STOREFRONTS[slug];
+      const isActive = state.currentView === 'region' && state.activeRegionPage === slug;
+      return `
+        <button
+          type="button"
+          class="kitchen-nav-pill ${isActive ? 'active-' + slug : ''}"
+          onclick="app.openRegionalPage('${escapeHtml(slug)}')"
+        >
+          ${escapeHtml(k.name)}
+        </button>
+      `;
+    }).join('');
+  },
+
   renderNavigation() {
-    const desktopUl = document.getElementById('desktopNavList');
     const mobileContainer = document.getElementById('mobileNavContainer');
-    if (!desktopUl) return;
+    if (!mobileContainer) return;
 
     const activeDepts = state.navigation.filter((c) => c.slug !== 'shop-by-region');
 
-    const regionDropdownHtml = state.regions
-      .map(
-        (r) => `
-        <div class="dropdown-link" onclick="app.openRegionalPage('${escapeHtml(r.slug)}')">
-          <span><strong>${escapeHtml(getRegionLabel(r))}</strong></span>
-        </div>
-      `
-      )
-      .join('');
-
-    const categoryDropdownHtml = activeDepts
-      .map(
-        (cat) => `
-        <div class="dropdown-link" onclick="app.selectCategory('${escapeHtml(cat.slug)}')">
-          <span><strong>${escapeHtml(getCategoryLabel(cat))}</strong></span>
-          <span style="font-size:0.74rem;color:var(--text-secondary);">${(cat.subcategories || []).length} sub-depts</span>
-        </div>
-      `
-      )
-      .join('');
-
-    const deptMegaItemsHtml = activeDepts
-      .map((cat) => {
-        const subItemsHtml = (cat.subcategories || [])
-          .map((sub) => {
-            const subLabel = state.lang === 'he' ? (sub.name_he || sub.name) : sub.name;
+    mobileContainer.innerHTML = `
+      <div style="margin-bottom:16px;border-bottom:1px solid var(--dm-line);padding-bottom:14px;display:flex;flex-direction:column;gap:8px;">
+        <button type="button" class="pill-control" style="justify-content:flex-start;" onclick="app.navigateToHome(); app.toggleMobileDrawer(false);">Home</button>
+        <button type="button" class="pill-control" style="justify-content:flex-start;" onclick="app.openShopView(); app.toggleMobileDrawer(false);">Full Shop (/shop)</button>
+        <button type="button" class="pill-control" style="justify-content:flex-start;" onclick="app.openTripBoxCollection(); app.toggleMobileDrawer(false);">Israeli Travellers Trip Box</button>
+        <button type="button" class="pill-control" style="justify-content:flex-start;" onclick="app.handleAccountClick(); app.toggleMobileDrawer(false);">Account / Sign In</button>
+      </div>
+      <div style="margin-bottom:16px;border-bottom:1px solid var(--dm-line);padding-bottom:14px;">
+        <div style="font-family:var(--dm-font-display);font-weight:800;font-size:0.86rem;letter-spacing:0.6px;text-transform:uppercase;color:var(--dm-muted);margin-bottom:10px;">Four Home Kitchens</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          ${KITCHEN_ORDER.map((slug) => {
+            const k = KITCHEN_STOREFRONTS[slug];
             return `
-              <div class="dropdown-link" onclick="app.selectSubcategory('${escapeHtml(cat.slug)}', '${escapeHtml(sub.slug)}')">
-                <span>${escapeHtml(subLabel)}</span>
-              </div>
+              <button
+                type="button"
+                class="${k.tintClass}"
+                style="min-height:48px;border-radius:16px;border:1px solid rgba(28,26,23,0.08);font-family:var(--dm-font-display);font-weight:800;font-size:0.95rem;cursor:pointer;padding:10px 12px;text-align:left;"
+                onclick="app.openRegionalPage('${escapeHtml(slug)}'); app.toggleMobileDrawer(false);"
+              >
+                ${escapeHtml(k.name)}
+              </button>
             `;
-          })
-          .join('');
-        return `
-          <li class="nav-item">
-            <button type="button" class="nav-link ${state.filters.category === cat.slug ? 'active' : ''}" onclick="app.selectCategory('${escapeHtml(cat.slug)}')">
-              <span>${escapeHtml(getCategoryLabel(cat))}</span>
-              <span class="nav-chevron">▼</span>
-            </button>
-            <div class="dropdown-panel" role="menu">
-              ${subItemsHtml}
-            </div>
-          </li>
-        `;
-      })
-      .join('');
-
-    desktopUl.innerHTML = `
-      <li class="nav-item">
-        <button type="button" class="nav-link" onclick="app.navigateToHome()">
-          <span>HOME</span>
-        </button>
-      </li>
-      <li class="nav-item">
-        <button type="button" class="nav-link" onclick="app.scrollToSection('catalog')">
-          <span>SHOP BY REGION</span>
-          <span class="nav-chevron">▼</span>
-        </button>
-        <div class="dropdown-panel mega-region" role="menu">
-          ${regionDropdownHtml}
+          }).join('')}
         </div>
-      </li>
-      <li class="nav-item">
-        <button type="button" class="nav-link" onclick="app.scrollToSection('catalog')">
-          <span>SHOP BY CATEGORY</span>
-          <span class="nav-chevron">▼</span>
-        </button>
-        <div class="dropdown-panel" role="menu">
-          ${categoryDropdownHtml}
-        </div>
-      </li>
-      <li class="nav-item">
-        <button type="button" class="nav-link" onclick="app.scrollToSection('specialOffersSection')">
-          <span>SPECIAL OFFERS</span>
-        </button>
-      </li>
-      <li class="nav-item">
-        <button type="button" class="nav-link" onclick="app.scrollToSection('newArrivalsSection')">
-          <span>NEW ARRIVALS</span>
-        </button>
-      </li>
-      <li class="nav-item">
-        <button type="button" class="nav-link" onclick="app.scrollToSection('bestSellersSection')">
-          <span>BEST SELLERS</span>
-        </button>
-      </li>
-    `;
-
-    if (mobileContainer) {
-      mobileContainer.innerHTML = `
-        <div style="margin-bottom:12px;border-bottom:1px solid var(--border);padding-bottom:10px;display:flex;flex-direction:column;gap:6px;">
-          <button type="button" class="btn-outline" style="text-align:left;" onclick="app.navigateToHome(); app.toggleMobileDrawer(false);">🏠 HOME</button>
-          <button type="button" class="btn-outline" style="text-align:left;" onclick="app.scrollToSection('specialOffersSection'); app.toggleMobileDrawer(false);">🏷️ SPECIAL OFFERS</button>
-          <button type="button" class="btn-outline" style="text-align:left;" onclick="app.scrollToSection('newArrivalsSection'); app.toggleMobileDrawer(false);">✨ NEW ARRIVALS</button>
-          <button type="button" class="btn-outline" style="text-align:left;" onclick="app.scrollToSection('bestSellersSection'); app.toggleMobileDrawer(false);">⭐ BEST SELLERS</button>
-        </div>
-        <div style="margin-bottom:12px;border-bottom:1px solid var(--border);padding-bottom:10px;">
-          <div style="font-family:var(--font-heading);font-weight:800;color:var(--brand-forest);margin-bottom:6px;">SHOP BY REGION (4 Countries)</div>
-          ${state.regions
+      </div>
+      <div>
+        <div style="font-family:var(--dm-font-display);font-weight:800;font-size:0.86rem;letter-spacing:0.6px;text-transform:uppercase;color:var(--dm-muted);margin-bottom:8px;">Shop Aisles</div>
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          ${activeDepts
             .map(
-              (r) =>
-                `<button type="button" style="display:block;width:100%;text-align:left;background:none;border:none;padding:6px 4px;font-weight:700;cursor:pointer;" onclick="app.openRegionalPage('${escapeHtml(r.slug)}'); app.toggleMobileDrawer(false);">🌏 ${escapeHtml(getRegionLabel(r))}</button>`
+              (cat) => `
+              <button
+                type="button"
+                style="min-height:44px;text-align:left;background:none;border:none;border-radius:12px;padding:8px 10px;font-weight:700;color:var(--dm-ink);cursor:pointer;"
+                onclick="app.selectCategory('${escapeHtml(cat.slug)}'); app.toggleMobileDrawer(false);"
+              >
+                ${escapeHtml(getCategoryLabel(cat))}
+              </button>
+            `
             )
             .join('')}
         </div>
-        ${activeDepts
-          .map(
-            (cat) => `
-            <div style="margin-bottom:12px;border-bottom:1px solid var(--border);padding-bottom:10px;">
-              <button type="button" style="background:none;border:none;font-family:var(--font-heading);font-weight:800;font-size:0.96rem;color:var(--brand-forest);cursor:pointer;padding:4px 0;" onclick="app.selectCategory('${escapeHtml(cat.slug)}'); app.toggleMobileDrawer(false);">
-                ${escapeHtml(getCategoryLabel(cat))}
-              </button>
-              <div style="padding-left:10px;margin-top:6px;display:flex;flex-direction:column;gap:4px;">
-                ${(cat.subcategories || [])
-                  .map(
-                    (sub) =>
-                      `<button type="button" style="text-align:left;background:none;border:none;padding:5px;font-size:0.86rem;cursor:pointer;" onclick="app.selectSubcategory('${escapeHtml(cat.slug)}', '${escapeHtml(sub.slug)}'); app.toggleMobileDrawer(false);">• ${escapeHtml(sub.name)}</button>`
-                  )
-                  .join('')}
-              </div>
-            </div>
-          `
-          )
-          .join('')}
-      `;
-    }
+      </div>
+    `;
   },
 
   scrollToSection(sectionId) {
@@ -1509,191 +1793,124 @@ const app = {
     setTimeout(() => {
       const sectionEl = document.getElementById(sectionId);
       if (!sectionEl) return;
-      const headingEl = sectionEl.querySelector('.section-title') || sectionEl;
       const headerEl = document.querySelector('.site-header');
       const headerHeight = headerEl ? headerEl.getBoundingClientRect().height : 0;
-      const targetTop = headingEl.getBoundingClientRect().top + window.scrollY - headerHeight - 18;
+      const targetTop = sectionEl.getBoundingClientRect().top + window.scrollY - headerHeight - 18;
       window.scrollTo({ top: Math.max(0, targetTop), behavior: 'smooth' });
     }, 60);
   },
 
   // =========================================================================
-  // SECTIONS 5E, 5F, 5G, 5H: HOMEPAGE SECTIONS RENDERER
+  // HOMEPAGE SECTIONS: 4-KITCHEN PICKER + BACK IN STOCK THIS WEEK
   // =========================================================================
   renderHomepageSections() {
-    this.renderFeaturedCategories();
-    this.renderBestSellers();
-    this.renderSpecialOffers();
+    this.renderKitchenPicker();
     this.renderNewArrivals();
   },
 
-  renderRegionTiles() {
-    const container = document.getElementById('regionTilesContainer');
-    if (!container) return;
-    container.innerHTML = state.regions
-      .map(
-        (r) => `
-        <article class="region-tile-card" onclick="app.openRegionalPage('${escapeHtml(r.slug)}')">
-          <div class="region-tile-media">
-            <img src="${escapeHtml(r.tile_image || r.hero_image || 'images/brand/dinu-logo.png')}" alt="${escapeHtml(r.name)}" loading="lazy" />
-            <span class="region-tile-badge">${escapeHtml(r.flag_emoji || '')} ${escapeHtml(r.name.toUpperCase())}</span>
+  renderKitchenPicker() {
+    const grid = document.getElementById('kitchenPickerGrid');
+    if (!grid) return;
+
+    grid.innerHTML = KITCHEN_ORDER.map((slug) => {
+      const k = KITCHEN_STOREFRONTS[slug];
+      const shots = k.packshots.slice(0, 3);
+      return `
+        <article
+          class="kitchen-card ${k.tintClass}"
+          role="link"
+          tabindex="0"
+          onclick="app.openRegionalPage('${escapeHtml(k.slug)}')"
+          onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();app.openRegionalPage('${escapeHtml(k.slug)}');}"
+        >
+          <div>
+            <span class="kitchen-badge-pill" style="color:${k.tintColor};">${escapeHtml(k.name)}</span>
+            <h3 class="kitchen-card-title" lang="${escapeHtml(k.lang)}">${escapeHtml(k.cardHeadline)}</h3>
+            <p class="kitchen-card-sub">${escapeHtml(k.cardSubcopy)}</p>
+            <span class="kitchen-card-cta" lang="${escapeHtml(k.lang)}">${escapeHtml(k.cardCta)}</span>
           </div>
-          <div class="region-tile-body">
-            <h3>${escapeHtml(getRegionLabel(r))}</h3>
-            <p>${escapeHtml(r.description || r.featured_highlight || '')}</p>
-            <button type="button" class="btn-primary" style="width:100%;padding:10px;" onclick="event.stopPropagation(); app.openRegionalPage('${escapeHtml(r.slug)}')">
-              SHOP NOW
-            </button>
+          <div class="kitchen-packshots-row" aria-hidden="true">
+            ${shots
+              .map(
+                (src) => `
+                <div class="kitchen-packshot-well">
+                  <img src="${escapeHtml(src)}" alt="" loading="lazy" />
+                </div>
+              `
+              )
+              .join('')}
           </div>
         </article>
-      `
-      )
-      .join('');
+      `;
+    }).join('');
   },
 
-  renderFeaturedCategories() {
-    const container = document.getElementById('featuredCategoriesGrid');
-    if (!container) return;
-    const allProds = state.allProducts.length > 0 ? state.allProducts : getLocalProducts();
-
-    const categoryMeta = [
-      { slug: 'pantry', icon: '🍚', label: 'Rice, Flour & Grains', desc: 'Aged Basmati Rice & Staple Grains' },
-      { slug: 'sweets', icon: '🍬', label: 'Sweets & Jaggery', desc: 'Kaju Katli, Besan Laddu & Natural Jaggery' },
-      { slug: 'snacks', icon: '🥨', label: 'Snacks & Crisps', desc: 'Crunchy Indian & Asian Savoury Snacks' },
-      { slug: 'sauce-seasoning', icon: '🥢', label: 'Sauces, Pastes & Condiments', desc: 'Authentic Soy Sauce, Marinades & Pastes' },
-      { slug: 'canned-jarred-goods', icon: '🫙', label: 'Canned & Jarred Goods', desc: 'Pickles, Preserves & Coconut Staples' },
-      { slug: 'drinks', icon: '🧃', label: 'Beverages & Teas', desc: 'Tropical Juices, Teas & Specialty Drinks' },
-      { slug: 'instant-foods', icon: '🍜', label: 'Noodles & Instant Foods', desc: 'Ready-to-Eat Curries, Noodles & Mixes' }
-    ];
-
-    container.innerHTML = categoryMeta
-      .map((c) => {
-        const count = allProds.filter((p) => p.category_slug === c.slug && p.status !== 'archived').length;
-        return `
-          <div class="category-tile-card" onclick="app.selectCategory('${escapeHtml(c.slug)}')">
-            <div class="category-tile-icon">${c.icon}</div>
-            <h4>${escapeHtml(c.label)}</h4>
-            <p>${escapeHtml(c.desc)}${count > 0 ? ` (${count} active items)` : ''}</p>
-          </div>
-        `;
-      })
-      .join('');
-  },
-
-  renderProductCardHtml(p, prefix = 'cat') {
+  renderProductCardHtml(p) {
+    const kitchenCfg = KITCHEN_STOREFRONTS[p.region_slug] || KITCHEN_STOREFRONTS.india;
     const reg = state.regions.find((r) => r.slug === p.region_slug);
+    const countryName = reg ? getRegionLabel(reg) : kitchenCfg.name;
     const inCartItem = (state.cart.items || []).find((ci) => ci.product_id === p.id && ci.variant_code === 'single');
     const localizedTitle = getProductLocalizedTitle(p);
-    const isWished = (state.wishlist || []).includes(p.id);
     const hasGenuineDiscount = p.compare_at_price_ils && Number(p.compare_at_price_ils) > Number(p.price_ils);
     const sizeBadge = p.size_label || (p.net_weight_grams >= 1000 ? `${p.net_weight_grams / 1000} kg` : `${p.net_weight_grams}g`);
-    const qtyInputId = `qty_${prefix}_${p.id}`;
 
     return `
       <article class="product-card">
         <div class="product-card-media" onclick="app.openPdpModal('${escapeHtml(p.slug)}')">
+          <span class="country-pill-badge ${escapeHtml(kitchenCfg.badgeTintClass)}">${escapeHtml(countryName)}</span>
           ${
             hasGenuineDiscount
-              ? `<div class="badge-stack-left"><span class="badge-sale">SAVE ${p.discount_percent}%</span></div>`
+              ? `<span class="badge-sale">SAVE ${p.discount_percent}%</span>`
               : ''
           }
-          <span class="badge-region-right">${reg ? escapeHtml(getRegionLabel(reg)) : escapeHtml(p.region_slug?.toUpperCase() || 'INDIA')}</span>
-          <button
-            type="button"
-            class="wishlist-btn ${isWished ? 'active' : ''}"
-            title="${isWished ? 'Remove from Wishlist' : 'Add to Wishlist'}"
-            onclick="event.stopPropagation(); app.toggleWishlist('${escapeHtml(p.id)}')"
-            aria-label="Toggle Wishlist"
-          >
-            ${isWished ? '♥' : '♡'}
-          </button>
           <img src="${escapeHtml(p.primary_image_url)}" alt="${escapeHtml(localizedTitle)}" loading="lazy" />
         </div>
 
         <div class="product-card-body">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;">
-            <div class="product-vendor">${escapeHtml(p.vendor_brand)}</div>
-            <span style="background:var(--surface);border:1px solid var(--border);padding:1px 7px;border-radius:4px;font-size:0.72rem;font-weight:800;color:var(--brand-forest);">${escapeHtml(sizeBadge)}</span>
+          <div class="product-meta-top">
+            <span>${escapeHtml(p.vendor_brand)}</span>
+            <span>${escapeHtml(sizeBadge)}</span>
           </div>
           <h3 class="product-title" onclick="app.openPdpModal('${escapeHtml(p.slug)}')">${escapeHtml(localizedTitle)}</h3>
 
-          <div class="product-rating-row">
-            <span style="font-size:0.73rem;color:var(--text-secondary);">Origin: ${escapeHtml((reg?.name || p.region_slug || 'India').toUpperCase())}</span>
-          </div>
-
-          <div class="product-price-block">
+          <div class="product-card-footer">
             <div>
-              <span class="price-current">₪${Number(p.price_ils).toFixed(2)}</span>
-              ${
-                hasGenuineDiscount
-                  ? `<span class="price-compare">₪${Number(p.compare_at_price_ils).toFixed(2)}</span>`
-                  : ''
-              }
+              <div>
+                <span class="price-current">₪${Number(p.price_ils).toFixed(2)}</span>
+                ${
+                  hasGenuineDiscount
+                    ? `<span class="price-compare">₪${Number(p.compare_at_price_ils).toFixed(2)}</span>`
+                    : ''
+                }
+              </div>
+              <div class="price-unit">₪${Number(p.price_per_100_ils).toFixed(2)} / ${escapeHtml(p.unit_measure_type || '100g')}</div>
             </div>
-            <div class="price-unit">₪${Number(p.price_per_100_ils).toFixed(2)} / ${escapeHtml(p.unit_measure_type)}</div>
-          </div>
 
-          ${
-            inCartItem
-              ? `
-                <div class="inline-qty-stepper">
-                  <button type="button" onclick="app.updateCartItemQuantity('${escapeHtml(inCartItem.cart_item_id)}', ${inCartItem.quantity - 1})" aria-label="Decrease quantity">−</button>
-                  <span>${inCartItem.quantity} ${escapeHtml(t('in_basket'))}</span>
-                  <button type="button" onclick="app.updateCartItemQuantity('${escapeHtml(inCartItem.cart_item_id)}', ${inCartItem.quantity + 1})" aria-label="Increase quantity">+</button>
-                </div>
-              `
-              : p.stock_quantity > 0
-              ? `
-                <div class="card-qty-row">
-                  <input type="number" id="${escapeHtml(qtyInputId)}" class="card-qty-input" value="1" min="1" max="${p.stock_quantity}" aria-label="Quantity" onclick="event.stopPropagation()" />
-                  <button type="button" class="add-to-cart-btn" onclick="app.addToCart('${escapeHtml(p.id)}', 'single', document.getElementById('${escapeHtml(qtyInputId)}')?.value || 1)">
-                    ${escapeHtml(t('add_to_basket'))}
-                  </button>
-                </div>
-              `
-              : `<button type="button" class="add-to-cart-btn" disabled style="background:#999;cursor:not-allowed;">${escapeHtml(t('out_of_stock'))}</button>`
-          }
+            ${
+              inCartItem
+                ? `
+                  <div class="inline-qty-stepper" onclick="event.stopPropagation()">
+                    <button type="button" onclick="app.updateCartItemQuantity('${escapeHtml(inCartItem.cart_item_id)}', ${inCartItem.quantity - 1})" aria-label="Decrease quantity">−</button>
+                    <span>${inCartItem.quantity}</span>
+                    <button type="button" onclick="app.updateCartItemQuantity('${escapeHtml(inCartItem.cart_item_id)}', ${inCartItem.quantity + 1})" aria-label="Increase quantity">+</button>
+                  </div>
+                `
+                : p.stock_quantity > 0
+                ? `
+                  <button
+                    type="button"
+                    class="add-circle-btn"
+                    onclick="event.stopPropagation(); app.addToCart('${escapeHtml(p.id)}', 'single', 1)"
+                    aria-label="Add ${escapeHtml(localizedTitle)} to basket"
+                    title="Add to basket"
+                  >+</button>
+                `
+                : `<button type="button" class="pill-control" disabled style="opacity:0.55;cursor:not-allowed;">${escapeHtml(t('out_of_stock'))}</button>`
+            }
+          </div>
         </div>
       </article>
     `;
-  },
-
-  renderBestSellers() {
-    const grid = document.getElementById('bestSellersGrid');
-    if (!grid) return;
-    const allProds = (state.allProducts.length > 0 ? state.allProducts : getLocalProducts()).filter(
-      (p) => p.status !== 'archived'
-    );
-    const best = allProds.filter((p) => p.is_best_seller || p.is_featured).slice(0, 6);
-    grid.innerHTML = best.map((p) => this.renderProductCardHtml(p, 'best')).join('');
-  },
-
-  renderSpecialOffers() {
-    const container = document.getElementById('specialOffersContainer');
-    if (!container) return;
-    const allProds = (state.allProducts.length > 0 ? state.allProducts : getLocalProducts()).filter(
-      (p) => p.status !== 'archived'
-    );
-    const discounted = allProds.filter(
-      (p) => p.compare_at_price_ils && Number(p.compare_at_price_ils) > Number(p.price_ils)
-    );
-
-    if (discounted.length === 0) {
-      container.innerHTML = `
-        <div class="card-panel" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;padding:14px 18px;margin-bottom:0;background:#FFFDF7;border:1.5px solid var(--brand-gold);">
-          <div style="flex:1;min-width:260px;">
-            <span class="badge-authentic">HONEST PRICING POLICY</span>
-            <h4 style="margin:5px 0 3px;font-size:0.95rem;">No Fabricated Strikethrough Discounts — Everyday Direct Import Pricing in ₪ ILS</h4>
-            <p style="margin:0;font-size:0.82rem;color:var(--text-secondary);">
-              Per Section 5G &amp; Section 18 of the DINU MARKET specification, promotional strikethrough prices are displayed strictly when an active promotion is configured in the Admin Dashboard. You can also apply promo code <strong>WELCOME10</strong> (10% off orders over ₪120) or <strong>DINU25</strong> (₪25 off orders over ₪220) in your shopping cart.
-            </p>
-          </div>
-          <button type="button" class="btn-outline" style="padding:7px 14px;font-size:0.8rem;" onclick="document.getElementById('catalog')?.scrollIntoView({behavior:'smooth'})">Browse All Products →</button>
-        </div>
-      `;
-    } else {
-      container.innerHTML = `<div class="product-grid compact-product-grid">${discounted.map((p) => this.renderProductCardHtml(p, 'offer')).join('')}</div>`;
-    }
   },
 
   renderNewArrivals() {
@@ -1702,23 +1919,24 @@ const app = {
     const allProds = (state.allProducts.length > 0 ? state.allProducts : getLocalProducts()).filter(
       (p) => p.status !== 'archived'
     );
-    const arrivals = allProds.filter((p) => p.is_new_arrival).slice(0, 6);
-    grid.innerHTML = (arrivals.length > 0 ? arrivals : allProds.slice(0, 6))
-      .map((p) => this.renderProductCardHtml(p, 'new'))
-      .join('');
+    const arrivals = allProds.filter((p) => p.is_new_arrival);
+    // Put non-India items first if available so mixed country badges show immediately on homepage
+    arrivals.sort((a, b) => (a.region_slug === 'philippines' ? -1 : b.region_slug === 'philippines' ? 1 : 0));
+    const list = (arrivals.length >= 4 ? arrivals : allProds).slice(0, 4);
+    grid.innerHTML = list.map((p) => this.renderProductCardHtml(p, 'new')).join('');
   },
 
   // =========================================================================
-  // WISHLIST & NEWSLETTER HANDLERS
+  // WISHLIST & PROMO FLOW HANDLERS
   // =========================================================================
   toggleWishlist(productId) {
     const idx = state.wishlist.indexOf(productId);
     if (idx >= 0) {
       state.wishlist.splice(idx, 1);
-      showToast('Removed from your Wishlist.');
+      showToast('Removed from saved items.');
     } else {
       state.wishlist.push(productId);
-      showToast('♥ Saved to your Wishlist!');
+      showToast('Saved to your list.');
     }
     localStorage.setItem('dinu_wishlist', JSON.stringify(state.wishlist));
     this.updateHeaderState();
@@ -1729,191 +1947,291 @@ const app = {
     }
   },
 
-  openWishlistModal() {
+  openShopView() {
+    state.filters.tripBox = false;
+    this.switchView('shop', true);
+    this.loadProducts();
+  },
+
+  openTripBoxCollection() {
+    this.resetAllFilters(false);
+    state.filters.tripBox = true;
+    this.switchView('shop', true);
+    this.loadProducts();
+  },
+
+  openGiftBoxFlow(kitchenSlug) {
+    const k = kitchenSlug && KITCHEN_STOREFRONTS[kitchenSlug] ? KITCHEN_STOREFRONTS[kitchenSlug] : null;
+    const title = k ? k.giftBand.title : 'Send a Dinu Gift & Care Box';
+    const desc = k
+      ? k.giftBand.copy
+      : 'Pack snacks and pantry favourites from all four kitchens with a free handwritten note — delivered to any door or pickup locker in Israel.';
+    const waHref = k
+      ? getWhatsAppUrl(k.slug, k.giftBand.whatsappText)
+      : getWhatsAppUrl('en', "Hi Dinu, I'd like to send a Gift Box with a handwritten note in Israel:");
+
     const bd = document.getElementById('genericModalBackdrop');
     const content = document.getElementById('genericModalContent');
-    const allProds = state.allProducts.length > 0 ? state.allProducts : getLocalProducts();
-    const wishedProds = allProds.filter((p) => state.wishlist.includes(p.id));
+    if (!bd || !content) return;
 
     content.innerHTML = `
-      <button type="button" class="modal-close-btn" onclick="app.closeGenericModal()">✕</button>
-      <h3>♥ My Saved Wishlist (${wishedProds.length} Items)</h3>
-      ${
-        wishedProds.length === 0
-          ? `<p style="color:var(--text-secondary);font-size:0.92rem;">Your wishlist is currently empty. Click the ♡ heart icon on any product card to save items for later.</p>`
-          : `<div style="display:flex;flex-direction:column;gap:10px;max-height:380px;overflow-y:auto;">
-               ${wishedProds
-                 .map(
-                   (p) => `
-                   <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface);">
-                     <div style="display:flex;align-items:center;gap:10px;cursor:pointer;" onclick="app.closeGenericModal(); app.openPdpModal('${escapeHtml(p.slug)}');">
-                       <img src="${escapeHtml(p.primary_image_url)}" alt="${escapeHtml(p.title)}" style="width:52px;height:52px;object-fit:contain;background:#FFF;border-radius:6px;" />
-                       <div>
-                         <div style="font-weight:700;font-size:0.9rem;">${escapeHtml(p.title)}</div>
-                         <div style="font-size:0.78rem;color:var(--text-secondary);">${escapeHtml(p.vendor_brand)} • ₪${Number(p.price_ils).toFixed(2)}</div>
-                       </div>
-                     </div>
-                     <div style="display:flex;gap:6px;">
-                       <button type="button" class="btn-primary" style="padding:6px 12px;font-size:0.78rem;" onclick="app.addToCart('${escapeHtml(p.id)}', 'single', 1)">Add to Cart</button>
-                       <button type="button" class="btn-outline" style="padding:6px 10px;font-size:0.78rem;" onclick="app.toggleWishlist('${escapeHtml(p.id)}'); app.openWishlistModal();">Remove</button>
-                     </div>
-                   </div>
-                 `
-                 )
-                 .join('')}
-             </div>`
-      }
+      <button type="button" class="modal-close-btn" onclick="app.closeGenericModal()" aria-label="Close modal">×</button>
+      <div style="padding-right:42px;">
+        <div style="font-size:13px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:var(--dm-chili);margin-bottom:8px;">
+          GIFT &amp; CARE PACKAGES · ISRAEL DELIVERY
+        </div>
+        <h3 style="font-size:1.85rem;margin:0 0 10px;">${escapeHtml(title)}</h3>
+        <p style="color:var(--dm-text-2);margin:0 0 20px;">${escapeHtml(desc)}</p>
+        <div style="background:var(--dm-cream);border:1px solid var(--dm-line);border-radius:20px;padding:18px;margin-bottom:22px;font-size:0.95rem;">
+          <strong>How it works:</strong>
+          <ol style="margin:8px 0 0;padding-left:20px;color:var(--dm-text-2);line-height:1.6;">
+            <li>Pick snacks, sweets, noodles or tea in your basket — or message us your budget (from ₪95) on WhatsApp.</li>
+            <li>Enter your friend's Israeli address and write your personal note in "Delivery Instructions" at checkout.</li>
+            <li>Order by ${escapeHtml(getSupportDetails().cutoff)} and we deliver it tomorrow with no price tag inside.</li>
+          </ol>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;">
+          <button type="button" class="btn-primary btn-cta-lg" onclick="app.closeGenericModal(); app.openShopView();">
+            Build box in shop →
+          </button>
+          <a href="${escapeHtml(waHref)}" target="_blank" rel="noopener noreferrer" class="btn-whatsapp btn-cta-lg">
+            Order gift box on WhatsApp
+          </a>
+        </div>
+      </div>
     `;
     bd.style.display = 'flex';
   },
 
-  async submitNewsletterForm(e) {
-    e.preventDefault();
-    const emailInput = document.getElementById('newsletterEmailInput');
-    const consentCheck = document.getElementById('newsletterConsentCheckbox');
-    if (!consentCheck?.checked) {
-      showToast('Please tick the explicit consent checkbox to subscribe.');
-      return;
-    }
-    const email = (emailInput?.value || '').trim();
-    if (!email) return;
-
-    const record = { email, consent_given: true, subscribed_at: new Date().toISOString() };
-    state.newsletterSubscribers.push(record);
-    localStorage.setItem('dinu_newsletter_subscribers', JSON.stringify(state.newsletterSubscribers));
-    if (emailInput) emailInput.value = '';
-    if (consentCheck) consentCheck.checked = false;
-    showToast('Thank you for subscribing to the DINU MARKET newsletter!');
-  },
-
   // =========================================================================
-  // SECTION 6: DEDICATED REGIONAL SHOPPING PAGES (India, Thailand, Sri Lanka, Philippines)
+  // KITCHEN STOREFRONTS (/ph, /th, /in, /lk) — ONE DATA-DRIVEN TEMPLATE
   // =========================================================================
-  openRegionalPage(regionSlug) {
-    state.activeRegionPage = regionSlug;
+  openRegionalPage(regionSlug, pushUrl = true) {
+    const normalized = KITCHEN_STOREFRONTS[regionSlug] ? regionSlug : 'philippines';
+    state.activeRegionPage = normalized;
+    state.activeRegionalPage = normalized;
     state.regionPageFilters = {
+      aisle: '',
       category: '',
       vendor: '',
       size: '',
       inStock: false,
       maxPrice: 150,
       sort: 'featured',
-      pageSize: 12
+      pageSize: 8
     };
-    this.switchView('region');
+
+    const k = KITCHEN_STOREFRONTS[normalized];
+    // Step 5: Default the page language to the kitchen's language, with toggle to English or Hebrew
+    state.lang = k.lang;
+    document.documentElement.lang = state.lang;
+    document.documentElement.dir = 'ltr';
+    this.updateLanguagePillUi();
+
+    this.switchView('region', true, pushUrl);
     this.renderRegionalPage();
+  },
+
+  selectKitchenAisle(aisleId) {
+    if (state.regionPageFilters.aisle === aisleId) {
+      state.regionPageFilters.aisle = '';
+    } else {
+      state.regionPageFilters.aisle = aisleId;
+    }
+    this.renderRegionalPage();
+    document.getElementById('kitchenFavouritesSection')?.scrollIntoView({ behavior: 'smooth' });
   },
 
   renderRegionalPage() {
     const container = document.getElementById('view-region');
     if (!container) return;
-    this.syncHeaderHeight();
-    const reg = state.regions.find((r) => r.slug === state.activeRegionPage) || state.regions[0];
-    const allProds = (state.allProducts.length > 0 ? state.allProducts : getLocalProducts()).filter(
-      (p) => p.region_slug === reg.slug && p.status !== 'archived'
-    );
+    const slug = state.activeRegionPage || 'philippines';
+    const k = KITCHEN_STOREFRONTS[slug] || KITCHEN_STOREFRONTS.philippines;
 
-    const regionCategories = Array.from(new Set(allProds.map((p) => p.category_slug)));
-    const regionVendors = Array.from(new Set(allProds.map((p) => p.vendor_brand)));
-    const regionSizes = Array.from(new Set(allProds.map((p) => p.size_label).filter(Boolean)));
+    const activeLang = [k.lang, 'en', 'he'].includes(state.lang) ? state.lang : k.lang;
+    const activeDir = activeLang === 'he' ? 'rtl' : 'ltr';
+    const heroTitle = k.heroTitle[activeLang] || k.heroTitle[k.lang];
+    const heroSub = k.heroSubcopy[activeLang] || k.heroSubcopy[k.lang];
+    const shopLabel = k.shopBtnLabel[activeLang] || k.shopBtnLabel.en;
+    const waLabel = k.whatsappBtnLabel[activeLang] || k.whatsappBtnLabel.en;
+    const aislesTitle = k.aislesHeading[activeLang] || k.aislesHeading.en;
+    const favTitle = k.favouritesHeading[activeLang] || k.favouritesHeading.en;
+    const waKitchenUrl = getWhatsAppUrl(k.slug);
+    const waGiftUrl = getWhatsAppUrl(k.slug, k.giftBand.whatsappText);
 
     container.innerHTML = `
-      <div class="region-sticky-nav" role="navigation" aria-label="Select Region">
-        ${state.regions
-          .map(
-            (r) =>
-              `<button type="button" class="${r.slug === reg.slug ? 'btn-primary' : 'btn-outline'}" style="padding:7px 16px;font-size:0.82rem;" onclick="app.openRegionalPage('${escapeHtml(r.slug)}')">${escapeHtml(r.name)}</button>`
-          )
-          .join('')}
+      <!-- Mobile Kitchen Switcher (Desktop shows the 4 pills in the sticky header center slot) -->
+      <div class="region-strip" style="margin-bottom:20px;" role="navigation" aria-label="Switch Kitchen">
+        ${KITCHEN_ORDER.map((s) => {
+          const item = KITCHEN_STOREFRONTS[s];
+          return `
+            <button
+              type="button"
+              data-kitchen="${escapeHtml(s)}"
+              class="region-pill ${s === slug ? 'active' : ''}"
+              onclick="app.openRegionalPage('${escapeHtml(s)}')"
+            >
+              ${escapeHtml(item.name)}
+            </button>
+          `;
+        }).join('')}
       </div>
 
-      <!-- 1. Country Hero Banner & 2. Country Introduction -->
-      <div class="card-panel" style="background:linear-gradient(125deg, #1E3F20 0%, #2D5A27 100%);color:#FFF;padding:28px;border:none;margin-bottom:22px;">
-        <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:24px;align-items:center;">
-          <div>
-            <h1 style="color:#FFF;margin:0 0 10px;font-size:2rem;">Authentic Groceries from ${escapeHtml(reg.name)} (${escapeHtml(reg.name_he || '')})</h1>
-            <p style="color:#F4EFE6;font-size:0.98rem;line-height:1.6;margin-bottom:14px;">
-              ${escapeHtml(reg.description || reg.featured_highlight || '')}
-            </p>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;">
-              ${regionCategories
-                .map((catSlug) => {
-                  const navCat = state.navigation.find((c) => c.slug === catSlug);
-                  return `<button type="button" class="btn-secondary" style="padding:6px 12px;font-size:0.78rem;" onclick="state.regionPageFilters.category='${escapeHtml(catSlug)}'; app.renderRegionalPageProducts();">Browse ${escapeHtml(navCat ? navCat.name : catSlug)}</button>`;
-                })
-                .join('')}
-            </div>
-          </div>
-          <div style="text-align:center;">
-            <img src="${escapeHtml(reg.tile_image || reg.hero_image || 'images/brand/dinu-logo.png')}" alt="${escapeHtml(reg.name)}" style="max-height:200px;width:auto;margin:0 auto;border-radius:12px;border:3px solid var(--brand-gold);background:#FFF;padding:6px;" />
-          </div>
-        </div>
-      </div>
-
-      <!-- 6. Filtering & 7. Sorting Controls -->
-      <div class="catalog-layout region-catalog-layout">
-        <aside class="filter-sidebar region-filter-sidebar">
-          <div class="filter-group">
-            <h4>Filter ${escapeHtml(reg.name)} Products</h4>
-            <label class="filter-check-row">
-              <input type="checkbox" id="regFilterInStock" onchange="state.regionPageFilters.inStock=this.checked; app.renderRegionalPageProducts();" />
-              <span>In Stock Only</span>
-            </label>
-          </div>
-          <div class="filter-group">
-            <h4>Category</h4>
-            <select class="select-control" style="width:100%;" onchange="state.regionPageFilters.category=this.value; app.renderRegionalPageProducts();">
-              <option value="">All ${escapeHtml(reg.name)} Categories</option>
-              ${regionCategories
-                .map((c) => `<option value="${escapeHtml(c)}">${escapeHtml(c.replace(/-/g, ' ').toUpperCase())}</option>`)
-                .join('')}
-            </select>
-          </div>
-          <div class="filter-group">
-            <h4>Brand</h4>
-            <select class="select-control" style="width:100%;" onchange="state.regionPageFilters.vendor=this.value; app.renderRegionalPageProducts();">
-              <option value="">All Brands</option>
-              ${regionVendors.map((v) => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('')}
-            </select>
-          </div>
-          <div class="filter-group">
-            <h4>Product Size</h4>
-            <select class="select-control" style="width:100%;" onchange="state.regionPageFilters.size=this.value; app.renderRegionalPageProducts();">
-              <option value="">All Sizes</option>
-              ${regionSizes.map((s) => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('')}
-            </select>
-          </div>
-          <div class="filter-group">
-            <h4>Max Price: <span id="regMaxPriceLbl">₪150</span></h4>
-            <input type="range" min="10" max="150" step="5" value="150" style="width:100%;accent-color:var(--brand-forest);" oninput="document.getElementById('regMaxPriceLbl').textContent='₪'+this.value; state.regionPageFilters.maxPrice=Number(this.value); app.renderRegionalPageProducts();" />
-          </div>
-          <button type="button" class="btn-outline" style="width:100%;padding:8px;" onclick="app.openRegionalPage('${escapeHtml(reg.slug)}')">Reset Filters</button>
-        </aside>
-
+      <!-- 1. Kitchen Tint Hero Card (36px radius) -->
+      <section class="kitchen-hero-card ${k.tintClass}">
         <div>
-          <div class="catalog-toolbar">
-            <div>
-              <h2 style="margin:0;font-size:1.3rem;">${escapeHtml(reg.name)} Product Catalogue</h2>
-              <span id="regPageCountBadge" style="font-size:0.84rem;color:var(--text-secondary);"></span>
-            </div>
-            <div style="display:flex;align-items:center;gap:10px;">
-              <label style="font-size:0.84rem;font-weight:700;">Sort by:</label>
-              <select class="select-control" onchange="state.regionPageFilters.sort=this.value; app.renderRegionalPageProducts();">
-                <option value="featured">Popularity</option>
-                <option value="price_asc">Price: low to high</option>
-                <option value="price_desc">Price: high to low</option>
-                <option value="newest">Newest arrivals</option>
-                <option value="title_asc">Alphabetical (A–Z)</option>
-              </select>
+          <div class="kitchen-hero-toprow">
+            <span class="kitchen-badge-pill" style="color:${k.tintColor};margin-bottom:0;" lang="${escapeHtml(k.lang)}">
+              ${escapeHtml(k.heroBadge)}
+            </span>
+            <div class="kitchen-lang-switcher" role="group" aria-label="Storefront language">
+              <button
+                type="button"
+                lang="${escapeHtml(k.lang)}"
+                class="${activeLang === k.lang ? 'active' : ''}"
+                onclick="app.setKitchenViewLang('${escapeHtml(k.lang)}')"
+              >${escapeHtml(k.langButtonLabel)}</button>
+              <button
+                type="button"
+                lang="en"
+                class="${activeLang === 'en' ? 'active' : ''}"
+                onclick="app.setKitchenViewLang('en')"
+              >English</button>
+              <button
+                type="button"
+                lang="he"
+                dir="rtl"
+                class="${activeLang === 'he' ? 'active' : ''}"
+                onclick="app.setKitchenViewLang('he')"
+              >עברית</button>
             </div>
           </div>
 
-          <div id="regionalPageProductsGrid" class="product-grid"></div>
+          <h1 class="kitchen-hero-h1" lang="${escapeHtml(activeLang)}" dir="${activeDir}">
+            ${escapeHtml(heroTitle)}
+          </h1>
+          <p class="kitchen-hero-sub" lang="${escapeHtml(activeLang)}" dir="${activeDir}">
+            ${escapeHtml(heroSub)}
+          </p>
+          ${
+            activeLang !== 'en'
+              ? `<p style="font-size:15px;color:var(--dm-text-2);margin:-12px 0 22px;" lang="en" dir="ltr">${escapeHtml(k.heroSubcopy.en)}</p>`
+              : ''
+          }
+
+          <div class="hero-cta-row">
+            <button
+              type="button"
+              class="btn-primary btn-cta-lg"
+              lang="${escapeHtml(activeLang)}"
+              onclick="document.getElementById('kitchenFavouritesSection')?.scrollIntoView({behavior:'smooth'})"
+            >
+              ${escapeHtml(shopLabel)}
+            </button>
+            <a
+              href="${escapeHtml(waKitchenUrl)}"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn-whatsapp btn-cta-lg"
+              lang="${escapeHtml(activeLang)}"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm5.82 14.01c-.24.68-1.41 1.3-1.95 1.38-.5.08-1.13.11-1.83-.11-.42-.13-.97-.31-1.67-.61-2.94-1.27-4.86-4.24-5.01-4.44-.15-.2-1.2-1.59-1.2-3.04 0-1.45.76-2.16 1.03-2.46.27-.3.59-.37.79-.37.2 0 .4.01.57.01.18 0 .43-.07.67.51.24.59.83 2.03.9 2.18.07.15.12.32.02.52-.1.2-.15.32-.3.49-.15.17-.31.38-.45.51-.15.15-.3.31-.13.61.17.3.76 1.25 1.63 2.02 1.12 1 2.06 1.31 2.36 1.46.3.15.47.12.64-.07.17-.2.74-.86.94-1.16.2-.3.4-.25.67-.15.27.1 1.73.82 2.03.97.3.15.5.22.57.35.07.12.07.72-.17 1.4z"/>
+              </svg>
+              <span>${escapeHtml(waLabel)}</span>
+            </a>
+          </div>
         </div>
-      </div>
+
+        <div class="kitchen-hero-visual" style="background:${k.softBg};" aria-label="${escapeHtml(k.name)} pantry selection">
+          ${k.packshots
+            .slice(0, 4)
+            .map(
+              (src) => `
+              <div class="kitchen-hero-visual-tile">
+                <img src="${escapeHtml(src)}" alt="${escapeHtml(k.name)} pantry staple" />
+              </div>
+            `
+            )
+            .join('')}
+        </div>
+      </section>
+
+      <!-- 2. Community-Named Aisle Chips -->
+      <section style="margin-bottom:40px;" aria-labelledby="kitchenAislesHeading">
+        <div class="section-head-row" style="margin-bottom:16px;">
+          <div>
+            <h2 class="section-h2" id="kitchenAislesHeading" lang="${escapeHtml(activeLang)}" dir="${activeDir}" style="font-size:32px;">
+              ${escapeHtml(aislesTitle)}
+            </h2>
+            <p class="section-lead">Tap an aisle to filter favourites, or browse all four kitchens in one basket.</p>
+          </div>
+          ${
+            state.regionPageFilters.aisle
+              ? `<button type="button" class="pill-control" onclick="app.selectKitchenAisle('')">Show all aisles</button>`
+              : ''
+          }
+        </div>
+
+        <div class="aisle-chips-grid">
+          ${k.aisles
+            .map(
+              (aisle) => `
+              <button
+                type="button"
+                class="aisle-chip-card ${state.regionPageFilters.aisle === aisle.id ? 'active' : ''}"
+                onclick="app.selectKitchenAisle('${escapeHtml(aisle.id)}')"
+              >
+                <span class="aisle-chip-name">${escapeHtml(aisle.name)}</span>
+                <span class="aisle-chip-brands">${escapeHtml(aisle.brands)}</span>
+              </button>
+            `
+            )
+            .join('')}
+        </div>
+      </section>
+
+      <!-- 3. Favourites Grid (up to 8 best sellers filtered by country of origin) -->
+      <section id="kitchenFavouritesSection" style="margin-bottom:44px;" aria-labelledby="kitchenFavHeading">
+        <div class="section-head-row" style="margin-bottom:20px;">
+          <div>
+            <h2 class="section-h2" id="kitchenFavHeading" lang="${escapeHtml(activeLang)}" dir="${activeDir}" style="font-size:32px;">
+              ${escapeHtml(favTitle)}
+            </h2>
+            <p class="section-lead" id="regPageCountBadge"></p>
+          </div>
+          <button type="button" class="pill-control" onclick="app.selectRegion('${escapeHtml(slug)}', true)">
+            Filter in full shop →
+          </button>
+        </div>
+
+        <div id="regionalPageProductsGrid" class="product-grid"></div>
+      </section>
+
+      <!-- 4. Dark Ink Gift Band ("Padala box" on /ph, etc.) -->
+      <section aria-label="${escapeHtml(k.giftBand.title)}">
+        <div class="promo-band promo-band-ink">
+          <div style="max-width:680px;">
+            <span class="travellers-eyebrow">${escapeHtml(k.giftBand.eyebrow)}</span>
+            <h2 class="band-title" style="color:var(--dm-white);margin-bottom:10px;">${escapeHtml(k.giftBand.title)}</h2>
+            <p style="font-size:17px;color:rgba(255,247,234,0.88);margin:0;">
+              ${escapeHtml(k.giftBand.copy)}
+            </p>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:12px;">
+            <button type="button" class="btn-turmeric" onclick="app.openGiftBoxFlow('${escapeHtml(slug)}')">
+              ${escapeHtml(k.giftBand.cta)}
+            </button>
+            <a href="${escapeHtml(waGiftUrl)}" target="_blank" rel="noopener noreferrer" class="btn-whatsapp btn-cta-lg">
+              Message on WhatsApp
+            </a>
+          </div>
+        </div>
+      </section>
     `;
 
     this.renderRegionalPageProducts();
+    this.syncHeaderHeight();
   },
 
   renderRegionalPageProducts() {
@@ -1921,58 +2239,88 @@ const app = {
     const badge = document.getElementById('regPageCountBadge');
     if (!grid) return;
 
-    const reg = state.regions.find((r) => r.slug === state.activeRegionPage) || state.regions[0];
-    const f = state.regionPageFilters;
-    let items = (state.allProducts.length > 0 ? state.allProducts : getLocalProducts()).filter(
-      (p) => p.region_slug === reg.slug && p.status !== 'archived'
+    const slug = state.activeRegionPage || 'philippines';
+    const k = KITCHEN_STOREFRONTS[slug] || KITCHEN_STOREFRONTS.philippines;
+    const allActive = (state.allProducts.length > 0 ? state.allProducts : getLocalProducts()).filter(
+      (p) => p.status !== 'archived'
     );
 
-    if (f.category) items = items.filter((p) => p.category_slug === f.category);
-    if (f.vendor) items = items.filter((p) => p.vendor_brand === f.vendor);
-    if (f.size) items = items.filter((p) => p.size_label === f.size);
-    if (f.inStock) items = items.filter((p) => p.stock_quantity > 0);
-    if (f.maxPrice) items = items.filter((p) => p.price_ils <= f.maxPrice);
+    let countryItems = allActive.filter((p) => p.region_slug === slug);
+    const activeAisle = k.aisles.find((a) => a.id === state.regionPageFilters.aisle);
+    if (activeAisle) {
+      countryItems = countryItems.filter((p) => activeAisle.categories.includes(p.category_slug));
+    }
 
-    if (f.sort === 'price_asc') items.sort((a, b) => a.price_ils - b.price_ils);
-    else if (f.sort === 'price_desc') items.sort((a, b) => b.price_ils - a.price_ils);
-    else if (f.sort === 'title_asc') items.sort((a, b) => a.title.localeCompare(b.title));
-    else if (f.sort === 'newest') items.sort((a, b) => Number(b.is_new_arrival || 0) - Number(a.is_new_arrival || 0));
+    countryItems.sort((a, b) => Number(b.is_best_seller || 0) - Number(a.is_best_seller || 0) || Number(b.sales_count || 0) - Number(a.sales_count || 0));
+    const displayItems = countryItems.slice(0, 8);
 
-    if (badge) badge.textContent = `Showing ${items.length} product(s) sourced from ${reg.name}`;
+    const waAislePrompt = activeAisle
+      ? `${WHATSAPP_GREETINGS[slug]} ${activeAisle.name} (${activeAisle.brands})`
+      : WHATSAPP_GREETINGS[slug];
+    const waUrl = getWhatsAppUrl(slug, waAislePrompt);
 
-    if (items.length === 0) {
-      grid.innerHTML = `
-        <div style="grid-column:1/-1;background:#FFF;padding:36px;border-radius:10px;border:1px solid var(--border);text-align:center;">
-          <h3>Currently Restocking ${escapeHtml(reg.name)} Inventory</h3>
-          <p style="color:var(--text-secondary);max-width:520px;margin:8px auto 16px;">
-            New shipments from ${escapeHtml(reg.name)} are arriving at our Israeli distribution centre soon. Add products from our Admin Dashboard or explore all 4 Asian regions below.
+    if (badge) {
+      if (activeAisle) {
+        badge.textContent = `Filtered by aisle: ${activeAisle.name} · Mix all 4 kitchens in 1 basket`;
+      } else {
+        badge.textContent =
+          displayItems.length > 0
+            ? `${displayItems.length} ${k.name} shelf favourite(s) ready for next-day delivery across Israel`
+            : `Fresh ${k.name} shipment unpacking — send your list on WhatsApp or mix from all 4 kitchens below`;
+      }
+    }
+
+    const requestCardHtml = `
+      <article class="product-card" style="background:var(--dm-cream);border:1.5px solid var(--dm-line-strong);justify-content:space-between;">
+        <div>
+          <span class="kitchen-badge-pill" style="color:${k.tintColor};margin-bottom:12px;">ORDER BY MESSAGE</span>
+          <h3 style="font-size:1.2rem;margin:0 0 8px;">Looking for a specific ${escapeHtml(k.name)} brand?</h3>
+          <p style="font-size:15px;color:var(--dm-text-2);margin:0 0 16px;">
+            ${
+              activeAisle
+                ? `Message us for <strong>${escapeHtml(activeAisle.brands)}</strong> and we will pack it from our warehouse shelf today.`
+                : `Send your ${escapeHtml(k.name)} grocery list on WhatsApp and we will pack your box for tomorrow's courier.`
+            }
           </p>
-          <button type="button" class="btn-primary" onclick="app.navigateToHome()">Explore All Regions →</button>
         </div>
-      `;
+        <a href="${escapeHtml(waUrl)}" target="_blank" rel="noopener noreferrer" class="btn-whatsapp" style="width:100%;">
+          Ask on WhatsApp →
+        </a>
+      </article>
+    `;
+
+    if (displayItems.length === 0) {
+      const crossKitchen = allActive.slice(0, 3).map((p) => this.renderProductCardHtml(p, 'regcross')).join('');
+      grid.innerHTML = requestCardHtml + crossKitchen;
       return;
     }
 
-    grid.innerHTML = items.map((p) => this.renderProductCardHtml(p, 'regpage')).join('');
+    grid.innerHTML =
+      displayItems.map((p) => this.renderProductCardHtml(p, 'regpage')).join('') +
+      (displayItems.length < 4 ? requestCardHtml : '');
   },
 
   renderRegionStrip() {
     const container = document.getElementById('regionPillsContainer');
     if (!container) return;
     const allPill = `
-      <button type="button" class="region-pill ${!state.filters.region ? 'active' : ''}" onclick="app.selectRegion('')">
+      <button type="button" class="region-pill ${!state.filters.region && !state.filters.tripBox ? 'active' : ''}" onclick="app.selectRegion('')">
         ${escapeHtml(t('all_4_regions'))}
       </button>
     `;
-    const pills = state.regions
-      .map(
-        (r) => `
-        <button type="button" class="region-pill ${state.filters.region === r.slug ? 'active' : ''}" onclick="app.selectRegion('${escapeHtml(r.slug)}')">
-          <span>${escapeHtml(getRegionLabel(r))}</span>
+    const pills = KITCHEN_ORDER.map((slug) => {
+      const reg = state.regions.find((r) => r.slug === slug) || { slug, name: KITCHEN_STOREFRONTS[slug].name };
+      return `
+        <button
+          type="button"
+          data-kitchen="${escapeHtml(slug)}"
+          class="region-pill ${state.filters.region === slug ? 'active' : ''}"
+          onclick="app.selectRegion('${escapeHtml(slug)}')"
+        >
+          <span>${escapeHtml(getRegionLabel(reg))}</span>
         </button>
-      `
-      )
-      .join('');
+      `;
+    }).join('');
     container.innerHTML = allPill + pills;
   },
 
@@ -1981,11 +2329,12 @@ const app = {
     if (!catSelect) return;
     const departments = state.navigation.filter((c) => c.slug !== 'shop-by-region');
     catSelect.innerHTML =
-      `<option value="">All 7 Active Categories</option>` +
+      `<option value="">All Categories</option>` +
       departments.map((d) => `<option value="${escapeHtml(d.slug)}">${escapeHtml(getCategoryLabel(d))}</option>`).join('');
   },
 
   onDepartmentSelectChange(catSlug) {
+    state.filters.tripBox = false;
     state.filters.category = catSlug;
     state.filters.subcategory = '';
     const subSelect = document.getElementById('filterSubcategorySelect');
@@ -2000,7 +2349,8 @@ const app = {
   },
 
   selectCategory(catSlug) {
-    this.switchView('storefront', false);
+    state.filters.tripBox = false;
+    this.switchView('shop', true);
     if (catSlug === 'shop-by-region') {
       state.filters.category = '';
       state.filters.subcategory = '';
@@ -2011,11 +2361,11 @@ const app = {
     const catSelect = document.getElementById('filterCategorySelect');
     if (catSelect) catSelect.value = state.filters.category;
     this.onDepartmentSelectChange(state.filters.category);
-    document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' });
   },
 
   selectSubcategory(catSlug, subSlug) {
-    this.switchView('storefront', false);
+    state.filters.tripBox = false;
+    this.switchView('shop', true);
     state.filters.category = catSlug;
     state.filters.subcategory = subSlug;
     const catSelect = document.getElementById('filterCategorySelect');
@@ -2024,39 +2374,32 @@ const app = {
     const subSelect = document.getElementById('filterSubcategorySelect');
     if (subSelect) subSelect.value = subSlug;
     this.applyCatalogFilters();
-    document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' });
   },
 
-  selectRegion(regionSlug, scrollToCatalog = false) {
-    this.switchView('storefront', false);
+  selectRegion(regionSlug, switchToShop = false) {
+    state.filters.tripBox = false;
+    if (switchToShop || state.currentView !== 'shop') {
+      this.switchView('shop', true);
+    }
     state.filters.region = regionSlug;
     const regSelect = document.getElementById('filterRegionSelect');
     if (regSelect) regSelect.value = regionSlug;
     this.renderRegionStrip();
     this.loadProducts();
-    if (scrollToCatalog) {
-      document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' });
-    }
   },
 
   filterByAuthenticInventory() {
-    this.switchView('storefront', false);
     this.resetAllFilters(false);
     state.filters.authenticOnly = true;
-    const chk = document.getElementById('filterAuthenticOnly');
-    if (chk) chk.checked = true;
+    this.switchView('shop', true);
     this.loadProducts();
-    document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' });
   },
 
   filterByOnSale() {
-    this.switchView('storefront', false);
     this.resetAllFilters(false);
     state.filters.onSale = true;
-    const chk = document.getElementById('filterOnSaleOnly');
-    if (chk) chk.checked = true;
+    this.switchView('shop', true);
     this.loadProducts();
-    document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' });
   },
 
   resetAllFilters(reload = true) {
@@ -2064,6 +2407,7 @@ const app = {
       category: '',
       subcategory: '',
       region: '',
+      tripBox: false,
       q: '',
       vendor: '',
       size: '',
@@ -2074,11 +2418,6 @@ const app = {
       maxPrice: 150,
       sort: 'featured'
     };
-    const ids = ['filterAuthenticOnly', 'filterInStockOnly', 'filterOnSaleOnly'];
-    ids.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) el.checked = false;
-    });
     if (document.getElementById('filterRegionSelect')) document.getElementById('filterRegionSelect').value = '';
     if (document.getElementById('filterCategorySelect')) document.getElementById('filterCategorySelect').value = '';
     if (document.getElementById('filterSubcategorySelect')) {
@@ -2089,8 +2428,9 @@ const app = {
     if (document.getElementById('filterVendorSelect')) document.getElementById('filterVendorSelect').value = '';
     if (document.getElementById('filterMaxPriceRange')) document.getElementById('filterMaxPriceRange').value = '150';
     if (document.getElementById('maxPriceLabel')) document.getElementById('maxPriceLabel').textContent = '₪150';
-    if (document.getElementById('sortSelect')) document.getElementById('sortSelect').value = 'featured';
+    if (document.getElementById('sortOrderSelect')) document.getElementById('sortOrderSelect').value = 'featured';
     if (document.getElementById('globalSearchInput')) document.getElementById('globalSearchInput').value = '';
+    if (document.getElementById('mobileSearchInput')) document.getElementById('mobileSearchInput').value = '';
 
     this.renderRegionStrip();
     this.renderNavigation();
@@ -2098,9 +2438,7 @@ const app = {
   },
 
   applyCatalogFilters() {
-    state.filters.authenticOnly = !!document.getElementById('filterAuthenticOnly')?.checked;
-    state.filters.inStock = !!document.getElementById('filterInStockOnly')?.checked;
-    state.filters.onSale = !!document.getElementById('filterOnSaleOnly')?.checked;
+    state.filters.tripBox = false;
     const regSelect = document.getElementById('filterRegionSelect');
     state.filters.region = regSelect ? regSelect.value : (state.filters.region || '');
     state.filters.category = document.getElementById('filterCategorySelect')?.value || '';
@@ -2109,7 +2447,7 @@ const app = {
     state.filters.dietary = document.getElementById('filterDietarySelect')?.value || '';
     state.filters.vendor = document.getElementById('filterVendorSelect')?.value || '';
     state.filters.maxPrice = Number(document.getElementById('filterMaxPriceRange')?.value || 150);
-    state.filters.sort = document.getElementById('sortSelect')?.value || 'featured';
+    state.filters.sort = document.getElementById('sortOrderSelect')?.value || 'featured';
     this.renderRegionStrip();
     this.renderNavigation();
     this.loadProducts();
@@ -2132,6 +2470,9 @@ const app = {
 
     const data = await apiFetch(`/api/products?${params.toString()}`);
     let prods = data.products || [];
+    if (state.filters.tripBox) {
+      prods = prods.filter((p) => p.region_slug === 'india' || p.region_slug === 'thailand');
+    }
     if (state.filters.size) {
       prods = prods.filter((p) => p.size_label === state.filters.size);
     }
@@ -2154,7 +2495,8 @@ const app = {
     if (!grid) return;
 
     const parts = [];
-    if (state.filters.authenticOnly) parts.push('📸 ' + t('filter_authentic'));
+    if (state.filters.tripBox) parts.push('Israeli Travellers Trip Box (India & Thailand)');
+    if (state.filters.authenticOnly) parts.push(t('filter_authentic'));
     if (state.filters.category) {
       const cat = state.navigation.find((c) => c.slug === state.filters.category);
       if (cat) parts.push(getCategoryLabel(cat));
@@ -2164,18 +2506,22 @@ const app = {
       const reg = state.regions.find((r) => r.slug === state.filters.region);
       if (reg) parts.push(getRegionLabel(reg));
     }
+    if (state.filters.dietary) parts.push(state.filters.dietary);
     if (state.filters.size) parts.push(`Size: ${state.filters.size}`);
     if (state.filters.q) parts.push(`Search: "${state.filters.q}"`);
 
-    if (heading) heading.textContent = parts.length > 0 ? parts.join(' • ') : t('all_products_heading');
+    if (heading) heading.textContent = parts.length > 0 ? parts.join(' · ') : t('all_products_heading');
     if (countBadge) countBadge.textContent = `(${state.products.length} items)`;
 
     if (state.products.length === 0) {
       grid.innerHTML = `
-        <div style="grid-column: 1 / -1; background:#FFF; padding:40px; text-align:center; border-radius:8px; border:1px solid var(--border);">
-          <h3>No matching products found</h3>
-          <p style="color:var(--text-secondary);">Try clearing one or more filters to view the full Dinu Market catalog.</p>
-          <button type="button" class="btn-primary" onclick="app.resetAllFilters()">${escapeHtml(t('clear_all_filters'))}</button>
+        <div style="grid-column: 1 / -1; background:var(--dm-white); padding:40px; text-align:center; border-radius:22px; border:1px solid var(--dm-line);">
+          <h3>No matching items in this filter</h3>
+          <p style="color:var(--dm-text-2);max-width:460px;margin:8px auto 18px;">Clear filters to browse all four kitchens, or message us on WhatsApp if you're looking for a specific brand.</p>
+          <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
+            <button type="button" class="btn-primary" onclick="app.resetAllFilters()">${escapeHtml(t('clear_all_filters'))}</button>
+            <a href="${escapeHtml(getWhatsAppUrl())}" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">Ask on WhatsApp</a>
+          </div>
         </div>
       `;
       return;
@@ -2201,28 +2547,28 @@ const app = {
       let html = '';
 
       if (data.categories?.length > 0 || data.regions?.length > 0) {
-        html += `<div class="predictive-section-title">Matching Categories &amp; Regions</div>`;
+        html += `<div class="predictive-section-title">Kitchens &amp; Aisles</div>`;
         (data.regions || []).forEach((r) => {
           html += `
             <div class="predictive-item" onclick="app.openRegionalPage('${escapeHtml(r.slug)}'); document.getElementById('predictiveDropdown').style.display='none';">
-              <span><strong>Region: ${escapeHtml(getRegionLabel(r))}</strong></span>
-              <span style="font-size:0.8rem;color:var(--brand-forest);">Open Region Page →</span>
+              <span><strong>${escapeHtml(getRegionLabel(r))} Kitchen</strong></span>
+              <span style="font-size:0.84rem;font-weight:700;color:var(--dm-green);">Open storefront →</span>
             </div>
           `;
         });
         (data.categories || []).forEach((c) => {
           html += `
             <div class="predictive-item" onclick="app.selectCategory('${escapeHtml(c.parent_slug || c.slug)}'); document.getElementById('predictiveDropdown').style.display='none';">
-              <span>📁 <strong>${escapeHtml(getCategoryLabel(c))}</strong></span>
-              <span style="font-size:0.8rem;color:var(--brand-forest);">View →</span>
+              <span><strong>${escapeHtml(getCategoryLabel(c))}</strong></span>
+              <span style="font-size:0.84rem;font-weight:700;color:var(--dm-green);">View aisle →</span>
             </div>
           `;
         });
       }
 
-      html += `<div class="predictive-section-title">Matching Products</div>`;
+      html += `<div class="predictive-section-title">Products</div>`;
       if (!data.products || data.products.length === 0) {
-        html += `<div style="padding:10px;font-size:0.86rem;color:var(--text-secondary);">No instant product matches for "${escapeHtml(q)}"</div>`;
+        html += `<div style="padding:10px;font-size:0.9rem;color:var(--dm-text-2);">No instant matches for "${escapeHtml(q)}" — message us on WhatsApp to check our shelf.</div>`;
       } else {
         data.products.forEach((p) => {
           html += `
@@ -2230,12 +2576,12 @@ const app = {
               <div style="display:flex;align-items:center;gap:10px;">
                 <img src="${escapeHtml(p.primary_image_url)}" alt="${escapeHtml(p.title)}" />
                 <div>
-                  <div style="font-weight:700;font-size:0.88rem;">${escapeHtml(p.title)}</div>
-                  <div style="font-size:0.76rem;color:var(--text-secondary);">${escapeHtml(p.vendor_brand)} • ${escapeHtml(p.title_he || '')}</div>
+                  <div style="font-weight:600;font-size:0.92rem;color:var(--dm-ink);">${escapeHtml(p.title)}</div>
+                  <div style="font-size:0.8rem;color:var(--dm-muted);">${escapeHtml(p.vendor_brand)} · ${escapeHtml(p.size_label || '')}</div>
                 </div>
               </div>
-              <div style="text-align:right;">
-                <div style="font-family:var(--font-heading);font-weight:800;color:var(--brand-forest);">₪${Number(p.price_ils).toFixed(2)}</div>
+              <div style="text-align:right;flex-shrink:0;">
+                <div style="font-family:var(--dm-font-display);font-weight:800;color:var(--dm-ink);">₪${Number(p.price_ils).toFixed(2)}</div>
               </div>
             </div>
           `;
@@ -2254,20 +2600,21 @@ const app = {
     const input = document.getElementById('globalSearchInput');
     const dd = document.getElementById('predictiveDropdown');
     if (dd) dd.style.display = 'none';
-    this.switchView('storefront', false);
+    state.filters.tripBox = false;
     state.filters.q = (input?.value || '').trim();
+    this.switchView('shop', true);
     this.loadProducts();
-    document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' });
   },
 
   // =========================================================================
-  // SECTION 7: PRODUCT DETAIL PAGE MODAL (PDP WITH CLICK-TO-ZOOM + FRONT & BACK PHOTOS)
+  // PRODUCT DETAIL MODAL (PDP WITH CLICK-TO-ZOOM + FRONT & BACK PHOTOS)
   // =========================================================================
   async openPdpModal(slug) {
     try {
       const data = await apiFetch(`/api/products/${encodeURIComponent(slug)}`);
       const p = data.product;
       const reg = data.region;
+      const kitchenCfg = KITCHEN_STOREFRONTS[p.region_slug] || KITCHEN_STOREFRONTS.india;
       const reviews = data.reviews || [];
       const related = data.related_products || [];
       const isWished = (state.wishlist || []).includes(p.id);
@@ -2277,41 +2624,40 @@ const app = {
       const content = document.getElementById('pdpModalContent');
 
       const redLabelsHtml = (p.red_labels || [])
-        .map((lbl) => `<span class="il-red-label">🔴 ${escapeHtml(lbl)}</span>`)
+        .map((lbl) => `<span class="il-red-label">${escapeHtml(lbl)}</span>`)
         .join(' ');
 
       const dietaryHtml = (p.dietary_tags || [])
         .map(
           (tag) =>
-            `<span style="background:#E8F6EE;color:var(--brand-forest);border:1px solid var(--brand-green);padding:3px 10px;border-radius:99px;font-size:0.76rem;font-weight:700;">✓ ${escapeHtml(tag)}</span>`
+            `<span style="background:var(--dm-cream);color:var(--dm-green);border:1px solid var(--dm-line-strong);padding:4px 12px;border-radius:999px;font-size:13px;font-weight:700;">${escapeHtml(tag)}</span>`
         )
         .join(' ');
 
       const nutritionEntries = Object.entries(p.nutrition || {});
 
       content.innerHTML = `
-        <button type="button" class="modal-close-btn" onclick="app.closePdpModal()" aria-label="Close Product Modal">✕</button>
+        <button type="button" class="modal-close-btn" onclick="app.closePdpModal()" aria-label="Close Product Modal">×</button>
 
-        <div style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:14px;">
-          Home / ${escapeHtml(reg?.name || p.region_slug)} / ${escapeHtml(data.category?.name || p.category_slug)} / <strong>${escapeHtml(p.title)}</strong>
+        <div style="font-size:14px;color:var(--dm-muted);margin-bottom:14px;padding-right:48px;">
+          Dinu Market / ${escapeHtml(reg?.name || kitchenCfg.name)} / ${escapeHtml(data.category?.name || p.category_slug)}
         </div>
 
         <div class="form-grid-2" style="gap:28px;align-items:start;">
-          <!-- Left: Image Gallery with Click-to-Zoom & Front/Back Label Switcher -->
           <div>
             <div class="pdp-zoom-container" onclick="this.classList.toggle('zoomed')" title="Click to toggle 2x zoom">
               <img id="pdpMainImage" src="${escapeHtml(p.primary_image_url)}" alt="${escapeHtml(p.title)}" />
-              <span class="pdp-zoom-hint">🔍 Click image to zoom in/out</span>
+              <span class="pdp-zoom-hint">Click packet to zoom</span>
             </div>
             ${
               p.secondary_image_url
                 ? `
-                  <div style="display:flex;gap:12px;align-items:center;">
-                    <button type="button" class="btn-outline" style="flex:1;padding:8px;font-size:0.8rem;" onclick="document.getElementById('pdpMainImage').src='${escapeHtml(p.primary_image_url)}'">
-                      📦 Front Packaging Photo
+                  <div style="display:flex;gap:10px;align-items:center;">
+                    <button type="button" class="pill-control" style="flex:1;font-size:0.84rem;" onclick="document.getElementById('pdpMainImage').src='${escapeHtml(p.primary_image_url)}'">
+                      Front packet
                     </button>
-                    <button type="button" class="btn-primary" style="flex:1;padding:8px;font-size:0.8rem;" onclick="document.getElementById('pdpMainImage').src='${escapeHtml(p.secondary_image_url)}'">
-                      🔍 Back Hebrew Label &amp; Barcode Photo
+                    <button type="button" class="pill-control" style="flex:1;font-size:0.84rem;" onclick="document.getElementById('pdpMainImage').src='${escapeHtml(p.secondary_image_url)}'">
+                      Back Hebrew nutrition label
                     </button>
                   </div>
                 `
@@ -2319,46 +2665,46 @@ const app = {
             }
           </div>
 
-          <!-- Right: Product Info, Variants, Pricing & Add to Basket -->
           <div>
-            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
-              <span style="font-weight:800;font-size:0.82rem;color:var(--brand-green-mid);text-transform:uppercase;">${escapeHtml(p.vendor_brand)}</span>
-              ${reg ? `<span style="background:var(--surface);padding:2px 10px;border-radius:99px;font-size:0.78rem;font-weight:700;">Country of Origin: ${escapeHtml(reg.name)}</span>` : ''}
-              <span style="font-size:0.76rem;color:var(--text-secondary);">SKU: ${escapeHtml(p.sku)}</span>
-              ${p.barcode_ean ? `<span style="font-size:0.76rem;color:var(--text-secondary);">EAN: ${escapeHtml(p.barcode_ean)}</span>` : ''}
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+              <span class="kitchen-badge-pill" style="color:${kitchenCfg.tintColor};margin-bottom:0;">${escapeHtml(reg?.name || kitchenCfg.name)}</span>
+              <span style="font-weight:700;font-size:14px;color:var(--dm-green);text-transform:uppercase;">${escapeHtml(p.vendor_brand)}</span>
+              <span style="font-size:14px;color:var(--dm-muted);">SKU: ${escapeHtml(p.sku)}</span>
             </div>
 
-            <h2 style="font-size:1.45rem;margin-bottom:4px;">${escapeHtml(getProductLocalizedTitle(p))}</h2>
-            <div style="font-size:1rem;color:var(--text-secondary);margin-bottom:10px;direction:rtl;text-align:left;">${escapeHtml(p.title_he || '')}</div>
+            <h2 style="font-size:1.65rem;margin-bottom:6px;">${escapeHtml(getProductLocalizedTitle(p))}</h2>
+            ${
+              p.title_he
+                ? `<div lang="he" dir="rtl" style="font-size:1rem;color:var(--dm-text-2);margin-bottom:12px;">${escapeHtml(p.title_he)}</div>`
+                : ''
+            }
 
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
               ${dietaryHtml}
               ${redLabelsHtml}
             </div>
 
-            <div style="background:var(--surface);padding:14px;border-radius:8px;border:1px solid var(--border);margin-bottom:16px;">
-              <div style="display:flex;align-items:baseline;gap:10px;">
-                <span id="pdpDynamicPrice" style="font-family:var(--font-heading);font-size:1.75rem;font-weight:900;color:var(--brand-forest);">₪${Number(p.price_ils).toFixed(2)}</span>
+            <div style="background:var(--dm-cream);padding:16px;border-radius:18px;border:1px solid var(--dm-line);margin-bottom:16px;">
+              <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;">
+                <span id="pdpDynamicPrice" style="font-family:var(--dm-font-display);font-size:1.85rem;font-weight:800;color:var(--dm-ink);">₪${Number(p.price_ils).toFixed(2)}</span>
                 ${
                   hasGenuineDiscount
-                    ? `<span style="text-decoration:line-through;color:#888;font-size:1rem;">₪${Number(p.compare_at_price_ils).toFixed(2)}</span>
-                       <span class="badge-sale">SAVE ${p.discount_percent}%</span>`
+                    ? `<span style="text-decoration:line-through;color:var(--dm-muted);font-size:1rem;">₪${Number(p.compare_at_price_ils).toFixed(2)}</span>`
                     : ''
                 }
-                <span style="margin-left:auto;font-weight:700;font-size:0.84rem;color:${p.stock_quantity > 0 ? 'var(--brand-green-mid)' : 'var(--brand-red)'};">
-                  ${p.stock_quantity > 0 ? `● In Stock (${p.stock_quantity} available)` : '● Out of Stock'}
+                <span style="margin-left:auto;font-weight:700;font-size:14px;color:${p.stock_quantity > 0 ? 'var(--dm-green)' : 'var(--dm-chili)'};">
+                  ${p.stock_quantity > 0 ? `In stock (${p.stock_quantity} available)` : 'Out of stock'}
                 </span>
               </div>
-              <div style="font-size:0.8rem;color:var(--text-secondary);margin-top:4px;">
-                Includes 18% Israeli VAT (כולל מע״מ) • Unit Price: <strong>₪${Number(p.price_per_100_ils).toFixed(2)} per ${escapeHtml(p.unit_measure_type)}</strong> • Size / Net Weight: <strong>${escapeHtml(p.size_label || p.net_weight_grams + 'g')}</strong>
+              <div style="font-size:14px;color:var(--dm-muted);margin-top:4px;">
+                Includes 18% VAT (<span lang="he" dir="rtl">כולל מע״מ</span>) · ₪${Number(p.price_per_100_ils).toFixed(2)} per ${escapeHtml(p.unit_measure_type)} · Net: ${escapeHtml(p.size_label || p.net_weight_grams + 'g')}
               </div>
             </div>
 
-            <p style="font-size:0.92rem;color:var(--text-primary);margin-bottom:14px;">${escapeHtml(getProductLocalizedDesc(p))}</p>
+            <p style="font-size:16px;color:var(--dm-text-2);margin-bottom:16px;">${escapeHtml(getProductLocalizedDesc(p))}</p>
 
-            <!-- Variant Selector -->
             <div class="form-field">
-              <label for="pdpVariantSelect">Select Pack Size / Format:</label>
+              <label for="pdpVariantSelect">Pack size</label>
               <select
                 id="pdpVariantSelect"
                 onchange="const mult = this.options[this.selectedIndex].dataset.mult; document.getElementById('pdpDynamicPrice').textContent = '₪' + (${Number(p.price_ils)} * Number(mult)).toFixed(2);"
@@ -2366,80 +2712,77 @@ const app = {
                 ${(p.variants || [])
                   .map(
                     (v) =>
-                      `<option value="${escapeHtml(v.code)}" data-mult="${v.multiplier}">${escapeHtml(v.label)} - ₪${(p.price_ils * v.multiplier).toFixed(2)}</option>`
+                      `<option value="${escapeHtml(v.code)}" data-mult="${v.multiplier}">${escapeHtml(v.label)} — ₪${(p.price_ils * v.multiplier).toFixed(2)}</option>`
                   )
                   .join('')}
               </select>
             </div>
 
-            <!-- Quantity, Add to Basket & Wishlist -->
-            <div style="display:flex;gap:10px;align-items:center;margin-top:16px;">
-              <input type="number" id="pdpQtyInput" value="1" min="1" max="${p.stock_quantity}" style="width:76px;padding:11px;border:1.5px solid var(--brand-forest);border-radius:8px;font-weight:700;text-align:center;" />
+            <div style="display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap;">
+              <input type="number" id="pdpQtyInput" value="1" min="1" max="${p.stock_quantity}" aria-label="Quantity" style="width:76px;min-height:48px;padding:10px;border:1.5px solid var(--dm-line-strong);border-radius:999px;font-weight:700;text-align:center;" />
               <button
                 type="button"
-                class="btn-primary"
-                style="flex:1;padding:13px;"
+                class="btn-primary btn-cta-lg"
+                style="flex:1;"
                 onclick="app.addToCart('${escapeHtml(p.id)}', document.getElementById('pdpVariantSelect').value, document.getElementById('pdpQtyInput').value)"
               >
-                🛒 Add to Cart
+                Add to Basket
               </button>
               <button
                 type="button"
-                class="btn-outline"
-                style="padding:12px 14px;"
+                class="pill-control"
+                style="min-height:48px;"
                 onclick="app.toggleWishlist('${escapeHtml(p.id)}'); app.openPdpModal('${escapeHtml(p.slug)}');"
               >
-                ${isWished ? '♥ Saved' : '♡ Wishlist'}
+                ${isWished ? 'Saved' : 'Save'}
               </button>
             </div>
 
-            <!-- Ingredients, Allergens & Storage -->
-            <div style="margin-top:18px;font-size:0.83rem;border-top:1px solid var(--border);padding-top:12px;">
-              <div style="margin-bottom:6px;"><strong>Ingredients:</strong> ${escapeHtml(p.ingredients || 'See package label.')}</div>
+            <div style="margin-top:18px;font-size:14px;color:var(--dm-text-2);border-top:1px solid var(--dm-line);padding-top:12px;line-height:1.6;">
+              <div><strong>Ingredients:</strong> ${escapeHtml(p.ingredients || 'See package label.')}</div>
               ${
                 p.allergens?.length > 0
-                  ? `<div style="margin-bottom:6px;color:var(--brand-red);"><strong>⚠️ Allergen Information:</strong> ${escapeHtml(p.allergens.join(', '))}</div>`
-                  : `<div style="margin-bottom:6px;"><strong>Allergen Information:</strong> None declared (see package label).</div>`
+                  ? `<div style="color:var(--dm-chili);"><strong>Allergens:</strong> ${escapeHtml(p.allergens.join(', '))}</div>`
+                  : `<div><strong>Allergens:</strong> None declared (see package label).</div>`
               }
-              <div style="margin-bottom:6px;"><strong>Importer (Israel):</strong> ${escapeHtml(p.importer_israel)} | <strong>Best Before:</strong> ${escapeHtml(p.expiry_date)}</div>
-              <div><strong>Storage Instructions:</strong> ${escapeHtml(p.storage_instructions)}</div>
+              <div><strong>Importer (Israel):</strong> ${escapeHtml(p.importer_israel)} · <strong>Best Before:</strong> ${escapeHtml(p.expiry_date)}</div>
+              <div><strong>Storage:</strong> ${escapeHtml(p.storage_instructions)}</div>
             </div>
           </div>
         </div>
 
-        <!-- Nutrition Facts & Verified Customer Reviews Row -->
-        <div class="form-grid-2" style="margin-top:24px;border-top:2px solid var(--border);padding-top:20px;">
+        <div class="form-grid-2" style="margin-top:24px;border-top:1px solid var(--dm-line);padding-top:20px;">
           <div>
-            <h4>Nutritional Values (סימון תזונתי ב-100 גרם/מ״ל)</h4>
+            <h4>Nutrition per 100g / 100ml (<span lang="he" dir="rtl">סימון תזונתי</span>)</h4>
             ${
               nutritionEntries.length > 0
                 ? `<table class="data-table">
                     <tbody>
                       ${nutritionEntries
                         .map(
-                          ([k, v]) =>
-                            `<tr><td><strong>${escapeHtml(k.replace(/_/g, ' ').toUpperCase())}</strong></td><td>${escapeHtml(v)}</td></tr>`
+                          ([kName, vVal]) =>
+                            `<tr><td><strong>${escapeHtml(kName.replace(/_/g, ' ').toUpperCase())}</strong></td><td>${escapeHtml(vVal)}</td></tr>`
                         )
                         .join('')}
                     </tbody>
                   </table>`
-                : `<p style="font-size:0.85rem;color:var(--text-secondary);">Full nutritional table printed on packaging.</p>`
+                : `<p style="font-size:14px;color:var(--dm-muted);">Full nutritional table printed on packaging.</p>`
             }
           </div>
 
           <div>
-            <h4>Customer Reviews (${reviews.length} Verified)</h4>
+            <h4>Customer Reviews (${reviews.length})</h4>
             <div style="max-height:200px;overflow-y:auto;margin-bottom:12px;">
               ${
                 reviews.length === 0
-                  ? `<p style="font-size:0.84rem;color:var(--text-secondary);">No customer reviews submitted yet. Only genuine customer reviews are published on DINU MARKET.</p>`
+                  ? `<p style="font-size:14px;color:var(--dm-muted);">No customer reviews yet. Only verified shopper reviews appear here.</p>`
                   : reviews
                       .map(
                         (r) => `
-                        <div style="background:var(--surface);padding:10px;border-radius:6px;margin-bottom:8px;font-size:0.84rem;">
+                        <div style="background:var(--dm-cream);padding:12px;border-radius:14px;margin-bottom:8px;font-size:14px;">
                           <div style="display:flex;justify-content:space-between;">
-                            <strong>${escapeHtml(r.author_name)} ${r.is_verified_purchase ? '<span style="color:var(--brand-green-mid);font-size:0.74rem;">✔ Verified Buyer</span>' : ''}</strong>
-                            <span style="color:#D97706;">${'★'.repeat(r.rating)}</span>
+                            <strong>${escapeHtml(r.author_name)} ${r.is_verified_purchase ? '<span style="color:var(--dm-green);font-size:13px;">(Verified)</span>' : ''}</strong>
+                            <span>${escapeHtml(r.rating)}/5</span>
                           </div>
                           <div style="font-weight:700;margin:3px 0;">${escapeHtml(r.title)}</div>
                           <div>${escapeHtml(r.body)}</div>
@@ -2450,36 +2793,37 @@ const app = {
               }
             </div>
 
-            <form onsubmit="app.submitProductReview(event, '${escapeHtml(p.slug)}')" style="background:var(--surface);padding:12px;border-radius:8px;">
-              <div style="font-weight:700;font-size:0.84rem;margin-bottom:8px;">Submit a Genuine Customer Review</div>
+            <form onsubmit="app.submitProductReview(event, '${escapeHtml(p.slug)}')" style="background:var(--dm-cream);padding:14px;border-radius:18px;">
+              <div style="font-weight:700;font-size:14px;margin-bottom:8px;">Write a review</div>
               <div style="display:flex;gap:8px;margin-bottom:8px;">
-                <select id="reviewRatingInput" style="padding:6px;border-radius:4px;border:1px solid var(--border);">
-                  <option value="5">★★★★★ (5/5)</option>
-                  <option value="4">★★★★☆ (4/5)</option>
-                  <option value="3">★★★☆☆ (3/5)</option>
+                <select id="reviewRatingInput" style="min-height:44px;padding:6px 12px;border-radius:999px;border:1.5px solid var(--dm-line-strong);background:var(--dm-white);">
+                  <option value="5">5 / 5</option>
+                  <option value="4">4 / 5</option>
+                  <option value="3">3 / 5</option>
                 </select>
-                <input type="text" id="reviewTitleInput" placeholder="Review headline..." required style="flex:1;padding:6px 10px;border:1px solid var(--border);border-radius:4px;" />
+                <input type="text" id="reviewTitleInput" placeholder="Short headline..." required style="flex:1;min-height:44px;padding:6px 14px;border:1.5px solid var(--dm-line-strong);border-radius:999px;background:var(--dm-white);" />
               </div>
-              <textarea id="reviewBodyInput" rows="2" placeholder="Share your genuine experience with this product..." required style="width:100%;padding:8px;border:1px solid var(--border);border-radius:4px;margin-bottom:8px;"></textarea>
-              <button type="submit" class="btn-outline" style="padding:6px 14px;font-size:0.8rem;">Submit Review</button>
+              <textarea id="reviewBodyInput" rows="2" placeholder="How did you use this in your kitchen?" required style="width:100%;padding:10px 14px;border:1.5px solid var(--dm-line-strong);border-radius:16px;margin-bottom:8px;background:var(--dm-white);"></textarea>
+              <button type="submit" class="pill-control">Post review</button>
             </form>
           </div>
         </div>
 
-        <!-- Related Products -->
         ${
           related.length > 0
             ? `
-              <div style="margin-top:22px;border-top:1px solid var(--border);padding-top:16px;">
-                <h4>Related Products</h4>
-                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+              <div style="margin-top:22px;border-top:1px solid var(--dm-line);padding-top:16px;">
+                <h4>More from this kitchen</h4>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;">
                   ${related
                     .map(
                       (rp) => `
-                      <div style="border:1px solid var(--border);border-radius:8px;padding:10px;cursor:pointer;background:#FFF;" onclick="app.openPdpModal('${escapeHtml(rp.slug)}')">
-                        <img src="${escapeHtml(rp.primary_image_url)}" alt="${escapeHtml(rp.title)}" style="width:100%;height:110px;object-fit:contain;border-radius:6px;margin-bottom:6px;" />
-                        <div style="font-weight:700;font-size:0.8rem;line-height:1.25;margin-bottom:4px;">${escapeHtml(rp.title)}</div>
-                        <div style="font-family:var(--font-heading);font-weight:800;color:var(--brand-forest);font-size:0.9rem;">₪${Number(rp.price_ils).toFixed(2)}</div>
+                      <div style="border:1px solid var(--dm-line);border-radius:16px;padding:12px;cursor:pointer;background:var(--dm-white);" onclick="app.openPdpModal('${escapeHtml(rp.slug)}')">
+                        <div style="height:110px;background:var(--dm-well);border-radius:12px;padding:8px;display:flex;align-items:center;justify-content:center;margin-bottom:8px;">
+                          <img src="${escapeHtml(rp.primary_image_url)}" alt="${escapeHtml(rp.title)}" style="max-width:100%;max-height:100%;object-fit:contain;" />
+                        </div>
+                        <div style="font-weight:600;font-size:14px;line-height:1.3;margin-bottom:4px;">${escapeHtml(rp.title)}</div>
+                        <div style="font-family:var(--dm-font-display);font-weight:800;color:var(--dm-ink);font-size:15px;">₪${Number(rp.price_ils).toFixed(2)}</div>
                       </div>
                     `
                     )
@@ -2512,7 +2856,7 @@ const app = {
         method: 'POST',
         body: JSON.stringify({ rating, title, body })
       });
-      showToast('Thank you! Your verified review has been recorded.');
+      showToast('Thank you! Your review has been recorded.');
       this.openPdpModal(slug);
       this.loadProducts();
     } catch (err) {
@@ -2521,7 +2865,7 @@ const app = {
   },
 
   // =========================================================================
-  // SECTION 8: PERSISTENT SHOPPING BASKET OPERATIONS
+  // PERSISTENT SHOPPING BASKET OPERATIONS
   // =========================================================================
   async addToCart(productId, variantCode = 'single', quantity = 1) {
     try {
@@ -2535,7 +2879,7 @@ const app = {
       this.renderHomepageSections();
       this.renderProductGrid();
       if (state.activeRegionPage) this.renderRegionalPageProducts();
-      showToast(res.message || 'Added to basket!');
+      showToast(res.message || 'Added to basket');
     } catch (err) {
       showToast(err.message);
     }
@@ -2605,19 +2949,33 @@ const app = {
     if (!itemsEl) return;
 
     const cart = state.cart;
+    const { freeThreshold } = getSupportDetails();
+    const subtotal = Number(cart.discounted_subtotal_ils ?? cart.subtotal_ils ?? 0);
+    const remainingForFree = Math.max(0, Number((freeThreshold - subtotal).toFixed(2)));
+
     if (barEl) {
-      barEl.innerHTML = `<div style="color:var(--brand-forest);font-weight:700;">Domestic Delivery Across Israel Only • All Prices Include 18% VAT (₪ ILS)</div>`;
+      barEl.innerHTML = `
+        <div>Domestic Delivery Across Israel Only · All Prices Include 18% VAT (₪ ILS)</div>
+        <div style="font-size:13px;color:var(--dm-green);margin-top:3px;">
+          ${
+            freeThreshold > 0
+              ? remainingForFree <= 0 && (cart.item_count || 0) > 0
+                ? `Unlocked free standard delivery across Gush Dan (over ₪${freeThreshold})`
+                : `Add ₪${remainingForFree.toFixed(2)} more for free delivery over ₪${freeThreshold}`
+              : ''
+          }
+        </div>
+      `;
     }
 
     if (!cart.items || cart.items.length === 0) {
       itemsEl.innerHTML = `
         <div style="text-align:center;padding:48px 16px;">
-          <div style="font-size:3rem;margin-bottom:10px;">🛒</div>
-          <h4>Your shopping basket is empty</h4>
-          <p style="font-size:0.86rem;color:var(--text-secondary);">
-            Add authentic groceries from India, Thailand, Sri Lanka, and the Philippines. Your basket is automatically saved across visits!
+          <h4 style="font-size:1.25rem;margin-bottom:8px;">Your basket is empty</h4>
+          <p style="font-size:15px;color:var(--dm-text-2);margin-bottom:20px;">
+            Mix groceries from the Philippines, Thailand, India and Sri Lanka in one basket — delivered tomorrow across Israel.
           </p>
-          <button type="button" class="btn-primary" onclick="app.toggleCartDrawer(false)">Continue Shopping</button>
+          <button type="button" class="btn-primary" onclick="app.toggleCartDrawer(false)">Continue shopping</button>
         </div>
       `;
       footerEl.innerHTML = '';
@@ -2630,17 +2988,17 @@ const app = {
         <div class="cart-line-item">
           <img src="${escapeHtml(item.primary_image_url)}" alt="${escapeHtml(item.title)}" />
           <div>
-            <div style="font-weight:700;font-size:0.88rem;line-height:1.25;">${escapeHtml(item.title)}</div>
-            <div style="font-size:0.76rem;color:var(--text-secondary);margin:2px 0 6px;">${escapeHtml(item.variant_label)} • ₪${Number(item.unit_price_ils).toFixed(2)} each</div>
-            <div style="display:inline-flex;align-items:center;border:1px solid var(--border);border-radius:4px;">
-              <button type="button" style="border:none;background:var(--surface);padding:2px 9px;cursor:pointer;font-weight:700;" onclick="app.updateCartItemQuantity('${escapeHtml(item.cart_item_id)}', ${item.quantity - 1})">−</button>
-              <span style="padding:2px 10px;font-size:0.84rem;font-weight:700;">${item.quantity}</span>
-              <button type="button" style="border:none;background:var(--surface);padding:2px 9px;cursor:pointer;font-weight:700;" onclick="app.updateCartItemQuantity('${escapeHtml(item.cart_item_id)}', ${item.quantity + 1})">+</button>
+            <div style="font-weight:600;font-size:15px;line-height:1.3;">${escapeHtml(item.title)}</div>
+            <div style="font-size:14px;color:var(--dm-muted);margin:2px 0 8px;">${escapeHtml(item.variant_label)} · ₪${Number(item.unit_price_ils).toFixed(2)}</div>
+            <div class="inline-qty-stepper" style="height:38px;">
+              <button type="button" style="height:38px;width:34px;" onclick="app.updateCartItemQuantity('${escapeHtml(item.cart_item_id)}', ${item.quantity - 1})" aria-label="Decrease quantity">−</button>
+              <span>${item.quantity}</span>
+              <button type="button" style="height:38px;width:34px;" onclick="app.updateCartItemQuantity('${escapeHtml(item.cart_item_id)}', ${item.quantity + 1})" aria-label="Increase quantity">+</button>
             </div>
           </div>
           <div style="text-align:right;">
-            <div style="font-family:var(--font-heading);font-weight:800;color:var(--brand-forest);">₪${Number(item.line_total_ils).toFixed(2)}</div>
-            <button type="button" style="background:none;border:none;color:var(--brand-red);font-size:0.75rem;cursor:pointer;margin-top:8px;" onclick="app.updateCartItemQuantity('${escapeHtml(item.cart_item_id)}', 0)">Remove</button>
+            <div style="font-family:var(--dm-font-display);font-weight:800;color:var(--dm-ink);">₪${Number(item.line_total_ils).toFixed(2)}</div>
+            <button type="button" style="background:none;border:none;color:var(--dm-chili);font-size:14px;font-weight:600;cursor:pointer;margin-top:8px;min-height:36px;" onclick="app.updateCartItemQuantity('${escapeHtml(item.cart_item_id)}', 0)">Remove</button>
           </div>
         </div>
       `
@@ -2652,41 +3010,41 @@ const app = {
         <input
           type="text"
           id="cartPromoInput"
-          placeholder="Discount / Promo code (WELCOME10, DINU25)"
+          placeholder="Promo code (WELCOME10, DINU25)"
           value="${escapeHtml(cart.discount_code || '')}"
-          style="flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:0.84rem;"
+          style="flex:1;min-height:44px;padding:8px 14px;border:1.5px solid var(--dm-line-strong);border-radius:999px;font-size:14px;background:var(--dm-white);"
         />
-        <button type="submit" class="btn-outline" style="padding:8px 14px;font-size:0.82rem;">Apply</button>
+        <button type="submit" class="pill-control">Apply</button>
       </form>
 
-      <div style="font-size:0.86rem;display:flex;flex-direction:column;gap:5px;margin-bottom:14px;">
+      <div style="font-size:15px;display:flex;flex-direction:column;gap:6px;margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;">
           <span>Subtotal (${cart.item_count} items):</span>
           <strong>₪${Number(cart.subtotal_ils).toFixed(2)}</strong>
         </div>
         ${
           cart.discount_amount_ils > 0
-            ? `<div style="display:flex;justify-content:space-between;color:var(--brand-red);">
+            ? `<div style="display:flex;justify-content:space-between;color:var(--dm-chili);">
                  <span>Discount (${escapeHtml(cart.discount_code)}):</span>
                  <strong>−₪${Number(cart.discount_amount_ils).toFixed(2)}</strong>
                </div>`
             : ''
         }
         <div style="display:flex;justify-content:space-between;">
-          <span>Est. Delivery (${escapeHtml(cart.zone_name || 'Israel')}):</span>
-          <strong>${cart.shipping_cost_ils === 0 ? '<span style="color:var(--brand-green-mid);">FREE (₪0.00)</span>' : '₪' + Number(cart.shipping_cost_ils).toFixed(2)}</strong>
+          <span>Delivery (${escapeHtml(cart.zone_name || 'Israel')}):</span>
+          <strong>${cart.shipping_cost_ils === 0 ? '<span style="color:var(--dm-green);">FREE (₪0.00)</span>' : '₪' + Number(cart.shipping_cost_ils).toFixed(2)}</strong>
         </div>
-        <div style="display:flex;justify-content:space-between;font-size:1.08rem;border-top:1px solid var(--border);padding-top:8px;margin-top:4px;color:var(--brand-forest);">
-          <strong>Estimated Total (incl. 18% VAT):</strong>
-          <strong style="font-family:var(--font-heading);">₪${Number(cart.total_ils).toFixed(2)}</strong>
+        <div style="display:flex;justify-content:space-between;font-size:1.1rem;border-top:1px solid var(--dm-line);padding-top:10px;margin-top:4px;color:var(--dm-ink);">
+          <strong>Total (incl. 18% VAT):</strong>
+          <strong style="font-family:var(--dm-font-display);">₪${Number(cart.total_ils).toFixed(2)}</strong>
         </div>
       </div>
 
       <div style="display:flex;flex-direction:column;gap:8px;">
-        <button type="button" class="btn-primary" style="width:100%;padding:13px;font-size:0.95rem;" onclick="app.toggleCartDrawer(false); app.switchView('checkout');">
-          🔒 Proceed to Checkout →
+        <button type="button" class="btn-primary btn-cta-lg" style="width:100%;" onclick="app.toggleCartDrawer(false); app.switchView('checkout');">
+          Proceed to Checkout →
         </button>
-        <button type="button" class="btn-outline" style="width:100%;padding:9px;font-size:0.84rem;" onclick="app.toggleCartDrawer(false)">
+        <button type="button" class="pill-control" style="width:100%;" onclick="app.toggleCartDrawer(false)">
           Continue Shopping
         </button>
       </div>
@@ -2694,18 +3052,54 @@ const app = {
   },
 
   // =========================================================================
-  // VIEW ROUTING (Storefront, Regional Page, Checkout, Account Portal, Admin Dashboard)
+  // VIEW ROUTING (/, /shop, /ph, /th, /in, /lk, Checkout, Account, Admin)
   // =========================================================================
   navigateToHome() {
     state.activeRegionPage = null;
+    const savedCookieLang = getCookie('dinu_lang');
+    const targetLang = savedCookieLang && I18N_DICTIONARY[savedCookieLang] ? savedCookieLang : 'en';
+    if (state.lang !== targetLang) {
+      this.setLanguage(targetLang, false);
+    }
     this.switchView('storefront', true);
   },
 
-  switchView(viewName, scrollToTop = true) {
-    ['storefront', 'region', 'checkout', 'account', 'admin'].forEach((v) => {
+  switchView(viewName, scrollToTop = true, pushUrl = true) {
+    state.currentView = viewName;
+    ['storefront', 'shop', 'region', 'checkout', 'account', 'admin'].forEach((v) => {
       const el = document.getElementById(`view-${v}`);
       if (el) el.style.display = v === viewName ? 'block' : 'none';
     });
+
+    // Step 5 Header #3: On kitchen pages, swap the search bar for the four kitchen pills
+    const searchSlot = document.getElementById('headerSearchSlot');
+    const pillsSlot = document.getElementById('headerKitchenPillsSlot');
+    if (viewName === 'region') {
+      if (searchSlot) searchSlot.style.display = 'none';
+      if (pillsSlot) {
+        pillsSlot.style.display = 'flex';
+        this.renderHeaderKitchenPills();
+      }
+    } else {
+      if (searchSlot) searchSlot.style.display = 'block';
+      if (pillsSlot) pillsSlot.style.display = 'none';
+    }
+
+    if (pushUrl && window.location.protocol !== 'file:') {
+      let targetPath = '/';
+      if (viewName === 'shop') targetPath = '/shop';
+      else if (viewName === 'region' && state.activeRegionPage) {
+        targetPath = KITCHEN_SLUG_TO_PATH[state.activeRegionPage] || '/ph';
+      }
+      if (['storefront', 'shop', 'region'].includes(viewName) && window.location.pathname !== targetPath) {
+        try {
+          window.history.pushState({ view: viewName, region: state.activeRegionPage }, '', targetPath);
+        } catch {}
+      }
+    }
+
+    this.syncWhatsAppLinks();
+    this.syncHeaderHeight();
 
     if (viewName === 'checkout') this.renderCheckoutView();
     if (viewName === 'account') this.loadAndRenderAccountView();
@@ -2724,26 +3118,26 @@ const app = {
   },
 
   // =========================================================================
-  // AUTHENTICATION MODAL & DEMO QUICK LOGINS (With Uncropped Master Logo)
+  // AUTHENTICATION MODAL & DEMO QUICK LOGINS
   // =========================================================================
   openAuthModal(mode = 'login') {
     const bd = document.getElementById('genericModalBackdrop');
     const content = document.getElementById('genericModalContent');
 
     content.innerHTML = `
-      <button type="button" class="modal-close-btn" onclick="app.closeGenericModal()">✕</button>
+      <button type="button" class="modal-close-btn" onclick="app.closeGenericModal()" aria-label="Close modal">×</button>
       <div style="text-align:center;margin-bottom:16px;">
-        <img src="images/brand/dinu-logo.png" alt="DINU MARKET" style="height:68px;width:auto;margin:0 auto;object-fit:contain;" />
-        <h3 style="margin:8px 0 4px;">${mode === 'register' ? 'Create Your DINU MARKET Account' : 'Sign In to DINU MARKET'}</h3>
-        <p style="font-size:0.84rem;color:var(--text-secondary);margin:0;">
-          🔒 Any items currently in your shopping basket will be automatically merged with your account!
+        <img src="images/brand/dinu-logo.png" alt="Dinu Market" style="height:64px;width:auto;margin:0 auto;object-fit:contain;" />
+        <h3 style="margin:8px 0 4px;">${mode === 'register' ? 'Create Your Dinu Market Account' : 'Sign In to Dinu Market'}</h3>
+        <p style="font-size:14px;color:var(--dm-text-2);margin:0;">
+          Any items currently in your basket are automatically kept when you sign in.
         </p>
       </div>
 
       <div style="display:flex;gap:8px;margin-bottom:16px;">
-        <button type="button" class="${mode === 'login' ? 'btn-primary' : 'btn-outline'}" style="flex:1;padding:8px;font-size:0.82rem;" onclick="app.openAuthModal('login')">Sign In</button>
-        <button type="button" class="${mode === 'register' ? 'btn-primary' : 'btn-outline'}" style="flex:1;padding:8px;font-size:0.82rem;" onclick="app.openAuthModal('register')">Register</button>
-        <button type="button" class="${mode === 'reset' ? 'btn-primary' : 'btn-outline'}" style="flex:1;padding:8px;font-size:0.82rem;" onclick="app.openAuthModal('reset')">Reset Password</button>
+        <button type="button" class="${mode === 'login' ? 'btn-primary' : 'pill-control'}" style="flex:1;" onclick="app.openAuthModal('login')">Sign In</button>
+        <button type="button" class="${mode === 'register' ? 'btn-primary' : 'pill-control'}" style="flex:1;" onclick="app.openAuthModal('register')">Register</button>
+        <button type="button" class="${mode === 'reset' ? 'btn-primary' : 'pill-control'}" style="flex:1;" onclick="app.openAuthModal('reset')">Reset Password</button>
       </div>
 
       ${
@@ -2758,11 +3152,11 @@ const app = {
                 <label>Password</label>
                 <input type="password" id="authPasswordInput" required placeholder="••••••••" value="Customer2026!" />
               </div>
-              <button type="submit" class="btn-primary" style="width:100%;padding:12px;">Sign In &amp; Sync Basket</button>
+              <button type="submit" class="btn-primary btn-cta-lg" style="width:100%;">Sign In &amp; Sync Basket</button>
             </form>
-            <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:0.82rem;">
-              <button type="button" style="background:none;border:none;color:var(--brand-forest);font-weight:700;cursor:pointer;" onclick="app.quickDemoLogin('customer')">⚡ 1-Click Demo Customer</button>
-              <button type="button" style="background:none;border:none;color:var(--brand-red);font-weight:700;cursor:pointer;" onclick="app.quickDemoLogin('admin')">🛡️ 1-Click Demo Admin</button>
+            <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--dm-line);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+              <button type="button" class="pill-control" onclick="app.quickDemoLogin('customer')">Demo Customer</button>
+              <button type="button" class="pill-control" onclick="app.quickDemoLogin('admin')">Admin Dashboard</button>
             </div>
           `
           : mode === 'register'
@@ -2971,24 +3365,24 @@ const app = {
       const ord = state.checkout.last_confirmed_order;
       container.innerHTML = `
         <div class="checkout-steps-bar">
-          ${steps.map((s) => `<div class="checkout-step-chip done">✔ ${escapeHtml(s)}</div>`).join('')}
+          ${steps.map((s) => `<div class="checkout-step-chip done">${escapeHtml(s)}</div>`).join('')}
         </div>
 
         <div class="card-panel" style="border-top:5px solid var(--brand-green);max-width:860px;margin:0 auto;">
           <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-bottom:2px solid var(--border);padding-bottom:16px;margin-bottom:18px;">
             <div>
               <span class="badge-authentic" style="font-size:0.8rem;">ORDER CONFIRMED • STATUS: ${escapeHtml(ord.status || 'Payment Received')}</span>
-              <h2 style="margin:6px 0 2px;">🎉 Thank You! Order ${escapeHtml(ord.order_number)} is Confirmed</h2>
+              <h2 style="margin:6px 0 2px;">Thank You! Order ${escapeHtml(ord.order_number)} is Confirmed</h2>
               <div style="font-size:0.88rem;color:var(--text-secondary);">
                 Official Israeli Tax Invoice (חשבונית מס קבלה): <strong>${escapeHtml(ord.tax_invoice_number)}</strong> • Transaction Ref: <strong>${escapeHtml(ord.transaction_ref)}</strong>
               </div>
             </div>
-            <button type="button" class="btn-outline" onclick="window.print()">🖨️ Print Tax Invoice / Receipt</button>
+            <button type="button" class="btn-outline" onclick="window.print()">Print Tax Invoice / Receipt</button>
           </div>
 
           <div class="form-grid-2" style="margin-bottom:18px;">
             <div style="background:var(--surface);padding:14px;border-radius:8px;">
-              <h4>📦 Domestic Israeli Delivery &amp; Live Tracking</h4>
+              <h4>Domestic Israeli Delivery &amp; Live Tracking</h4>
               <div style="font-size:0.86rem;">
                 <strong>Recipient:</strong> ${escapeHtml(ord.shipping_address.recipient_name)} (${escapeHtml(ord.shipping_address.phone)})<br/>
                 <strong>Address:</strong> ${escapeHtml(ord.shipping_address.street_address)} ${escapeHtml(ord.shipping_address.building_number || '')}, ${escapeHtml(ord.shipping_address.apartment_floor || '')}, ${escapeHtml(ord.shipping_address.city)} ${escapeHtml(ord.shipping_address.postal_code || '')}, Israel (${escapeHtml(ord.zone_code)})<br/>
@@ -2997,7 +3391,7 @@ const app = {
               </div>
             </div>
             <div style="background:var(--surface);padding:14px;border-radius:8px;">
-              <h4>📧 Confirmation Email &amp; Payment Receipt</h4>
+              <h4>Confirmation Email &amp; Payment Receipt</h4>
               <div style="font-size:0.86rem;">
                 <strong>Sent To:</strong> ${escapeHtml(ord.customer_email)}<br/>
                 <strong>Payment Method:</strong> ${escapeHtml(ord.payment_method.toUpperCase())} ${ord.card_last4 ? '(•••• ' + escapeHtml(ord.card_last4) + ')' : ''}<br/>
@@ -3032,7 +3426,7 @@ const app = {
             ${
               state.user
                 ? `<button type="button" class="btn-outline" onclick="state.checkout.last_confirmed_order=null; app.switchView('account');">
-                     📦 View Order History &amp; Tracking
+                     View Order History &amp; Tracking
                    </button>`
                 : ''
             }
@@ -3049,7 +3443,7 @@ const app = {
 
     container.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-        <h2 style="margin:0;">🔒 DINU MARKET Domestic Israel Checkout</h2>
+        <h2 style="margin:0;">DINU MARKET Domestic Israel Checkout</h2>
         <button type="button" class="btn-outline" onclick="app.switchView('storefront')">← Back to Storefront</button>
       </div>
 
@@ -3066,20 +3460,20 @@ const app = {
               state.user
                 ? `<div style="display:flex;justify-content:space-between;align-items:center;background:#E8F6EE;padding:12px 16px;border-radius:8px;border:1px solid var(--brand-green);">
                      <div>
-                       <strong>✔ Signed in as ${escapeHtml(state.user.full_name)}</strong> (${escapeHtml(state.user.email)})
+                       <strong>Signed in as ${escapeHtml(state.user.full_name)}</strong> (${escapeHtml(state.user.email)})
                        <div style="font-size:0.8rem;color:var(--brand-forest);">Your order will be saved to your account history with saved addresses.</div>
                      </div>
                      <button type="button" class="btn-outline" style="padding:6px 12px;font-size:0.78rem;" onclick="app.logout()">Switch / Guest Mode</button>
                    </div>`
                 : `<div style="background:var(--surface);border:1.5px solid var(--brand-gold);padding:14px 16px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
                      <div>
-                       <strong>✔ Guest Checkout Enabled</strong>
+                       <strong>Guest Checkout Enabled</strong>
                        <div style="font-size:0.82rem;color:var(--text-secondary);">You can complete your purchase below as a Guest, or sign in to use saved addresses and order history.</div>
                      </div>
                      <div style="display:flex;gap:8px;flex-wrap:wrap;">
                        <button type="button" class="btn-primary" style="padding:7px 14px;font-size:0.82rem;" onclick="app.openAuthModal('login')">Sign In</button>
                        <button type="button" class="btn-outline" style="padding:7px 14px;font-size:0.82rem;" onclick="app.openAuthModal('register')">Register</button>
-                       <button type="button" class="btn-secondary" style="padding:7px 14px;font-size:0.82rem;" onclick="app.quickDemoLogin('customer')">⚡ 1-Click Demo Customer</button>
+                       <button type="button" class="btn-secondary" style="padding:7px 14px;font-size:0.82rem;" onclick="app.quickDemoLogin('customer')">Demo Customer</button>
                      </div>
                    </div>`
             }
@@ -3090,7 +3484,7 @@ const app = {
             <div class="card-panel">
               <h3>Step 2: Contact Details &amp; Domestic Delivery Address (Israel Only)</h3>
               <div style="background:#FFF8EB;border:1px solid var(--brand-gold);padding:10px 14px;border-radius:6px;font-size:0.83rem;margin-bottom:14px;">
-                🇮🇱 <strong>Delivery Geographic Scope:</strong> DINU MARKET delivers exclusively within <strong>Israel</strong>. International shipping addresses outside Israel are not accepted.
+                <strong>Delivery Geographic Scope:</strong> DINU MARKET delivers exclusively within <strong>Israel</strong>. International shipping addresses outside Israel are not accepted.
               </div>
 
               ${
@@ -3102,7 +3496,7 @@ const app = {
                            .map(
                              (a, i) => `
                              <button type="button" class="btn-outline" style="padding:6px 12px;font-size:0.8rem;" onclick="app.SelectSavedAddressInCheckout(${i})">
-                               📍 ${escapeHtml(a.label)}: ${escapeHtml(a.street_address)}, ${escapeHtml(a.city)}
+                               ${escapeHtml(a.label)}: ${escapeHtml(a.street_address)}, ${escapeHtml(a.city)}
                              </button>
                            `
                            )
@@ -3138,8 +3532,8 @@ const app = {
                 <div class="form-field">
                   <label>Country (מדינה) * — Restricted to Israel</label>
                   <select onchange="state.checkout.country=this.value">
-                    <option value="Israel" ${state.checkout.country === 'Israel' ? 'selected' : ''}>🇮🇱 Israel (ישראל) — Domestic Delivery Only</option>
-                    <option value="Outside Israel">🌍 Outside Israel (Test Validation Block)</option>
+                    <option value="Israel" ${state.checkout.country === 'Israel' ? 'selected' : ''}>Israel (ישראל) — Domestic Delivery Only</option>
+                    <option value="Outside Israel">Outside Israel (Test Validation Block)</option>
                   </select>
                 </div>
                 <div class="form-field">
@@ -3201,7 +3595,7 @@ const app = {
                 <label style="display:flex;justify-content:space-between;align-items:center;padding:12px;border:2px solid ${state.checkout.delivery_method === 'standard' ? 'var(--brand-forest)' : 'var(--border)'};border-radius:8px;cursor:pointer;background:${state.checkout.delivery_method === 'standard' ? 'var(--surface)' : '#FFF'};">
                   <div>
                     <input type="radio" name="delivMethod" value="standard" ${state.checkout.delivery_method === 'standard' ? 'checked' : ''} onchange="state.checkout.delivery_method='standard'; app.renderCheckoutView();" />
-                    <strong>🚚 Standard Delivery within Israel (HFD / Cheetah Courier)</strong>
+                    <strong>Standard Delivery within Israel (HFD / Cheetah Courier)</strong>
                     <div style="font-size:0.8rem;color:var(--text-secondary);margin-left:22px;">Door-to-door delivery (${escapeHtml(activeZone.estimated_days || '1–3 business days')})</div>
                   </div>
                   <strong style="color:var(--brand-forest);">
@@ -3214,7 +3608,7 @@ const app = {
                     ? `<label style="display:flex;justify-content:space-between;align-items:center;padding:12px;border:2px solid ${state.checkout.delivery_method === 'express' ? 'var(--brand-forest)' : 'var(--border)'};border-radius:8px;cursor:pointer;background:${state.checkout.delivery_method === 'express' ? 'var(--surface)' : '#FFF'};">
                          <div>
                            <input type="radio" name="delivMethod" value="express" ${state.checkout.delivery_method === 'express' ? 'checked' : ''} onchange="state.checkout.delivery_method='express'; app.renderCheckoutView();" />
-                           <strong>⚡ Express Delivery within Israel (Same / Next Business Day)</strong>
+                           <strong>Express Delivery within Israel (Same / Next Business Day)</strong>
                            <div style="font-size:0.8rem;color:var(--text-secondary);margin-left:22px;">Priority dispatch with thermal protection</div>
                          </div>
                          <strong style="color:var(--brand-forest);">₪${Number(activeZone.express_rate_ils).toFixed(2)}</strong>
@@ -3225,7 +3619,7 @@ const app = {
                 <label style="display:flex;justify-content:space-between;align-items:center;padding:12px;border:2px solid ${state.checkout.delivery_method === 'locker' ? 'var(--brand-forest)' : 'var(--border)'};border-radius:8px;cursor:pointer;background:${state.checkout.delivery_method === 'locker' ? 'var(--surface)' : '#FFF'};">
                   <div>
                     <input type="radio" name="delivMethod" value="locker" ${state.checkout.delivery_method === 'locker' ? 'checked' : ''} onchange="state.checkout.delivery_method='locker'; app.renderCheckoutView();" />
-                    <strong>📦 Local Pickup / 24/7 Collection Point (נקודת איסוף)</strong>
+                    <strong>Local Pickup / 24/7 Collection Point (נקודת איסוף)</strong>
                     <div style="font-size:0.8rem;color:var(--text-secondary);margin-left:22px;">Collect at your convenience via SMS code</div>
                   </div>
                   <strong style="color:var(--brand-forest);">
@@ -3239,16 +3633,16 @@ const app = {
             <div class="card-panel">
               <h3>Step 6 &amp; Step 7: Secure Payment Gateway (₪ ILS)</h3>
               <p style="font-size:0.82rem;color:var(--text-secondary);margin-top:0;">
-                🔒 PCI-DSS Level 1 Tokenized Payment Gateway (Tranzila / Cardcom / Meshulam / PayPlus / Stripe / PayPal). Raw card numbers and CVV codes are never stored on DINU MARKET servers.
+                PCI-DSS Level 1 Tokenized Payment Gateway (Tranzila / Cardcom / Meshulam / PayPlus / Stripe / PayPal). Raw card numbers and CVV codes are never stored on DINU MARKET servers.
               </p>
 
               <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;">
                 ${[
-                  { id: 'credit_card', label: '💳 Credit / Debit Card (Visa/MC/Amex/Isracard)' },
-                  { id: 'bit', label: '📲 Bit (ביט ישראל)' },
-                  { id: 'apple_pay', label: '🍎 Apple Pay' },
-                  { id: 'google_pay', label: '🤖 Google Pay' },
-                  { id: 'paypal', label: '🅿️ PayPal Express' }
+                  { id: 'credit_card', label: 'Credit / Debit Card (Visa/MC/Amex/Isracard)' },
+                  { id: 'bit', label: 'Bit (ביט ישראל)' },
+                  { id: 'apple_pay', label: 'Apple Pay' },
+                  { id: 'google_pay', label: 'Google Pay' },
+                  { id: 'paypal', label: 'PayPal Express' }
                 ]
                   .map(
                     (pm) => `
@@ -3284,7 +3678,7 @@ const app = {
                        </div>
                      </div>`
                   : `<div style="background:#E8F6EE;padding:12px;border-radius:8px;font-size:0.86rem;color:var(--brand-forest);">
-                       ✔ Ready to authorize instant tokenized payment in ₪ ILS via <strong>${escapeHtml(state.checkout.payment_method.toUpperCase())}</strong>.
+                       Ready to authorize instant tokenized payment in ₪ ILS via <strong>${escapeHtml(state.checkout.payment_method.toUpperCase())}</strong>.
                      </div>`
               }
 
@@ -3294,7 +3688,7 @@ const app = {
                 style="width:100%;padding:15px;font-size:1.05rem;margin-top:16px;"
                 ${state.cart.item_count === 0 ? 'disabled style="width:100%;padding:15px;background:#999;cursor:not-allowed;margin-top:16px;"' : ''}
               >
-                ✔ Authorize Payment (₪${Number(state.cart.total_ils).toFixed(2)}) &amp; Place Order
+                Authorize Payment (₪${Number(state.cart.total_ils).toFixed(2)}) &amp; Place Order
               </button>
             </div>
           </form>
@@ -3420,7 +3814,7 @@ const app = {
       container.innerHTML = `
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
           <div>
-            <h2 style="margin:0;">👤 My Dinu Market Account: ${escapeHtml(state.user.full_name)}</h2>
+            <h2 style="margin:0;">My Dinu Market Account: ${escapeHtml(state.user.full_name)}</h2>
             <div style="font-size:0.86rem;color:var(--text-secondary);">Email: ${escapeHtml(state.user.email)} • Role: ${escapeHtml(state.user.role)}</div>
           </div>
           <div style="display:flex;gap:10px;">
@@ -3456,14 +3850,14 @@ const app = {
             </div>
 
             <div class="card-panel">
-              <h3>📍 Saved Delivery Addresses (${state.accountData.addresses.length})</h3>
+              <h3>Saved Delivery Addresses (${state.accountData.addresses.length})</h3>
               ${state.accountData.addresses
                 .map(
                   (a) => `
                   <div style="background:var(--surface);padding:12px;border-radius:8px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">
                     <div style="font-size:0.86rem;">
                       <strong>${escapeHtml(a.label)} - ${escapeHtml(a.recipient_name)}</strong> (${escapeHtml(a.zone_code)})<br/>
-                      ${escapeHtml(a.street_address)}, ${escapeHtml(a.apartment_floor || '')}, ${escapeHtml(a.city)} • 📞 ${escapeHtml(a.phone)}
+                      ${escapeHtml(a.street_address)}, ${escapeHtml(a.apartment_floor || '')}, ${escapeHtml(a.city)} • ${escapeHtml(a.phone)}
                     </div>
                     <button type="button" style="background:none;border:none;color:var(--brand-red);cursor:pointer;font-weight:700;" onclick="app.deleteSavedAddress('${escapeHtml(a.id)}')">Delete</button>
                   </div>
@@ -3498,7 +3892,7 @@ const app = {
           <!-- Order History & Live Order Tracking -->
           <div>
             <div class="card-panel">
-              <h3>📦 Order History &amp; Live Tracking (${state.accountData.orders.length})</h3>
+              <h3>Order History &amp; Live Tracking (${state.accountData.orders.length})</h3>
               ${
                 state.accountData.orders.length === 0
                   ? `<p style="color:var(--text-secondary);font-size:0.9rem;">You have not placed any orders yet.</p>`
@@ -3619,10 +4013,10 @@ const app = {
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
           <div>
             <span class="badge-authentic">CENTRALISED SUPABASE POSTGRESQL + RLS ADMIN PORTAL</span>
-            <h2 style="margin:4px 0 0;">🛡️ DINU MARKET Administration &amp; Inventory Dashboard</h2>
+            <h2 style="margin:4px 0 0;">DINU MARKET Administration &amp; Inventory Dashboard</h2>
           </div>
           <div style="display:flex;gap:10px;flex-wrap:wrap;">
-            <button type="button" class="btn-outline" onclick="app.exportProductsCsv()">⬇️ Export Catalogue CSV</button>
+            <button type="button" class="btn-outline" onclick="app.exportProductsCsv()">Export Catalogue CSV</button>
             <button type="button" class="btn-outline" onclick="app.switchView('storefront')">← Return to Storefront</button>
           </div>
         </div>
@@ -3651,7 +4045,7 @@ const app = {
         <div class="card-panel" style="background:#F3F8F4;border:1.5px solid var(--brand-green);margin-bottom:20px;">
           <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
             <div>
-              <strong>🗄️ Centralised Supabase Backend Architecture (24 Tables + Storage + RLS)</strong>
+              <strong>Centralised Supabase Backend Architecture (24 Tables + Storage + RLS)</strong>
               <div style="font-size:0.82rem;color:var(--text-secondary);margin-top:4px;">
                 Schema: <code>supabase/migrations/001_initial_schema.sql</code> • Tables: <code>countries_of_origin</code>, <code>categories</code>, <code>brands</code>, <code>products</code>, <code>product_images</code>, <code>product_variants</code>, <code>inventory_levels</code>, <code>product_pricing</code>, <code>promotional_offers</code>, <code>profiles</code>, <code>customer_addresses</code>, <code>carts</code>, <code>cart_items</code>, <code>shipping_methods</code>, <code>discount_codes</code>, <code>orders</code>, <code>order_items</code>, <code>payments</code>, <code>shipping_records</code>, <code>product_reviews</code>, <code>website_content</code>, <code>newsletter_subscribers</code>, <code>wishlists</code>, <code>admin_audit_logs</code>.<br/>
                 Storage Folders: <code>/products/india/</code>, <code>/products/thailand/</code>, <code>/products/sri-lanka/</code>, <code>/products/philippines/</code>.
@@ -3664,13 +4058,13 @@ const app = {
         <!-- Module 1: Add New Product + Bulk CSV Import + Live Product Price, Promo & Inventory Manager -->
         <div class="card-panel">
           <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
-            <h3 style="margin:0;">📦 Catalogue, Pricing, Promotions &amp; Inventory Management (${data.products.length} Products)</h3>
+            <h3 style="margin:0;">Catalogue, Pricing, Promotions &amp; Inventory Management (${data.products.length} Products)</h3>
             <div style="display:flex;gap:8px;align-items:center;">
               <label class="btn-outline" style="padding:6px 12px;font-size:0.8rem;cursor:pointer;">
-                ⬆️ Bulk CSV Import
+                Bulk CSV Import
                 <input type="file" accept=".csv" style="display:none;" onchange="app.importProductsCsv(event)" />
               </label>
-              <button type="button" class="btn-outline" style="padding:6px 12px;font-size:0.8rem;" onclick="app.exportProductsCsv()">⬇️ Export CSV</button>
+              <button type="button" class="btn-outline" style="padding:6px 12px;font-size:0.8rem;" onclick="app.exportProductsCsv()">Export CSV</button>
             </div>
           </div>
 
@@ -3748,7 +4142,7 @@ const app = {
 
         <!-- Module 2: Orders, 9 Required Order Statuses, Dispatch Tracking & Gateway Refunds -->
         <div class="card-panel">
-          <h3>🚚 Order Management &amp; Fulfilment Workflow (${data.orders.length} Orders — All 9 Statuses Supported)</h3>
+          <h3>Order Management &amp; Fulfilment Workflow (${data.orders.length} Orders — All 9 Statuses Supported)</h3>
           ${
             data.orders.length === 0
               ? `<p style="color:var(--text-secondary);">No customer orders placed yet. Complete a test checkout (Guest or Signed-In) to manage orders here.</p>`
@@ -3792,7 +4186,7 @@ const app = {
         <!-- Module 3: Israeli Delivery Zones & Audit Logs -->
         <div class="form-grid-2">
           <div class="card-panel">
-            <h3>🇮🇱 Configurable Israeli Domestic Delivery Zones</h3>
+            <h3>Configurable Israeli Domestic Delivery Zones</h3>
             <table class="data-table">
               <thead>
                 <tr><th>Zone</th><th>Standard (₪)</th><th>Locker (₪)</th><th>Free Over (₪)</th><th>Save</th></tr>
@@ -3816,7 +4210,7 @@ const app = {
           </div>
 
           <div class="card-panel">
-            <h3>🔐 Immutable Admin Audit Logs &amp; Newsletter Subscribers (${state.newsletterSubscribers.length})</h3>
+            <h3>Immutable Admin Audit Logs &amp; Newsletter Subscribers (${state.newsletterSubscribers.length})</h3>
             <div style="max-height:240px;overflow-y:auto;">
               <table class="data-table">
                 <thead>
@@ -4015,6 +4409,7 @@ const app = {
       showToast(res.message);
       const boot = await apiFetch('/api/bootstrap');
       state.shippingZones = boot.shipping_zones || [];
+      this.syncLiveDeliveryBanner();
       this.loadAndRenderAdminView();
     } catch (err) {
       showToast(err.message);
@@ -4027,45 +4422,49 @@ const app = {
   showPolicyModal(type) {
     const bd = document.getElementById('genericModalBackdrop');
     const content = document.getElementById('genericModalContent');
+    const { email, phoneDisplay, cutoff, freeThreshold } = getSupportDetails();
+    const waUrl = getWhatsAppUrl();
 
     const policies = {
       about: {
         title: 'About DINU MARKET Israel',
         html: `
           <p><strong>DINU MARKET</strong> is an online Asian and Indian specialty grocery store operating in <strong>Israel</strong> and delivering exclusively to addresses within Israel.</p>
-          <p>We source authentic groceries, sweets, aged basmati rice, spices, sauces, and pantry staples from four culinary regions:</p>
+          <p>We source authentic groceries, sweets, aged basmati rice, spices, sauces, and pantry staples from four kitchens:</p>
           <ul>
-            <li><strong>🇮🇳 India:</strong> Haldiram’s Sweets &amp; Savouries, Lal Qilla Majestic Basmati Rice (1 kg &amp; 5 kg), Flavorz Natural Jaggery.</li>
-            <li><strong>🇹🇭 Thailand:</strong> Thai curry pastes, coconut milk, jasmine rice, and authentic Thai condiments.</li>
-            <li><strong>🇱🇰 Sri Lanka:</strong> Ceylon spices, sambols, roasted curry powders, and coconut staples.</li>
-            <li><strong>🇵🇭 Philippines:</strong> Silver Swan Soy Sauce (1000 ml) and classic Filipino pantry essentials.</li>
+            <li><strong>Philippines:</strong> Silver Swan Soy Sauce (1000 ml), sawsawan, pancit noodles, merienda, and classic Pinoy pantry essentials.</li>
+            <li><strong>Thailand:</strong> Thai curry pastes, coconut milk, jasmine rice, and authentic Thai condiments.</li>
+            <li><strong>India:</strong> Haldiram’s Sweets &amp; Savouries, Lal Qilla Supreme Basmati Rice (5 kg), Flavorz Natural Jaggery.</li>
+            <li><strong>Sri Lanka:</strong> Ceylon spices, sambols, roasted curry powders, and coconut staples.</li>
           </ul>
         `
       },
       contact: {
         title: 'Contact DINU MARKET Customer Support (Israel)',
         html: `
-          <p>Our customer service team in Israel is ready to help with product enquiries, domestic courier tracking, and wholesale requests:</p>
+          <p>Message us in Tagalog, Thai, Sinhala, Hindi, Hebrew, or English — a real person answers on WhatsApp, phone, or email:</p>
           <ul>
-            <li><strong>Customer Support Email:</strong> <a href="mailto:Support@DinuMarket.co.il">Support@DinuMarket.co.il</a></li>
+            <li><strong>WhatsApp (Fastest):</strong> <a href="${escapeHtml(waUrl)}" target="_blank" rel="noopener">Chat on WhatsApp (${escapeHtml(phoneDisplay)})</a></li>
+            <li><strong>Phone (Israel):</strong> <a href="tel:+972548124900">${escapeHtml(phoneDisplay)}</a></li>
+            <li><strong>Customer Support Email:</strong> <a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></li>
             <li><strong>Operating Hours:</strong> Sunday – Thursday, 08:30 – 18:00 (Israel Time)</li>
-            <li><strong>Delivery Coverage:</strong> Domestic delivery across all regions of Israel (Gush Dan, Sharon, Jerusalem, Haifa &amp; North, South, Eilat &amp; Arava).</li>
+            <li><strong>Delivery Coverage:</strong> Order by ${escapeHtml(cutoff)} for next-day delivery across Israel (free delivery over ₪${escapeHtml(String(freeThreshold))}).</li>
           </ul>
         `
       },
       faq: {
         title: 'Frequently Asked Questions (FAQ)',
         html: `
-          <p><strong>1. Where does DINU MARKET deliver?</strong><br/>We deliver exclusively to residential and business addresses within <strong>Israel</strong>. International shipping outside Israel is not offered.</p>
+          <p><strong>1. Where does DINU MARKET deliver?</strong><br/>We deliver exclusively to residential and business addresses within <strong>Israel</strong>. Order by ${escapeHtml(cutoff)} for next-day delivery in central Israel.</p>
           <p><strong>2. What currency are prices listed in?</strong><br/>All prices are listed in <strong>Israeli New Shekels (₪ / ILS)</strong> inclusive of 18% Israeli VAT.</p>
-          <p><strong>3. Can I check out as a guest without creating an account?</strong><br/>Yes! Both <strong>Guest Checkout</strong> and registered <strong>Customer Accounts</strong> are supported at checkout.</p>
-          <p><strong>4. Which countries do your products come from?</strong><br/>Our products are sourced from <strong>India</strong>, <strong>Thailand</strong>, <strong>Sri Lanka</strong>, and <strong>the Philippines</strong>.</p>
+          <p><strong>3. Can I order directly on WhatsApp or check out as a guest?</strong><br/>Yes — you can check out online as a Guest, sign into your Customer Account, or <a href="${escapeHtml(waUrl)}" target="_blank" rel="noopener">message us your list on WhatsApp</a>.</p>
+          <p><strong>4. Which kitchens do your products come from?</strong><br/>Our products are sourced directly from <strong>the Philippines</strong>, <strong>Thailand</strong>, <strong>India</strong>, and <strong>Sri Lanka</strong>.</p>
         `
       },
       shipping: {
         title: 'Shipping & Delivery Policy (Israel Only)',
         html: `
-          <p>DINU MARKET delivers nationwide across Israel via <strong>Standard Courier</strong>, <strong>Express Delivery</strong>, and <strong>24/7 Local Pickup Lockers</strong>:</p>
+          <p>Order by <strong>${escapeHtml(cutoff)}</strong> for next-business-day dispatch across Israel via <strong>Standard Courier</strong>, <strong>Express Delivery</strong>, and <strong>24/7 Local Pickup Lockers</strong> (free standard delivery over <strong>₪${escapeHtml(String(freeThreshold))}</strong>):</p>
           <table class="data-table">
             <thead><tr><th>Israeli Delivery Zone</th><th>Standard Courier</th><th>Pickup Locker</th><th>Est. Delivery</th></tr></thead>
             <tbody>
@@ -4085,7 +4484,7 @@ const app = {
           <p>In full compliance with the <strong>Israeli Consumer Protection Law, 5741-1981 (חוק הגנת הצרכן)</strong>:</p>
           <ul>
             <li>Any damaged, defective, or incorrect item is eligible for an immediate replacement or full refund in ₪ ILS with an official Israeli Credit Tax Invoice (<em>חשבונית זיכוי</em>).</li>
-            <li>Contact <strong>Support@DinuMarket.co.il</strong> with your Order Number to initiate a return or refund.</li>
+            <li>Contact <a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a> or call <a href="tel:+972548124900">${escapeHtml(phoneDisplay)}</a> with your Order Number to initiate a return or refund.</li>
           </ul>
         `
       },
@@ -4106,12 +4505,13 @@ const app = {
         `
       },
       accessibility: {
-        title: 'Accessibility Statement (הצהרת נגישות - IS 5568 & WCAG 2.1 AA)',
+        title: 'Accessibility Statement (הצהרת נגישות - IS 5568 & WCAG 2.2 AA)',
         html: `
-          <p>DINU MARKET conforms to <strong>Israeli Standard IS 5568</strong> and <strong>WCAG 2.1 Level AA</strong>:</p>
+          <p>DINU MARKET conforms to <strong>Israeli Standard IS 5568</strong> and <strong>WCAG 2.2 Level AA</strong>:</p>
           <ul>
-            <li>Full keyboard navigation (` + '`Tab`' + `, ` + '`Enter`' + `, ` + '`Escape`' + `) and visible focus outlines (` + '`2px solid #2D5A27`' + `).</li>
-            <li>WCAG AA contrast ratios across all brand palette tokens and semantic ARIA labels.</li>
+            <li>Full keyboard navigation (<code>Tab</code>, <code>Enter</code>, <code>Escape</code>) and visible focus outlines (<code>2px solid #0F4D2C</code>).</li>
+            <li>WCAG 2.2 AA contrast ratios across all brand palette tokens, 44×44px minimum touch targets, and semantic ARIA labels.</li>
+            <li>For accessibility assistance, contact <a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a> or <a href="tel:+972548124900">${escapeHtml(phoneDisplay)}</a>.</li>
           </ul>
         `
       },
