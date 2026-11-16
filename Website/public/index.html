@@ -34,18 +34,8 @@
        TOP DELIVERY BAR (--dm-green, live cutoff & free-delivery threshold,
        plus Demo Customer & Admin Dashboard buttons kept per request)
        ==================================================================== -->
-  <div class="announcement-bar" role="region" aria-label="Delivery Notice">
+  <div class="announcement-bar" role="region" aria-label="Account Quick Access">
     <div class="announcement-inner">
-      <div class="announcement-copy" id="topDeliveryBanner">
-        <span class="delivery-copy-desktop">
-          Order by <strong id="liveCutoffDesktop">14:00</strong> for next-day delivery
-          <span class="delivery-sep" aria-hidden="true">·</span>
-          <span class="delivery-highlight">Free delivery over ₪<span id="liveFreeThresh">250</span></span>
-        </span>
-        <span class="delivery-copy-mobile">
-          Order by <strong id="liveCutoffMobile">14:00</strong> · at your door tomorrow
-        </span>
-      </div>
       <div class="announcement-right">
         <button type="button" onclick="app.quickDemoLogin('customer')">Demo Customer</button>
         <button type="button" onclick="app.quickDemoLogin('admin')">Admin Dashboard</button>
@@ -194,92 +184,9 @@
        MAIN VIEWPORT CONTAINER
        ==================================================================== -->
   <main id="mainContent">
-    <!-- VIEW 1: REFRESHED HOMEPAGE (/) -->
-    <div id="view-storefront">
-      <!-- 1. Four Regions Graphic (Each panel links to its region page) -->
-      <section class="home-hero" id="heroSection" aria-label="Shop by Region">
-        <div class="container">
-          <div class="regions-graphic-banner">
-            <img
-              src="images/brand/regions-graphic.jpg"
-              alt="Shop by region: Philippines (פיליפינים · Pilipinas), Thailand (תאילנד · ประเทศไทย), Sri Lanka (סרי לנקה · ශ්‍රී ලංකාව), and India (הודו · भारत)"
-              class="regions-graphic-img"
-              width="1024"
-              height="571"
-            />
-            <div class="regions-graphic-links" dir="ltr">
-              <a
-                href="/ph"
-                class="regions-graphic-hotspot"
-                onclick="event.preventDefault(); app.openRegionalPage('philippines');"
-                aria-label="Philippines · פיליפינים · Pilipinas"
-                title="Philippines · Pilipinas"
-              ></a>
-              <a
-                href="/th"
-                class="regions-graphic-hotspot"
-                onclick="event.preventDefault(); app.openRegionalPage('thailand');"
-                aria-label="Thailand · תאילנד · ประเทศไทย"
-                title="Thailand · ประเทศไทย"
-              ></a>
-              <a
-                href="/lk"
-                class="regions-graphic-hotspot"
-                onclick="event.preventDefault(); app.openRegionalPage('sri-lanka');"
-                aria-label="Sri Lanka · סרי לנקה · ශ්‍රී ලංකාව"
-                title="Sri Lanka · ශ්‍රී ලංකාව"
-              ></a>
-              <a
-                href="/in"
-                class="regions-graphic-hotspot"
-                onclick="event.preventDefault(); app.openRegionalPage('india');"
-                aria-label="India · הודו · भारत"
-                title="India · भारत"
-              ></a>
-            </div>
-          </div>
-          <div class="hero-cta-row" id="heroRegionCtaRow">
-            <button type="button" class="pill-control btn-cta-secondary" onclick="app.openShopView()">
-              Browse all products
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <!-- 3. Israeli Travellers Band (Dark Ink, RTL Hebrew + English + Turmeric CTA) -->
-      <section class="page-section" id="travellersBandSection">
-        <div class="container">
-          <div class="promo-band promo-band-ink travellers-band" dir="rtl">
-            <div class="travellers-band-body">
-              <span class="travellers-eyebrow" lang="he" dir="rtl">מארז המזרח הרחוק</span>
-              <h2 class="travellers-title" lang="he" dir="rtl">חזרתם מהודו או מתאילנד ומתגעגעים לטעם?</h2>
-              <p class="travellers-sub-en" dir="ltr" lang="en">
-                Back from India or Thailand and missing the taste? Pack your Sunday table with Haldiram’s snacks, masala chai, jaggery, Mama noodles and curry pastes — delivered tomorrow.
-              </p>
-            </div>
-            <div class="travellers-band-cta" dir="ltr" lang="en">
-              <button type="button" class="btn-turmeric" onclick="app.openTripBoxCollection()">
-                Shop the Trip Box →
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
-
-    <!-- VIEW 2: FULL SHOP CATALOGUE (/shop) -->
-    <div id="view-shop" class="container view-section" style="display:none;">
-      <section id="catalog">
-        <div class="section-head-row" style="margin-bottom:20px;">
-          <div>
-            <h1 class="section-h2" style="margin:0 0 6px;">All 4 Kitchens · Full Shop</h1>
-            <p class="section-lead" id="shopSubtitleLead">
-              Filter by kitchen, aisle, brand, pack size, dietary needs and price in ₪ ILS.
-            </p>
-          </div>
-          <button type="button" class="pill-control" onclick="app.navigateToHome()">← Back to home</button>
-        </div>
-
+    <!-- VIEW 1: LANDING PAGE / FULL SHOP CATALOGUE (/) -->
+    <div id="view-storefront" class="container view-section">
+      <section id="catalog" aria-label="Product Catalogue">
         <div id="regionPillsContainer" class="region-strip"></div>
         <div class="clear-filters-row">
           <button type="button" class="pill-control" onclick="app.resetAllFilters()" data-i18n="clear_all_filters">
@@ -455,9 +362,6 @@
               <div style="font-size:0.82rem;color:var(--dm-turmeric);font-weight:700;letter-spacing:0.5px;">4 KITCHENS · DELIVERED IN ISRAEL</div>
             </div>
           </div>
-          <p style="font-size:0.92rem;color:rgba(255,247,234,0.88);margin-bottom:14px;">
-            Authentic home groceries from the Philippines, Thailand, India and Sri Lanka — stocked in Israel with full Kosher, Vegan, Vegetarian and Gluten-Free dietary filters in our shop.
-          </p>
           <div style="font-size:0.9rem;color:var(--dm-cream);line-height:1.7;margin-bottom:14px;">
             <div>Email: <a id="footerSupportEmail" href="mailto:support@dinumarket.co.il" class="footer-inline-link">support@dinumarket.co.il</a></div>
             <div>Phone / SMS: <a id="footerSupportPhone" href="tel:+972548124900" class="footer-inline-link">054-812-4900</a> (Sun–Thu, 08:30–18:00)</div>
@@ -480,28 +384,14 @@
         </div>
 
         <div>
-          <h4>Four Home Kitchens</h4>
-          <ul class="footer-links">
-            <li><button type="button" onclick="app.openRegionalPage('philippines')">Philippines Storefront (/ph)</button></li>
-            <li><button type="button" onclick="app.openRegionalPage('thailand')">Thailand Storefront (/th)</button></li>
-            <li><button type="button" onclick="app.openRegionalPage('india')">India Storefront (/in)</button></li>
-            <li><button type="button" onclick="app.openRegionalPage('sri-lanka')">Sri Lanka Storefront (/lk)</button></li>
-            <li><button type="button" onclick="app.openTripBoxCollection()">Israeli Travellers Trip Box</button></li>
-            <li><button type="button" onclick="app.openShopView()">Browse Full Shop (/shop)</button></li>
-          </ul>
-        </div>
-
-        <div>
           <h4>Customer Care &amp; Policies</h4>
           <ul class="footer-links">
             <li><button type="button" onclick="app.showPolicyModal('about')">About Dinu Market</button></li>
             <li><button type="button" onclick="app.showPolicyModal('contact')">Contact &amp; Support Hours</button></li>
             <li><button type="button" onclick="app.showPolicyModal('shipping')">Israel Delivery Zones &amp; Cutoffs</button></li>
-            <li><button type="button" onclick="app.showPolicyModal('faq')">Frequently Asked Questions</button></li>
             <li><button type="button" onclick="app.showPolicyModal('returns')">Returns &amp; Refunds Policy</button></li>
             <li><button type="button" onclick="app.showPolicyModal('privacy')">Privacy &amp; Cookie Policy</button></li>
             <li><button type="button" onclick="app.showPolicyModal('terms')">Terms &amp; Conditions</button></li>
-            <li><button type="button" onclick="app.showPolicyModal('accessibility')">Accessibility Statement (WCAG 2.2 AA)</button></li>
           </ul>
         </div>
 

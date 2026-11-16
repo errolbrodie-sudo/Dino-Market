@@ -1549,10 +1549,6 @@ const app = {
       this.openRegionalPage(KITCHEN_PATH_TO_SLUG[cleanPath], false);
       return;
     }
-    if (cleanPath === '/shop') {
-      this.switchView('shop', scrollToTop, false);
-      return;
-    }
     state.activeRegionPage = null;
     this.switchView('storefront', scrollToTop, false);
   },
@@ -1757,27 +1753,7 @@ const app = {
     mobileContainer.innerHTML = `
       <div style="margin-bottom:16px;border-bottom:1px solid var(--dm-line);padding-bottom:14px;display:flex;flex-direction:column;gap:8px;">
         <button type="button" class="pill-control" style="justify-content:flex-start;" onclick="app.navigateToHome(); app.toggleMobileDrawer(false);">Home</button>
-        <button type="button" class="pill-control" style="justify-content:flex-start;" onclick="app.openShopView(); app.toggleMobileDrawer(false);">Full Shop (/shop)</button>
-        <button type="button" class="pill-control" style="justify-content:flex-start;" onclick="app.openTripBoxCollection(); app.toggleMobileDrawer(false);">Israeli Travellers Trip Box</button>
         <button type="button" class="pill-control" style="justify-content:flex-start;" onclick="app.handleAccountClick(); app.toggleMobileDrawer(false);">Account / Sign In</button>
-      </div>
-      <div style="margin-bottom:16px;border-bottom:1px solid var(--dm-line);padding-bottom:14px;">
-        <div style="font-family:var(--dm-font-display);font-weight:800;font-size:0.86rem;letter-spacing:0.6px;text-transform:uppercase;color:var(--dm-muted);margin-bottom:10px;">Four Home Kitchens</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-          ${KITCHEN_ORDER.map((slug) => {
-            const k = KITCHEN_STOREFRONTS[slug];
-            return `
-              <button
-                type="button"
-                class="${k.tintClass}"
-                style="min-height:48px;border-radius:16px;border:1px solid rgba(28,26,23,0.08);font-family:var(--dm-font-display);font-weight:800;font-size:0.95rem;cursor:pointer;padding:10px 12px;text-align:left;"
-                onclick="app.openRegionalPage('${escapeHtml(slug)}'); app.toggleMobileDrawer(false);"
-              >
-                ${escapeHtml(k.name)}
-              </button>
-            `;
-          }).join('')}
-        </div>
       </div>
       <div>
         <div style="font-family:var(--dm-font-display);font-weight:800;font-size:0.86rem;letter-spacing:0.6px;text-transform:uppercase;color:var(--dm-muted);margin-bottom:8px;">Shop Aisles</div>
@@ -2552,8 +2528,8 @@ const app = {
 
   selectRegion(regionSlug, switchToShop = false) {
     state.filters.tripBox = false;
-    if (switchToShop || state.currentView !== 'shop') {
-      this.switchView('shop', true);
+    if (switchToShop || state.currentView !== 'storefront') {
+      this.switchView('storefront', true);
     }
     state.filters.region = regionSlug;
     const regSelect = document.getElementById('filterRegionSelect');
@@ -3239,16 +3215,17 @@ const app = {
   },
 
   switchView(viewName, scrollToTop = true, pushUrl = true) {
-    state.currentView = viewName;
-    ['storefront', 'shop', 'region', 'checkout', 'account', 'admin'].forEach((v) => {
+    const resolvedView = viewName === 'shop' ? 'storefront' : viewName;
+    state.currentView = resolvedView;
+    ['storefront', 'region', 'checkout', 'account', 'admin'].forEach((v) => {
       const el = document.getElementById(`view-${v}`);
-      if (el) el.style.display = v === viewName ? 'block' : 'none';
+      if (el) el.style.display = v === resolvedView ? 'block' : 'none';
     });
 
     // Step 5 Header #3: On kitchen pages, swap the search bar for the four kitchen pills
     const searchSlot = document.getElementById('headerSearchSlot');
     const pillsSlot = document.getElementById('headerKitchenPillsSlot');
-    if (viewName === 'region') {
+    if (resolvedView === 'region') {
       if (searchSlot) searchSlot.style.display = 'none';
       if (pillsSlot) {
         pillsSlot.style.display = 'flex';
@@ -3261,13 +3238,12 @@ const app = {
 
     if (pushUrl && window.location.protocol !== 'file:') {
       let targetPath = '/';
-      if (viewName === 'shop') targetPath = '/shop';
-      else if (viewName === 'region' && state.activeRegionPage) {
+      if (resolvedView === 'region' && state.activeRegionPage) {
         targetPath = KITCHEN_SLUG_TO_PATH[state.activeRegionPage] || '/ph';
       }
-      if (['storefront', 'shop', 'region'].includes(viewName) && window.location.pathname !== targetPath) {
+      if (['storefront', 'region'].includes(resolvedView) && window.location.pathname !== targetPath) {
         try {
-          window.history.pushState({ view: viewName, region: state.activeRegionPage }, '', targetPath);
+          window.history.pushState({ view: resolvedView, region: state.activeRegionPage }, '', targetPath);
         } catch {}
       }
     }
@@ -3275,9 +3251,9 @@ const app = {
     this.syncWhatsAppLinks();
     this.syncHeaderHeight();
 
-    if (viewName === 'checkout') this.renderCheckoutView();
-    if (viewName === 'account') this.loadAndRenderAccountView();
-    if (viewName === 'admin') this.loadAndRenderAdminView();
+    if (resolvedView === 'checkout') this.renderCheckoutView();
+    if (resolvedView === 'account') this.loadAndRenderAccountView();
+    if (resolvedView === 'admin') this.loadAndRenderAdminView();
     if (scrollToTop) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
