@@ -421,7 +421,7 @@ const I18N_DICTIONARY = {
     search_placeholder: "Search Lucky Me, Mama, Haldiram's, Silver Swan, Maliban...",
     search_btn: 'Search',
     clear_all_filters: 'Clear all filters',
-    all_4_regions: 'All 4 Kitchens',
+    all_4_regions: 'All Products',
     filter_authentic: 'Warehouse Photographed Items',
     filter_in_stock: 'In Stock Only',
     filter_on_sale: 'Special Offers',
@@ -431,7 +431,7 @@ const I18N_DICTIONARY = {
     filter_brand_title: 'Brand',
     filter_max_price: 'Max Price (₪ ILS):',
     sort_by_label: 'Sort by:',
-    all_products_heading: 'All 4 Kitchens',
+    all_products_heading: 'All Products',
     add_to_basket: 'Add to Basket',
     in_basket: 'in basket',
     in_stock: 'In stock',
@@ -460,7 +460,7 @@ const I18N_DICTIONARY = {
     search_placeholder: 'חיפוש Lucky Me, Mama, Haldiram’s, Silver Swan, Maliban...',
     search_btn: 'חיפוש',
     clear_all_filters: 'נקה מסננים',
-    all_4_regions: 'כל 4 המטבחים',
+    all_4_regions: 'כל המוצרים',
     filter_authentic: 'מוצרים במלאי מצולם',
     filter_in_stock: 'במלאי בלבד',
     filter_on_sale: 'במבצע',
@@ -499,7 +499,7 @@ const I18N_DICTIONARY = {
     search_placeholder: 'Haldiram’s, Lal Qilla बासमती, Rusky, Gulab Jamun, गुड़ खोजें...',
     search_btn: 'खोजें',
     clear_all_filters: 'सभी फ़िल्टर हटाएं',
-    all_4_regions: 'सभी 4 रसोई',
+    all_4_regions: 'सभी उत्पाद',
     filter_authentic: 'असली स्टोर आइटम',
     filter_in_stock: 'केवल स्टॉक में',
     filter_on_sale: 'विशेष छूट',
@@ -538,7 +538,7 @@ const I18N_DICTIONARY = {
     search_placeholder: 'ค้นหา มาม่า, แม่พลอย, กะทิชาวเกาะ, ข้าวหอมมะลิ, น้ำปลา...',
     search_btn: 'ค้นหา',
     clear_all_filters: 'ล้างตัวกรองทั้งหมด',
-    all_4_regions: 'ครบทั้ง 4 ครัว',
+    all_4_regions: 'สินค้าทั้งหมด',
     filter_authentic: 'สินค้าพร้อมส่งในคลัง',
     filter_in_stock: 'มีสินค้าเท่านั้น',
     filter_on_sale: 'โปรโมชั่น',
@@ -577,7 +577,7 @@ const I18N_DICTIONARY = {
     search_placeholder: 'Maliban, සිලෝන් තේ, සම්බෝල, බාස්මතී සහල් හෝ හකුරු සොයන්න...',
     search_btn: 'සොයන්න',
     clear_all_filters: 'සියලු පෙරහන් ඉවත් කරන්න',
-    all_4_regions: 'මුළුතැන්ගෙයි 4ම',
+    all_4_regions: 'සියලුම භාණ්ඩ',
     filter_authentic: 'ගබඩාවේ ඇති භාණ්ඩ',
     filter_in_stock: 'තොගයේ ඇති පමණක්',
     filter_on_sale: 'වට්ටම් සහිත',
@@ -616,7 +616,7 @@ const I18N_DICTIONARY = {
     search_placeholder: 'Maghanap ng Lucky Me, Silver Swan, Datu Puti, SkyFlakes, bigas...',
     search_btn: 'Hanapin',
     clear_all_filters: 'I-clear ang mga filter',
-    all_4_regions: 'Lahat ng 4 na Kusina',
+    all_4_regions: 'Lahat ng Produkto',
     filter_authentic: 'Mga Produktong Nasa Bodega',
     filter_in_stock: 'May Stock Lamang',
     filter_on_sale: 'Naka-Sale',
@@ -1591,6 +1591,13 @@ const app = {
         document.documentElement.style.setProperty('--site-header-height', `${h}px`);
       }
     }
+    const stripEl = document.getElementById('regionPillsContainer');
+    if (stripEl && state.currentView === 'storefront') {
+      const sh = Math.round(stripEl.getBoundingClientRect().height);
+      if (sh > 0) {
+        document.documentElement.style.setProperty('--region-strip-height', `${sh}px`);
+      }
+    }
   },
 
   updateHeaderState() {
@@ -2298,6 +2305,7 @@ const app = {
       `;
     }).join('');
     container.innerHTML = allPill + pills;
+    this.syncHeaderHeight();
   },
 
   selectRegionalCatalogRegion(regionSlug) {
@@ -2472,6 +2480,7 @@ const app = {
       `;
     }).join('');
     container.innerHTML = allPill + pills;
+    this.syncHeaderHeight();
   },
 
   populateFilterDropdowns() {

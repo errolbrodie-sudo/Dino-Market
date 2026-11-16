@@ -1600,6 +1600,16 @@ textarea {
   margin-bottom: 12px;
 }
 
+#regionPillsContainer {
+  position: sticky;
+  top: var(--site-header-height, 76px);
+  z-index: 90;
+  background-color: var(--dm-cream);
+  padding: 10px 4px;
+  margin: -10px -4px 12px;
+  border-bottom: 1px solid var(--dm-line);
+}
+
 .region-pill {
   display: inline-flex;
   align-items: center;
@@ -1661,6 +1671,10 @@ textarea {
   padding: 20px;
   position: sticky;
   top: calc(var(--site-header-height, 118px) + 16px);
+}
+
+#view-storefront .filter-sidebar {
+  top: calc(var(--site-header-height, 76px) + var(--region-strip-height, 65px) + 12px);
 }
 
 .filter-group {
@@ -2665,6 +2679,17 @@ textarea {
     min-height: 36px;
     padding: 5px 14px;
     font-size: 0.82rem;
+  }
+
+  #regionPillsContainer {
+    padding: 8px 4px;
+    gap: 6px;
+  }
+
+  #regionPillsContainer .region-pill {
+    min-height: 38px;
+    padding: 6px 13px;
+    font-size: 0.84rem;
   }
 
   .aisle-chips-grid,
