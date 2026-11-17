@@ -109,6 +109,13 @@ const KITCHEN_SLUG_TO_PATH = {
   'sri-lanka': '/lk'
 };
 
+const REGION_FLAG_URLS = {
+  philippines: 'images/flags/philippines.png',
+  thailand: 'images/flags/thailand.png',
+  india: 'images/flags/india.svg',
+  'sri-lanka': 'images/flags/sri-lanka.png'
+};
+
 const WHATSAPP_GREETINGS = {
   philippines: 'Kumusta Dinu, gusto ko pong umorder sa Filipino store:',
   tl: 'Kumusta Dinu, gusto ko pong umorder sa Filipino store:',
@@ -1742,7 +1749,8 @@ const app = {
           class="kitchen-nav-pill ${isActive ? 'active-' + slug : ''}"
           onclick="app.openRegionalPage('${escapeHtml(slug)}')"
         >
-          ${escapeHtml(k.name)}
+          <img src="${escapeHtml(REGION_FLAG_URLS[slug])}" alt="" class="region-btn-flag" />
+          <span>${escapeHtml(k.name)}</span>
         </button>
       `;
     }).join('');
@@ -1770,10 +1778,11 @@ const app = {
               <button
                 type="button"
                 class="${k.tintClass}"
-                style="min-height:48px;border-radius:16px;border:1px solid rgba(28,26,23,0.08);font-family:var(--dm-font-display);font-weight:800;font-size:0.95rem;cursor:pointer;padding:10px 12px;text-align:left;"
+                style="min-height:48px;border-radius:16px;border:1px solid rgba(28,26,23,0.08);font-family:var(--dm-font-display);font-weight:800;font-size:0.95rem;cursor:pointer;padding:10px 12px;text-align:left;display:flex;align-items:center;gap:8px;"
                 onclick="app.openRegionalPage('${escapeHtml(slug)}'); app.toggleMobileDrawer(false);"
               >
-                ${escapeHtml(k.name)}
+                <img src="${escapeHtml(REGION_FLAG_URLS[slug])}" alt="" class="region-btn-flag" />
+                <span>${escapeHtml(k.name)}</span>
               </button>
             `;
           }).join('')}
@@ -2080,102 +2089,7 @@ const app = {
     const maxPriceVal = Number(state.regionPageFilters.maxPrice || 150);
 
     container.innerHTML = `
-      <!-- Mobile Kitchen Switcher (Desktop shows the 4 pills in the sticky header center slot) -->
-      <div class="region-strip" style="margin-bottom:12px;" role="navigation" aria-label="Switch Kitchen">
-        ${KITCHEN_ORDER.map((s) => {
-          const item = KITCHEN_STOREFRONTS[s];
-          return `
-            <button
-              type="button"
-              data-kitchen="${escapeHtml(s)}"
-              class="region-pill ${s === slug ? 'active' : ''}"
-              onclick="app.openRegionalPage('${escapeHtml(s)}')"
-            >
-              ${escapeHtml(item.name)}
-            </button>
-          `;
-        }).join('')}
-      </div>
-
-      <!-- 1. Kitchen Tint Hero Card (Single-column, heading + CTA buttons only) -->
-      <section class="kitchen-hero-card ${k.tintClass}">
-        <div class="kitchen-hero-toprow">
-          <span class="kitchen-badge-pill" style="color:${k.tintColor};margin-bottom:0;" lang="${escapeHtml(k.lang)}">
-            ${escapeHtml(k.heroBadge)}
-          </span>
-          <div class="kitchen-lang-switcher" role="group" aria-label="Storefront language">
-            <button
-              type="button"
-              lang="${escapeHtml(k.lang)}"
-              class="${activeLang === k.lang ? 'active' : ''}"
-              onclick="app.setKitchenViewLang('${escapeHtml(k.lang)}')"
-            >${escapeHtml(k.langButtonLabel)}</button>
-            <button
-              type="button"
-              lang="en"
-              class="${activeLang === 'en' ? 'active' : ''}"
-              onclick="app.setKitchenViewLang('en')"
-            >English</button>
-            <button
-              type="button"
-              lang="he"
-              dir="rtl"
-              class="${activeLang === 'he' ? 'active' : ''}"
-              onclick="app.setKitchenViewLang('he')"
-            >עברית</button>
-          </div>
-        </div>
-
-        <h1 class="kitchen-hero-h1" lang="${escapeHtml(activeLang)}" dir="${activeDir}">
-          ${escapeHtml(heroTitle)}
-        </h1>
-
-        <div class="hero-cta-row">
-          <button
-            type="button"
-            class="btn-primary btn-cta-lg"
-            lang="${escapeHtml(activeLang)}"
-            onclick="app.scrollToRegionCatalog()"
-          >
-            ${escapeHtml(shopLabel)}
-          </button>
-          <a
-            href="${escapeHtml(waKitchenUrl)}"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn-whatsapp btn-cta-lg"
-            lang="${escapeHtml(activeLang)}"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm5.82 14.01c-.24.68-1.41 1.3-1.95 1.38-.5.08-1.13.11-1.83-.11-.42-.13-.97-.31-1.67-.61-2.94-1.27-4.86-4.24-5.01-4.44-.15-.2-1.2-1.59-1.2-3.04 0-1.45.76-2.16 1.03-2.46.27-.3.59-.37.79-.37.2 0 .4.01.57.01.18 0 .43-.07.67.51.24.59.83 2.03.9 2.18.07.15.12.32.02.52-.1.2-.15.32-.3.49-.15.17-.31.38-.45.51-.15.15-.3.31-.13.61.17.3.76 1.25 1.63 2.02 1.12 1 2.06 1.31 2.36 1.46.3.15.47.12.64-.07.17-.2.74-.86.94-1.16.2-.3.4-.25.67-.15.27.1 1.73.82 2.03.97.3.15.5.22.57.35.07.12.07.72-.17 1.4z"/>
-            </svg>
-            <span>${escapeHtml(waLabel)}</span>
-          </a>
-        </div>
-      </section>
-
-      <!-- 2. Dark Ink Gift Band ("Padala box" on /ph, etc.) -->
-      <section style="margin-bottom:20px;" aria-label="${escapeHtml(k.giftBand.title)}">
-        <div class="promo-band promo-band-ink">
-          <div class="kitchen-gift-band-body">
-            <span class="travellers-eyebrow">${escapeHtml(k.giftBand.eyebrow)}</span>
-            <h2 class="band-title">${escapeHtml(k.giftBand.title)}</h2>
-            <p class="band-copy">
-              ${escapeHtml(k.giftBand.copy)}
-            </p>
-          </div>
-          <div class="kitchen-gift-band-actions">
-            <button type="button" class="btn-turmeric" onclick="app.openGiftBoxFlow('${escapeHtml(slug)}')">
-              ${escapeHtml(k.giftBand.cta)}
-            </button>
-            <a href="${escapeHtml(waGiftUrl)}" target="_blank" rel="noopener noreferrer" class="btn-whatsapp btn-cta-lg">
-              Message on WhatsApp
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <!-- 3. Reproduced Full-Shop Filter & Product Catalogue Structure (auto-selecting page region) -->
+      <!-- Full-Shop Filter & Product Catalogue Structure (auto-selecting page region) -->
       <section id="regionCatalogSection" aria-label="${escapeHtml(k.name)} Product Catalogue">
         <div id="regRegionPillsContainer" class="region-strip"></div>
         <div class="clear-filters-row">
@@ -2317,6 +2231,7 @@ const app = {
           class="region-pill ${activeReg === slug ? 'active' : ''}"
           onclick="app.selectRegionalCatalogRegion('${escapeHtml(slug)}')"
         >
+          <img src="${escapeHtml(REGION_FLAG_URLS[slug])}" alt="" class="region-btn-flag" />
           <span>${escapeHtml(getRegionLabel(reg))}</span>
         </button>
       `;
@@ -2491,6 +2406,7 @@ const app = {
           class="region-pill ${state.filters.region === slug ? 'active' : ''}"
           onclick="app.selectRegion('${escapeHtml(slug)}')"
         >
+          <img src="${escapeHtml(REGION_FLAG_URLS[slug])}" alt="" class="region-btn-flag" />
           <span>${escapeHtml(getRegionLabel(reg))}</span>
         </button>
       `;

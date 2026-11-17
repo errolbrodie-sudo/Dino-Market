@@ -5,7 +5,7 @@
 
 :root {
   /* Dinu tokens */
-  --dm-cream: #FFF7EA;
+  --dm-cream: #F7F7F7;
   --dm-white: #FFFFFF;
   --dm-ink: #1C1A17;
   --dm-green: #0F4D2C;
@@ -84,6 +84,7 @@
 
 html {
   scroll-behavior: smooth;
+  background-color: #F7F7F7;
 }
 
 body {
@@ -92,7 +93,7 @@ body {
   font-size: 17px;
   font-weight: 400;
   color: var(--dm-ink);
-  background-color: var(--dm-cream);
+  background-color: #F7F7F7;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
@@ -365,9 +366,9 @@ textarea {
 .announcement-inner {
   max-width: var(--content-width);
   margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 12px;
 }
 
@@ -587,6 +588,7 @@ textarea {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   min-height: 42px;
   padding: 8px 18px;
   border-radius: 999px;
@@ -597,6 +599,16 @@ textarea {
   font-size: 0.9rem;
   cursor: pointer;
   white-space: nowrap;
+}
+
+.region-btn-flag {
+  width: 22px;
+  height: 15px;
+  object-fit: cover;
+  border-radius: 3px;
+  border: 1px solid rgba(28, 26, 23, 0.18);
+  flex-shrink: 0;
+  display: inline-block;
 }
 
 .kitchen-nav-pill:hover {
@@ -817,12 +829,43 @@ textarea {
 }
 
 .regions-graphic-hotspot {
+  position: relative;
   display: block;
   width: 100%;
   height: 100%;
   cursor: pointer;
   background: rgba(255, 255, 255, 0);
   transition: background-color 0.15s ease;
+}
+
+.pane-flag-badge {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24%;
+  aspect-ratio: 3 / 2;
+  height: auto;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid rgba(28, 26, 23, 0.18);
+  pointer-events: none;
+  display: block;
+}
+
+.pane-flag-ph {
+  top: 21.5%;
+}
+
+.pane-flag-th {
+  bottom: 22.8%;
+}
+
+.pane-flag-lk {
+  top: 21.5%;
+}
+
+.pane-flag-in {
+  bottom: 21.2%;
 }
 
 .regions-graphic-hotspot:hover {
@@ -1599,6 +1642,7 @@ textarea {
 .region-pill {
   display: inline-flex;
   align-items: center;
+  gap: 8px;
   min-height: 44px;
   padding: 8px 18px;
   background: var(--dm-white);
@@ -2008,7 +2052,7 @@ textarea {
 
 .footer-grid {
   display: grid;
-  grid-template-columns: 1.35fr 1fr 1fr 1.1fr;
+  grid-template-columns: 1.35fr 1fr 1.15fr;
   gap: 28px;
   margin-bottom: 32px;
 }
