@@ -2386,11 +2386,13 @@ const app = {
     `
         : '';
 
+    const topBannerSlot = document.getElementById('regionTopBannerSlot');
+    if (topBannerSlot) {
+      topBannerSlot.innerHTML = `${indiaBannerHtml}${phBannerHtml}${lkBannerHtml}${thBannerHtml}`;
+      topBannerSlot.style.display = 'block';
+    }
+
     container.innerHTML = `
-      ${indiaBannerHtml}
-      ${phBannerHtml}
-      ${lkBannerHtml}
-      ${thBannerHtml}
       <!-- Full-Shop Filter & Product Catalogue Structure (auto-selecting page region) -->
       <section id="regionCatalogSection" aria-label="${escapeHtml(k.name)} Product Catalogue">
         <div id="regRegionPillsContainer" class="region-strip"></div>
@@ -3466,15 +3468,21 @@ const app = {
     // Step 5 Header #3: On kitchen pages, swap the search bar for the four kitchen pills
     const searchSlot = document.getElementById('headerSearchSlot');
     const pillsSlot = document.getElementById('headerKitchenPillsSlot');
+    const topBannerSlot = document.getElementById('regionTopBannerSlot');
     if (viewName === 'region') {
       if (searchSlot) searchSlot.style.display = 'none';
       if (pillsSlot) {
         pillsSlot.style.display = 'flex';
         this.renderHeaderKitchenPills();
       }
+      if (topBannerSlot) topBannerSlot.style.display = 'block';
     } else {
       if (searchSlot) searchSlot.style.display = 'block';
       if (pillsSlot) pillsSlot.style.display = 'none';
+      if (topBannerSlot) {
+        topBannerSlot.style.display = 'none';
+        topBannerSlot.innerHTML = '';
+      }
     }
 
     if (pushUrl && window.location.protocol !== 'file:') {

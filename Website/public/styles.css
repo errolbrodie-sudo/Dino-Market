@@ -2738,13 +2738,18 @@ textarea {
   box-shadow: none !important;
 }
 
+.region-top-banner-slot {
+  width: 100%;
+  background-color: #F7F7F7;
+}
+
 .india-secondary-banner {
   position: relative;
   display: flex;
   width: 100%;
   max-width: 1440px;
   height: 150px;
-  margin-bottom: 22px;
+  margin: 0 auto;
   background-color: #EBD6B8;
   border: 1px solid #E4D5C0;
   overflow: hidden;
@@ -2933,7 +2938,7 @@ textarea {
   width: 100%;
   max-width: 1440px;
   height: 150px;
-  margin-bottom: 22px;
+  margin: 0 auto;
   background-color: #FAD686;
   border: 1px solid #CBD8E8;
   overflow: hidden;
@@ -3123,7 +3128,7 @@ textarea {
   width: 100%;
   max-width: 1440px;
   height: 150px;
-  margin-bottom: 22px;
+  margin: 0 auto;
   background-color: #F7D08A;
   border: 1px solid #DFC498;
   overflow: hidden;
@@ -3313,7 +3318,7 @@ textarea {
   width: 100%;
   max-width: 1440px;
   height: 150px;
-  margin-bottom: 22px;
+  margin: 0 auto;
   background-color: #EFC669;
   border: 1px solid #CBD6E4;
   overflow: hidden;
@@ -3480,4 +3485,8 @@ textarea {
   .th-secondary-banner .ing-lemongrass { grid-column: 3 / 4; grid-row: 1 / 2; }
   .th-secondary-banner .ing-chillies   { grid-column: 4 / 5; grid-row: 1 / 2; }
   .th-secondary-banner .ing-basil      { grid-column: 5 / 6; grid-row: 1 / 2; }
+}
+
+.region-top-banner-slot > section {
+  margin: 0 auto;
 }
