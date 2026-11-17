@@ -421,7 +421,7 @@ const I18N_DICTIONARY = {
     search_placeholder: "Search Lucky Me, Mama, Haldiram's, Silver Swan, Maliban...",
     search_btn: 'Search',
     clear_all_filters: 'Clear all filters',
-    all_4_regions: 'All Products',
+    all_4_regions: 'All 4 Kitchens',
     filter_authentic: 'Warehouse Photographed Items',
     filter_in_stock: 'In Stock Only',
     filter_on_sale: 'Special Offers',
@@ -431,7 +431,7 @@ const I18N_DICTIONARY = {
     filter_brand_title: 'Brand',
     filter_max_price: 'Max Price (₪ ILS):',
     sort_by_label: 'Sort by:',
-    all_products_heading: 'All Products',
+    all_products_heading: 'All 4 Kitchens',
     add_to_basket: 'Add to Basket',
     in_basket: 'in basket',
     in_stock: 'In stock',
@@ -460,7 +460,7 @@ const I18N_DICTIONARY = {
     search_placeholder: 'חיפוש Lucky Me, Mama, Haldiram’s, Silver Swan, Maliban...',
     search_btn: 'חיפוש',
     clear_all_filters: 'נקה מסננים',
-    all_4_regions: 'כל המוצרים',
+    all_4_regions: 'כל 4 המטבחים',
     filter_authentic: 'מוצרים במלאי מצולם',
     filter_in_stock: 'במלאי בלבד',
     filter_on_sale: 'במבצע',
@@ -499,7 +499,7 @@ const I18N_DICTIONARY = {
     search_placeholder: 'Haldiram’s, Lal Qilla बासमती, Rusky, Gulab Jamun, गुड़ खोजें...',
     search_btn: 'खोजें',
     clear_all_filters: 'सभी फ़िल्टर हटाएं',
-    all_4_regions: 'सभी उत्पाद',
+    all_4_regions: 'सभी 4 रसोई',
     filter_authentic: 'असली स्टोर आइटम',
     filter_in_stock: 'केवल स्टॉक में',
     filter_on_sale: 'विशेष छूट',
@@ -538,7 +538,7 @@ const I18N_DICTIONARY = {
     search_placeholder: 'ค้นหา มาม่า, แม่พลอย, กะทิชาวเกาะ, ข้าวหอมมะลิ, น้ำปลา...',
     search_btn: 'ค้นหา',
     clear_all_filters: 'ล้างตัวกรองทั้งหมด',
-    all_4_regions: 'สินค้าทั้งหมด',
+    all_4_regions: 'ครบทั้ง 4 ครัว',
     filter_authentic: 'สินค้าพร้อมส่งในคลัง',
     filter_in_stock: 'มีสินค้าเท่านั้น',
     filter_on_sale: 'โปรโมชั่น',
@@ -577,7 +577,7 @@ const I18N_DICTIONARY = {
     search_placeholder: 'Maliban, සිලෝන් තේ, සම්බෝල, බාස්මතී සහල් හෝ හකුරු සොයන්න...',
     search_btn: 'සොයන්න',
     clear_all_filters: 'සියලු පෙරහන් ඉවත් කරන්න',
-    all_4_regions: 'සියලුම භාණ්ඩ',
+    all_4_regions: 'මුළුතැන්ගෙයි 4ම',
     filter_authentic: 'ගබඩාවේ ඇති භාණ්ඩ',
     filter_in_stock: 'තොගයේ ඇති පමණක්',
     filter_on_sale: 'වට්ටම් සහිත',
@@ -616,7 +616,7 @@ const I18N_DICTIONARY = {
     search_placeholder: 'Maghanap ng Lucky Me, Silver Swan, Datu Puti, SkyFlakes, bigas...',
     search_btn: 'Hanapin',
     clear_all_filters: 'I-clear ang mga filter',
-    all_4_regions: 'Lahat ng Produkto',
+    all_4_regions: 'Lahat ng 4 na Kusina',
     filter_authentic: 'Mga Produktong Nasa Bodega',
     filter_in_stock: 'May Stock Lamang',
     filter_on_sale: 'Naka-Sale',
@@ -1549,6 +1549,10 @@ const app = {
       this.openRegionalPage(KITCHEN_PATH_TO_SLUG[cleanPath], false);
       return;
     }
+    if (cleanPath === '/shop') {
+      this.switchView('shop', scrollToTop, false);
+      return;
+    }
     state.activeRegionPage = null;
     this.switchView('storefront', scrollToTop, false);
   },
@@ -1589,13 +1593,6 @@ const app = {
       const h = Math.round(headerEl.getBoundingClientRect().height);
       if (h > 0) {
         document.documentElement.style.setProperty('--site-header-height', `${h}px`);
-      }
-    }
-    const stripEl = document.getElementById('regionPillsContainer');
-    if (stripEl && state.currentView === 'storefront') {
-      const sh = Math.round(stripEl.getBoundingClientRect().height);
-      if (sh > 0) {
-        document.documentElement.style.setProperty('--region-strip-height', `${sh}px`);
       }
     }
   },
@@ -1760,7 +1757,27 @@ const app = {
     mobileContainer.innerHTML = `
       <div style="margin-bottom:16px;border-bottom:1px solid var(--dm-line);padding-bottom:14px;display:flex;flex-direction:column;gap:8px;">
         <button type="button" class="pill-control" style="justify-content:flex-start;" onclick="app.navigateToHome(); app.toggleMobileDrawer(false);">Home</button>
+        <button type="button" class="pill-control" style="justify-content:flex-start;" onclick="app.openShopView(); app.toggleMobileDrawer(false);">Full Shop (/shop)</button>
+        <button type="button" class="pill-control" style="justify-content:flex-start;" onclick="app.openTripBoxCollection(); app.toggleMobileDrawer(false);">Israeli Travellers Trip Box</button>
         <button type="button" class="pill-control" style="justify-content:flex-start;" onclick="app.handleAccountClick(); app.toggleMobileDrawer(false);">Account / Sign In</button>
+      </div>
+      <div style="margin-bottom:16px;border-bottom:1px solid var(--dm-line);padding-bottom:14px;">
+        <div style="font-family:var(--dm-font-display);font-weight:800;font-size:0.86rem;letter-spacing:0.6px;text-transform:uppercase;color:var(--dm-muted);margin-bottom:10px;">Four Home Kitchens</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          ${KITCHEN_ORDER.map((slug) => {
+            const k = KITCHEN_STOREFRONTS[slug];
+            return `
+              <button
+                type="button"
+                class="${k.tintClass}"
+                style="min-height:48px;border-radius:16px;border:1px solid rgba(28,26,23,0.08);font-family:var(--dm-font-display);font-weight:800;font-size:0.95rem;cursor:pointer;padding:10px 12px;text-align:left;"
+                onclick="app.openRegionalPage('${escapeHtml(slug)}'); app.toggleMobileDrawer(false);"
+              >
+                ${escapeHtml(k.name)}
+              </button>
+            `;
+          }).join('')}
+        </div>
       </div>
       <div>
         <div style="font-family:var(--dm-font-display);font-weight:800;font-size:0.86rem;letter-spacing:0.6px;text-transform:uppercase;color:var(--dm-muted);margin-bottom:8px;">Shop Aisles</div>
@@ -2138,8 +2155,8 @@ const app = {
       </section>
 
       <!-- 2. Dark Ink Gift Band ("Padala box" on /ph, etc.) -->
-      <section class="kitchen-gift-band-section" aria-label="${escapeHtml(k.giftBand.title)}">
-        <div class="promo-band promo-band-ink kitchen-gift-band">
+      <section style="margin-bottom:20px;" aria-label="${escapeHtml(k.giftBand.title)}">
+        <div class="promo-band promo-band-ink">
           <div class="kitchen-gift-band-body">
             <span class="travellers-eyebrow">${escapeHtml(k.giftBand.eyebrow)}</span>
             <h2 class="band-title">${escapeHtml(k.giftBand.title)}</h2>
@@ -2305,7 +2322,6 @@ const app = {
       `;
     }).join('');
     container.innerHTML = allPill + pills;
-    this.syncHeaderHeight();
   },
 
   selectRegionalCatalogRegion(regionSlug) {
@@ -2480,7 +2496,6 @@ const app = {
       `;
     }).join('');
     container.innerHTML = allPill + pills;
-    this.syncHeaderHeight();
   },
 
   populateFilterDropdowns() {
@@ -2537,8 +2552,8 @@ const app = {
 
   selectRegion(regionSlug, switchToShop = false) {
     state.filters.tripBox = false;
-    if (switchToShop || state.currentView !== 'storefront') {
-      this.switchView('storefront', true);
+    if (switchToShop || state.currentView !== 'shop') {
+      this.switchView('shop', true);
     }
     state.filters.region = regionSlug;
     const regSelect = document.getElementById('filterRegionSelect');
@@ -3224,17 +3239,16 @@ const app = {
   },
 
   switchView(viewName, scrollToTop = true, pushUrl = true) {
-    const resolvedView = viewName === 'shop' ? 'storefront' : viewName;
-    state.currentView = resolvedView;
-    ['storefront', 'region', 'checkout', 'account', 'admin'].forEach((v) => {
+    state.currentView = viewName;
+    ['storefront', 'shop', 'region', 'checkout', 'account', 'admin'].forEach((v) => {
       const el = document.getElementById(`view-${v}`);
-      if (el) el.style.display = v === resolvedView ? 'block' : 'none';
+      if (el) el.style.display = v === viewName ? 'block' : 'none';
     });
 
     // Step 5 Header #3: On kitchen pages, swap the search bar for the four kitchen pills
     const searchSlot = document.getElementById('headerSearchSlot');
     const pillsSlot = document.getElementById('headerKitchenPillsSlot');
-    if (resolvedView === 'region') {
+    if (viewName === 'region') {
       if (searchSlot) searchSlot.style.display = 'none';
       if (pillsSlot) {
         pillsSlot.style.display = 'flex';
@@ -3247,12 +3261,13 @@ const app = {
 
     if (pushUrl && window.location.protocol !== 'file:') {
       let targetPath = '/';
-      if (resolvedView === 'region' && state.activeRegionPage) {
+      if (viewName === 'shop') targetPath = '/shop';
+      else if (viewName === 'region' && state.activeRegionPage) {
         targetPath = KITCHEN_SLUG_TO_PATH[state.activeRegionPage] || '/ph';
       }
-      if (['storefront', 'region'].includes(resolvedView) && window.location.pathname !== targetPath) {
+      if (['storefront', 'shop', 'region'].includes(viewName) && window.location.pathname !== targetPath) {
         try {
-          window.history.pushState({ view: resolvedView, region: state.activeRegionPage }, '', targetPath);
+          window.history.pushState({ view: viewName, region: state.activeRegionPage }, '', targetPath);
         } catch {}
       }
     }
@@ -3260,9 +3275,9 @@ const app = {
     this.syncWhatsAppLinks();
     this.syncHeaderHeight();
 
-    if (resolvedView === 'checkout') this.renderCheckoutView();
-    if (resolvedView === 'account') this.loadAndRenderAccountView();
-    if (resolvedView === 'admin') this.loadAndRenderAdminView();
+    if (viewName === 'checkout') this.renderCheckoutView();
+    if (viewName === 'account') this.loadAndRenderAccountView();
+    if (viewName === 'admin') this.loadAndRenderAdminView();
     if (scrollToTop) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
