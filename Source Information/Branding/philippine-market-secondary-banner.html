@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Philippine Market Secondary Page Banner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ==========================================================================
+       SECONDARY E-COMMERCE PAGE BANNER — PHILIPPINE MARKET (ULTRA-FLAT)
+       Desktop: 1440 x 150px | Tablet: 768 x 130px | Mobile: 375 x 165px
+       ========================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+    }
+
+    body {
+      background-color: #EEF4FA;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 16px;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .ph-secondary-banner {
+      position: relative;
+      display: flex;
+      width: 100%;
+      max-width: 1440px;
+      height: 150px;
+      background-color: #FAD686;
+      border: 1px solid #CBD8E8;
+      overflow: hidden;
+    }
+
+    /* Left Marketing Zone (52%) with 9-Step Sunlit Mango-Gold Color-Graded Background */
+    .ph-banner-left {
+      position: relative;
+      z-index: 2;
+      flex: 0 0 52%;
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      padding: 0 28px 0 44px;
+      background: linear-gradient(
+        90deg,
+        #FFFDF7 0%,      #FFFDF7 11.11%,
+        #FFF9EB 11.11%,  #FFF9EB 22.22%,
+        #FFF4DE 22.22%,  #FFF4DE 33.33%,
+        #FEEFD0 33.33%,  #FEEFD0 44.44%,
+        #FDEAC2 44.44%,  #FDEAC2 55.55%,
+        #FCE5B4 55.55%,  #FCE5B4 66.66%,
+        #FBE0A5 66.66%,  #FBE0A5 77.77%,
+        #FBDB96 77.77%,  #FBDB96 88.88%,
+        #FAD686 88.88%,  #FAD686 100%
+      );
+    }
+
+    /* Sharp Flat Philippine National Flag */
+    .ph-banner-flag {
+      flex-shrink: 0;
+      width: 64px;
+      height: 42px;
+      border: 1px solid rgba(0, 43, 107, 0.22);
+      display: block;
+    }
+
+    /* Two-Color Marketing Heading */
+    .ph-banner-heading {
+      font-size: 21px;
+      font-weight: 800;
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      color: #002B6B;
+    }
+
+    .ph-banner-heading span {
+      display: block;
+      color: #CE1126;
+    }
+
+    /* Right Raw Ingredients Zone (48%) */
+    .ph-banner-right {
+      position: relative;
+      flex: 0 0 48%;
+      height: 100%;
+      background-color: #FAD686;
+      overflow: hidden;
+    }
+
+    /* Smooth Alpha Feather Blend from Left Step-Down Zone into Raw Ingredients */
+    .ph-banner-right::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 110px;
+      background: linear-gradient(90deg, #FAD686 0%, rgba(250, 214, 134, 0) 100%);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* 5-Panel Editorial Collage of Raw Philippine Ingredients */
+    .ph-ingredients-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1.05fr 0.9fr 0.9fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 2px;
+      width: 100%;
+      height: 100%;
+      background-color: #FAD686;
+    }
+
+    .ing-tile {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #F4C86A;
+    }
+
+    .ing-tile img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: saturate(1.12) contrast(1.03);
+    }
+
+    /* Panel Layout Assignments */
+    .ing-noodles { grid-column: 1 / 2; grid-row: 1 / 3; }
+    .ing-rice    { grid-column: 2 / 3; grid-row: 1 / 3; }
+    .ing-mango   { grid-column: 3 / 4; grid-row: 1 / 2; }
+    .ing-aroma   { grid-column: 3 / 4; grid-row: 2 / 3; }
+    .ing-citrus  { grid-column: 4 / 5; grid-row: 1 / 3; }
+
+    /* Tablet Breakpoint (768 x 130px) */
+    @media (max-width: 1024px) {
+      .ph-secondary-banner {
+        height: 130px;
+      }
+      .ph-banner-left {
+        flex: 0 0 55%;
+        gap: 16px;
+        padding: 0 16px 0 22px;
+      }
+      .ph-banner-flag {
+        width: 52px;
+        height: 34px;
+      }
+      .ph-banner-heading {
+        font-size: 15.5px;
+      }
+      .ph-banner-right {
+        flex: 0 0 45%;
+      }
+      .ph-banner-right::before {
+        width: 72px;
+      }
+    }
+
+    /* Mobile Breakpoint (375 x 165px) */
+    @media (max-width: 640px) {
+      .ph-secondary-banner {
+        flex-direction: column;
+        height: 165px;
+      }
+      .ph-banner-left {
+        flex: 0 0 54%;
+        width: 100%;
+        gap: 12px;
+        padding: 10px 14px;
+      }
+      .ph-banner-flag {
+        width: 38px;
+        height: 25px;
+      }
+      .ph-banner-heading {
+        font-size: 12.5px;
+        line-height: 1.2;
+      }
+      .ph-banner-right {
+        flex: 0 0 46%;
+        width: 100%;
+      }
+      .ph-banner-right::before {
+        inset: 0 0 auto 0;
+        width: 100%;
+        height: 22px;
+        background: linear-gradient(180deg, #FAD686 0%, rgba(250, 214, 134, 0) 100%);
+      }
+      .ph-ingredients-grid {
+        grid-template-columns: repeat(5, 1fr);
+        grid-template-rows: 1fr;
+      }
+      .ing-noodles { grid-column: 1 / 2; grid-row: 1 / 2; }
+      .ing-rice    { grid-column: 2 / 3; grid-row: 1 / 2; }
+      .ing-mango   { grid-column: 3 / 4; grid-row: 1 / 2; }
+      .ing-aroma   { grid-column: 4 / 5; grid-row: 1 / 2; }
+      .ing-citrus  { grid-column: 5 / 6; grid-row: 1 / 2; }
+    }
+  </style>
+</head>
+<body>
+
+  <section class="ph-secondary-banner" aria-label="A Taste of the Philippines, Something for Every Home">
+    <!-- Left Zone: Enlarged Flat Philippine Flag + Two-Color Heading on 9-Step Sunlit Mango-Gold Background -->
+    <div class="ph-banner-left">
+      <svg class="ph-banner-flag" viewBox="0 0 900 450" role="img" aria-label="National Flag of the Philippines">
+        <!-- Royal Blue Top Half -->
+        <rect width="900" height="225" x="0" y="0" fill="#0038A8" />
+        <!-- Crimson Red Bottom Half -->
+        <rect width="900" height="225" x="0" y="225" fill="#CE1126" />
+        <!-- White Equilateral Triangle -->
+        <polygon points="0,0 389.7,225 0,450" fill="#FFFFFF" />
+        <!-- Golden 8-Rayed Sun -->
+        <g transform="translate(132, 225)" fill="#FCD116">
+          <circle r="44" />
+          <g id="sun-ray-pair">
+            <polygon points="-7,-44 0,-86 7,-44" />
+            <polygon points="-13,-42 -9,-74 -5,-44" />
+            <polygon points="5,-44 9,-74 13,-42" />
+          </g>
+          <use href="#sun-ray-pair" transform="rotate(45)" />
+          <use href="#sun-ray-pair" transform="rotate(90)" />
+          <use href="#sun-ray-pair" transform="rotate(135)" />
+          <use href="#sun-ray-pair" transform="rotate(180)" />
+          <use href="#sun-ray-pair" transform="rotate(225)" />
+          <use href="#sun-ray-pair" transform="rotate(270)" />
+          <use href="#sun-ray-pair" transform="rotate(315)" />
+        </g>
+        <!-- Three 5-Pointed Golden Stars -->
+        <polygon fill="#FCD116" points="38,44 43.8,57.5 58.5,58.8 47.4,68.5 50.7,82.8 38,75.2 25.3,82.8 28.6,68.5 17.5,58.8 32.2,57.5" />
+        <polygon fill="#FCD116" points="38,367.2 43.8,380.7 58.5,382 47.4,391.7 50.7,406 38,398.4 25.3,406 28.6,391.7 17.5,382 32.2,380.7" />
+        <polygon fill="#FCD116" points="334,205 339.8,218.5 354.5,219.8 343.4,229.5 346.7,243.8 334,236.2 321.3,243.8 324.6,229.5 313.5,219.8 328.2,218.5" />
+      </svg>
+
+      <h2 class="ph-banner-heading">
+        A TASTE OF THE PHILIPPINES,
+        <span>SOMETHING FOR EVERY HOME</span>
+      </h2>
+    </div>
+
+    <!-- Right Zone: Raw Pancit Noodles, Raw Jasmine Rice, Golden Mangoes, Adobo Aromatics & Calamansi -->
+    <div class="ph-banner-right">
+      <div class="ph-ingredients-grid">
+        <div class="ing-tile ing-noodles">
+          <img
+            src="https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?auto=format&fit=crop&w=600&q=85"
+            alt="Raw dried golden pancit bihon and canton noodles"
+            loading="eager"
+          />
+        </div>
+        <div class="ing-tile ing-rice">
+          <img
+            src="https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=600&q=85"
+            alt="Uncooked raw white Philippine jasmine and sinandomeng rice grains"
+            loading="eager"
+          />
+        </div>
+        <div class="ing-tile ing-mango">
+          <img
+            src="https://images.unsplash.com/photo-1553279768-865429fa0078?auto=format&fit=crop&w=500&q=85"
+            alt="Fresh golden Philippine carabao mangoes"
+            loading="eager"
+          />
+        </div>
+        <div class="ing-tile ing-aroma">
+          <img
+            src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=500&q=85"
+            alt="Raw garlic, ginger, black peppercorns, and bay leaves"
+            loading="eager"
+          />
+        </div>
+        <div class="ing-tile ing-citrus">
+          <img
+            src="https://images.unsplash.com/photo-1590502593747-42a996133562?auto=format&fit=crop&w=500&q=85"
+            alt="Fresh green calamansi limes and tropical herbs"
+            loading="eager"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>

@@ -2722,3 +2722,762 @@ textarea {
     text-align: left;
   }
 }
+
+/* ==========================================================================
+   SECONDARY E-COMMERCE PAGE BANNER — INDIAN MARKET (ULTRA-FLAT)
+   Desktop: 1440 x 150px | Tablet: 768 x 130px | Mobile: 375 x 165px
+   ========================================================================== */
+.india-secondary-banner,
+.india-secondary-banner *,
+.india-secondary-banner *::before,
+.india-secondary-banner *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.india-secondary-banner {
+  position: relative;
+  display: flex;
+  width: 100%;
+  max-width: 1440px;
+  height: 150px;
+  margin-bottom: 22px;
+  background-color: #EBD6B8;
+  border: 1px solid #E4D5C0;
+  overflow: hidden;
+  direction: ltr;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.india-banner-left {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 52%;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 0 28px 0 44px;
+  background: linear-gradient(
+    90deg,
+    #FAF6F0 0%,      #FAF6F0 11.11%,
+    #F8F2E9 11.11%,  #F8F2E9 22.22%,
+    #F6EEE2 22.22%,  #F6EEE2 33.33%,
+    #F4EADB 33.33%,  #F4EADB 44.44%,
+    #F2E5D4 44.44%,  #F2E5D4 55.55%,
+    #F0E1CD 55.55%,  #F0E1CD 66.66%,
+    #EEDDC6 66.66%,  #EEDDC6 77.77%,
+    #ECD9BF 77.77%,  #ECD9BF 88.88%,
+    #EBD6B8 88.88%,  #EBD6B8 100%
+  );
+}
+
+.india-banner-flag {
+  flex-shrink: 0;
+  width: 64px;
+  height: 42px;
+  border: 1px solid rgba(34, 25, 18, 0.16);
+  display: block;
+}
+
+.india-banner-heading {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 23px;
+  font-weight: 800;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: #221912;
+  text-align: left;
+}
+
+.india-banner-heading span {
+  display: block;
+  color: #C84B11;
+}
+
+.india-banner-right {
+  position: relative;
+  flex: 0 0 48%;
+  height: 100%;
+  background-color: #EBD6B8;
+  overflow: hidden;
+}
+
+.india-banner-right::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 110px;
+  background: linear-gradient(90deg, #EBD6B8 0%, rgba(235, 214, 184, 0) 100%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.india-ingredients-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1.05fr 0.9fr 0.9fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 2px;
+  width: 100%;
+  height: 100%;
+  background-color: #EBD6B8;
+}
+
+.india-secondary-banner .ing-tile {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #E5CFAF;
+}
+
+.india-secondary-banner .ing-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.india-secondary-banner .ing-noodles { grid-column: 1 / 2; grid-row: 1 / 3; }
+.india-secondary-banner .ing-rice    { grid-column: 2 / 3; grid-row: 1 / 3; }
+.india-secondary-banner .ing-spices  { grid-column: 3 / 4; grid-row: 1 / 2; }
+.india-secondary-banner .ing-dal     { grid-column: 3 / 4; grid-row: 2 / 3; }
+.india-secondary-banner .ing-herbs   { grid-column: 4 / 5; grid-row: 1 / 3; }
+
+@media (max-width: 1024px) {
+  .india-secondary-banner {
+    height: 130px;
+  }
+  .india-banner-left {
+    flex: 0 0 54%;
+    gap: 16px;
+    padding: 0 18px 0 24px;
+  }
+  .india-banner-flag {
+    width: 52px;
+    height: 34px;
+  }
+  .india-banner-heading {
+    font-size: 17px;
+  }
+  .india-banner-right {
+    flex: 0 0 46%;
+  }
+  .india-banner-right::before {
+    width: 72px;
+  }
+}
+
+@media (max-width: 640px) {
+  .india-secondary-banner {
+    flex-direction: column;
+    height: 165px;
+    margin-bottom: 16px;
+  }
+  .india-banner-left {
+    flex: 0 0 54%;
+    width: 100%;
+    gap: 12px;
+    padding: 10px 14px;
+  }
+  .india-banner-flag {
+    width: 38px;
+    height: 25px;
+  }
+  .india-banner-heading {
+    font-size: 13.5px;
+    line-height: 1.2;
+  }
+  .india-banner-right {
+    flex: 0 0 46%;
+    width: 100%;
+  }
+  .india-banner-right::before {
+    inset: 0 0 auto 0;
+    width: 100%;
+    height: 22px;
+    background: linear-gradient(180deg, #EBD6B8 0%, rgba(235, 214, 184, 0) 100%);
+  }
+  .india-ingredients-grid {
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: 1fr;
+  }
+  .india-secondary-banner .ing-noodles { grid-column: 1 / 2; grid-row: 1 / 2; }
+  .india-secondary-banner .ing-rice    { grid-column: 2 / 3; grid-row: 1 / 2; }
+  .india-secondary-banner .ing-spices  { grid-column: 3 / 4; grid-row: 1 / 2; }
+  .india-secondary-banner .ing-dal     { grid-column: 4 / 5; grid-row: 1 / 2; }
+  .india-secondary-banner .ing-herbs   { grid-column: 5 / 6; grid-row: 1 / 2; }
+}
+
+/* ==========================================================================
+   SECONDARY E-COMMERCE PAGE BANNER — PHILIPPINE MARKET (ULTRA-FLAT)
+   Desktop: 1440 x 150px | Tablet: 768 x 130px | Mobile: 375 x 165px
+   ========================================================================== */
+.ph-secondary-banner,
+.ph-secondary-banner *,
+.ph-secondary-banner *::before,
+.ph-secondary-banner *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.ph-secondary-banner {
+  position: relative;
+  display: flex;
+  width: 100%;
+  max-width: 1440px;
+  height: 150px;
+  margin-bottom: 22px;
+  background-color: #FAD686;
+  border: 1px solid #CBD8E8;
+  overflow: hidden;
+  direction: ltr;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.ph-banner-left {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 52%;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 0 28px 0 44px;
+  background: linear-gradient(
+    90deg,
+    #FFFDF7 0%,      #FFFDF7 11.11%,
+    #FFF9EB 11.11%,  #FFF9EB 22.22%,
+    #FFF4DE 22.22%,  #FFF4DE 33.33%,
+    #FEEFD0 33.33%,  #FEEFD0 44.44%,
+    #FDEAC2 44.44%,  #FDEAC2 55.55%,
+    #FCE5B4 55.55%,  #FCE5B4 66.66%,
+    #FBE0A5 66.66%,  #FBE0A5 77.77%,
+    #FBDB96 77.77%,  #FBDB96 88.88%,
+    #FAD686 88.88%,  #FAD686 100%
+  );
+}
+
+.ph-banner-flag {
+  flex-shrink: 0;
+  width: 64px;
+  height: 42px;
+  border: 1px solid rgba(0, 43, 107, 0.22);
+  display: block;
+}
+
+.ph-banner-heading {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: #002B6B;
+  text-align: left;
+}
+
+.ph-banner-heading span {
+  display: block;
+  color: #CE1126;
+}
+
+.ph-banner-right {
+  position: relative;
+  flex: 0 0 48%;
+  height: 100%;
+  background-color: #FAD686;
+  overflow: hidden;
+}
+
+.ph-banner-right::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 110px;
+  background: linear-gradient(90deg, #FAD686 0%, rgba(250, 214, 134, 0) 100%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.ph-ingredients-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1.05fr 0.9fr 0.9fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 2px;
+  width: 100%;
+  height: 100%;
+  background-color: #FAD686;
+}
+
+.ph-secondary-banner .ing-tile {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #F4C86A;
+}
+
+.ph-secondary-banner .ing-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: saturate(1.12) contrast(1.03);
+}
+
+.ph-secondary-banner .ing-noodles { grid-column: 1 / 2; grid-row: 1 / 3; }
+.ph-secondary-banner .ing-rice    { grid-column: 2 / 3; grid-row: 1 / 3; }
+.ph-secondary-banner .ing-mango   { grid-column: 3 / 4; grid-row: 1 / 2; }
+.ph-secondary-banner .ing-aroma   { grid-column: 3 / 4; grid-row: 2 / 3; }
+.ph-secondary-banner .ing-citrus  { grid-column: 4 / 5; grid-row: 1 / 3; }
+
+@media (max-width: 1024px) {
+  .ph-secondary-banner {
+    height: 130px;
+  }
+  .ph-banner-left {
+    flex: 0 0 55%;
+    gap: 16px;
+    padding: 0 16px 0 22px;
+  }
+  .ph-banner-flag {
+    width: 52px;
+    height: 34px;
+  }
+  .ph-banner-heading {
+    font-size: 15.5px;
+  }
+  .ph-banner-right {
+    flex: 0 0 45%;
+  }
+  .ph-banner-right::before {
+    width: 72px;
+  }
+}
+
+@media (max-width: 640px) {
+  .ph-secondary-banner {
+    flex-direction: column;
+    height: 165px;
+    margin-bottom: 16px;
+  }
+  .ph-banner-left {
+    flex: 0 0 54%;
+    width: 100%;
+    gap: 12px;
+    padding: 10px 14px;
+  }
+  .ph-banner-flag {
+    width: 38px;
+    height: 25px;
+  }
+  .ph-banner-heading {
+    font-size: 12.5px;
+    line-height: 1.2;
+  }
+  .ph-banner-right {
+    flex: 0 0 46%;
+    width: 100%;
+  }
+  .ph-banner-right::before {
+    inset: 0 0 auto 0;
+    width: 100%;
+    height: 22px;
+    background: linear-gradient(180deg, #FAD686 0%, rgba(250, 214, 134, 0) 100%);
+  }
+  .ph-ingredients-grid {
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: 1fr;
+  }
+  .ph-secondary-banner .ing-noodles { grid-column: 1 / 2; grid-row: 1 / 2; }
+  .ph-secondary-banner .ing-rice    { grid-column: 2 / 3; grid-row: 1 / 2; }
+  .ph-secondary-banner .ing-mango   { grid-column: 3 / 4; grid-row: 1 / 2; }
+  .ph-secondary-banner .ing-aroma   { grid-column: 4 / 5; grid-row: 1 / 2; }
+  .ph-secondary-banner .ing-citrus  { grid-column: 5 / 6; grid-row: 1 / 2; }
+}
+
+/* ==========================================================================
+   SECONDARY E-COMMERCE PAGE BANNER — SRI LANKAN MARKET (ULTRA-FLAT)
+   Desktop: 1440 x 150px | Tablet: 768 x 130px | Mobile: 375 x 165px
+   ========================================================================== */
+.lk-secondary-banner,
+.lk-secondary-banner *,
+.lk-secondary-banner *::before,
+.lk-secondary-banner *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.lk-secondary-banner {
+  position: relative;
+  display: flex;
+  width: 100%;
+  max-width: 1440px;
+  height: 150px;
+  margin-bottom: 22px;
+  background-color: #F7D08A;
+  border: 1px solid #DFC498;
+  overflow: hidden;
+  direction: ltr;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.lk-banner-left {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 52%;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 0 28px 0 44px;
+  background: linear-gradient(
+    90deg,
+    #FFFDF8 0%,      #FFFDF8 11.11%,
+    #FEF8EB 11.11%,  #FEF8EB 22.22%,
+    #FDF2DE 22.22%,  #FDF2DE 33.33%,
+    #FCECD0 33.33%,  #FCECD0 44.44%,
+    #FBE7C2 44.44%,  #FBE7C2 55.55%,
+    #FAE1B4 55.55%,  #FAE1B4 66.66%,
+    #F9DBA6 66.66%,  #F9DBA6 77.77%,
+    #F8D698 77.77%,  #F8D698 88.88%,
+    #F7D08A 88.88%,  #F7D08A 100%
+  );
+}
+
+.lk-banner-flag {
+  flex-shrink: 0;
+  width: 64px;
+  height: 42px;
+  border: 1px solid rgba(122, 18, 50, 0.25);
+  display: block;
+}
+
+.lk-banner-heading {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: #7A1232;
+  text-align: left;
+}
+
+.lk-banner-heading span {
+  display: block;
+  color: #C85200;
+}
+
+.lk-banner-right {
+  position: relative;
+  flex: 0 0 48%;
+  height: 100%;
+  background-color: #F7D08A;
+  overflow: hidden;
+}
+
+.lk-banner-right::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 110px;
+  background: linear-gradient(90deg, #F7D08A 0%, rgba(247, 208, 138, 0) 100%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.lk-ingredients-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1.05fr 0.9fr 0.9fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 2px;
+  width: 100%;
+  height: 100%;
+  background-color: #F7D08A;
+}
+
+.lk-secondary-banner .ing-tile {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #EFC274;
+}
+
+.lk-secondary-banner .ing-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: saturate(1.14) contrast(1.03);
+}
+
+.lk-secondary-banner .ing-noodles { grid-column: 1 / 2; grid-row: 1 / 3; }
+.lk-secondary-banner .ing-rice    { grid-column: 2 / 3; grid-row: 1 / 3; }
+.lk-secondary-banner .ing-spices  { grid-column: 3 / 4; grid-row: 1 / 2; }
+.lk-secondary-banner .ing-coconut { grid-column: 3 / 4; grid-row: 2 / 3; }
+.lk-secondary-banner .ing-herbs   { grid-column: 4 / 5; grid-row: 1 / 3; }
+
+@media (max-width: 1024px) {
+  .lk-secondary-banner {
+    height: 130px;
+  }
+  .lk-banner-left {
+    flex: 0 0 54%;
+    gap: 16px;
+    padding: 0 18px 0 24px;
+  }
+  .lk-banner-flag {
+    width: 52px;
+    height: 34px;
+  }
+  .lk-banner-heading {
+    font-size: 16.5px;
+  }
+  .lk-banner-right {
+    flex: 0 0 46%;
+  }
+  .lk-banner-right::before {
+    width: 72px;
+  }
+}
+
+@media (max-width: 640px) {
+  .lk-secondary-banner {
+    flex-direction: column;
+    height: 165px;
+    margin-bottom: 16px;
+  }
+  .lk-banner-left {
+    flex: 0 0 54%;
+    width: 100%;
+    gap: 12px;
+    padding: 10px 14px;
+  }
+  .lk-banner-flag {
+    width: 38px;
+    height: 25px;
+  }
+  .lk-banner-heading {
+    font-size: 13px;
+    line-height: 1.2;
+  }
+  .lk-banner-right {
+    flex: 0 0 46%;
+    width: 100%;
+  }
+  .lk-banner-right::before {
+    inset: 0 0 auto 0;
+    width: 100%;
+    height: 22px;
+    background: linear-gradient(180deg, #F7D08A 0%, rgba(247, 208, 138, 0) 100%);
+  }
+  .lk-ingredients-grid {
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: 1fr;
+  }
+  .lk-secondary-banner .ing-noodles { grid-column: 1 / 2; grid-row: 1 / 2; }
+  .lk-secondary-banner .ing-rice    { grid-column: 2 / 3; grid-row: 1 / 2; }
+  .lk-secondary-banner .ing-spices  { grid-column: 3 / 4; grid-row: 1 / 2; }
+  .lk-secondary-banner .ing-coconut { grid-column: 4 / 5; grid-row: 1 / 2; }
+  .lk-secondary-banner .ing-herbs   { grid-column: 5 / 6; grid-row: 1 / 2; }
+}
+
+/* ==========================================================================
+   SECONDARY E-COMMERCE PAGE BANNER — THAILAND MARKET (ULTRA-FLAT)
+   Desktop: 1440 x 150px | Tablet: 768 x 130px | Mobile: 375 x 165px
+   ========================================================================== */
+.th-secondary-banner,
+.th-secondary-banner *,
+.th-secondary-banner *::before,
+.th-secondary-banner *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.th-secondary-banner {
+  position: relative;
+  display: flex;
+  width: 100%;
+  max-width: 1440px;
+  height: 150px;
+  margin-bottom: 22px;
+  background-color: #EFC669;
+  border: 1px solid #CBD6E4;
+  overflow: hidden;
+  direction: ltr;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.th-banner-left {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 52%;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 0 28px 0 44px;
+  background: linear-gradient(
+    90deg,
+    #FFFEF9 0%,      #FFFEF9 11.11%,
+    #FDF7E7 11.11%,  #FDF7E7 22.22%,
+    #FBF0D5 22.22%,  #FBF0D5 33.33%,
+    #F9E9C3 33.33%,  #F9E9C3 44.44%,
+    #F7E2B1 44.44%,  #F7E2B1 55.55%,
+    #F5DB9F 55.55%,  #F5DB9F 66.66%,
+    #F3D48D 66.66%,  #F3D48D 77.77%,
+    #F1CD7B 77.77%,  #F1CD7B 88.88%,
+    #EFC669 88.88%,  #EFC669 100%
+  );
+}
+
+.th-banner-flag {
+  flex-shrink: 0;
+  width: 64px;
+  height: 42px;
+  border: 1px solid rgba(31, 28, 61, 0.24);
+  display: block;
+}
+
+.th-banner-heading {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: #1F1C3D;
+  text-align: left;
+}
+
+.th-banner-heading span {
+  display: block;
+  color: #A51931;
+}
+
+.th-banner-right {
+  position: relative;
+  flex: 0 0 48%;
+  height: 100%;
+  background-color: #EFC669;
+  overflow: hidden;
+}
+
+.th-banner-right::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 110px;
+  background: linear-gradient(90deg, #EFC669 0%, rgba(239, 198, 105, 0) 100%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.th-ingredients-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1.05fr 0.9fr 0.9fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 2px;
+  width: 100%;
+  height: 100%;
+  background-color: #EFC669;
+}
+
+.th-secondary-banner .ing-tile {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #E5B958;
+}
+
+.th-secondary-banner .ing-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: saturate(1.14) contrast(1.03);
+}
+
+.th-secondary-banner .ing-noodles    { grid-column: 1 / 2; grid-row: 1 / 3; }
+.th-secondary-banner .ing-rice       { grid-column: 2 / 3; grid-row: 1 / 3; }
+.th-secondary-banner .ing-lemongrass { grid-column: 3 / 4; grid-row: 1 / 2; }
+.th-secondary-banner .ing-chillies   { grid-column: 3 / 4; grid-row: 2 / 3; }
+.th-secondary-banner .ing-basil      { grid-column: 4 / 5; grid-row: 1 / 3; }
+
+@media (max-width: 1024px) {
+  .th-secondary-banner {
+    height: 130px;
+  }
+  .th-banner-left {
+    flex: 0 0 54%;
+    gap: 16px;
+    padding: 0 18px 0 24px;
+  }
+  .th-banner-flag {
+    width: 52px;
+    height: 34px;
+  }
+  .th-banner-heading {
+    font-size: 16.5px;
+  }
+  .th-banner-right {
+    flex: 0 0 46%;
+  }
+  .th-banner-right::before {
+    width: 72px;
+  }
+}
+
+@media (max-width: 640px) {
+  .th-secondary-banner {
+    flex-direction: column;
+    height: 165px;
+    margin-bottom: 16px;
+  }
+  .th-banner-left {
+    flex: 0 0 54%;
+    width: 100%;
+    gap: 12px;
+    padding: 10px 14px;
+  }
+  .th-banner-flag {
+    width: 38px;
+    height: 25px;
+  }
+  .th-banner-heading {
+    font-size: 13px;
+    line-height: 1.2;
+  }
+  .th-banner-right {
+    flex: 0 0 46%;
+    width: 100%;
+  }
+  .th-banner-right::before {
+    inset: 0 0 auto 0;
+    width: 100%;
+    height: 22px;
+    background: linear-gradient(180deg, #EFC669 0%, rgba(239, 198, 105, 0) 100%);
+  }
+  .th-ingredients-grid {
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: 1fr;
+  }
+  .th-secondary-banner .ing-noodles    { grid-column: 1 / 2; grid-row: 1 / 2; }
+  .th-secondary-banner .ing-rice       { grid-column: 2 / 3; grid-row: 1 / 2; }
+  .th-secondary-banner .ing-lemongrass { grid-column: 3 / 4; grid-row: 1 / 2; }
+  .th-secondary-banner .ing-chillies   { grid-column: 4 / 5; grid-row: 1 / 2; }
+  .th-secondary-banner .ing-basil      { grid-column: 5 / 6; grid-row: 1 / 2; }
+}

@@ -2088,7 +2088,309 @@ const app = {
     const selectedReg = state.regionPageFilters.region;
     const maxPriceVal = Number(state.regionPageFilters.maxPrice || 150);
 
+    const indiaBannerHtml =
+      slug === 'india'
+        ? `
+      <section class="india-secondary-banner" dir="ltr" aria-label="A Taste of India, Something for Every Home">
+        <div class="india-banner-left">
+          <svg class="india-banner-flag" viewBox="0 0 900 600" role="img" aria-label="National Flag of India">
+            <rect width="900" height="200" y="0" fill="#FF9933" />
+            <rect width="900" height="200" y="200" fill="#FFFFFF" />
+            <rect width="900" height="200" y="400" fill="#138808" />
+            <g transform="translate(450, 300)">
+              <circle r="92" fill="none" stroke="#000080" stroke-width="11" />
+              <circle r="16" fill="#000080" />
+              <g id="ashoka-spokes" stroke="#000080" stroke-width="5">
+                <line x1="0" y1="-92" x2="0" y2="92" />
+                <line x1="-92" y1="0" x2="92" y2="0" />
+                <line x1="-65" y1="-65" x2="65" y2="65" />
+                <line x1="-65" y1="65" x2="65" y2="-65" />
+                <line x1="-23.8" y1="-88.9" x2="23.8" y2="88.9" />
+                <line x1="-46" y1="-79.7" x2="46" y2="79.7" />
+                <line x1="-79.7" y1="-46" x2="79.7" y2="46" />
+                <line x1="-88.9" y1="-23.8" x2="88.9" y2="23.8" />
+                <line x1="-88.9" y1="23.8" x2="88.9" y2="-23.8" />
+                <line x1="-79.7" y1="46" x2="79.7" y2="-46" />
+                <line x1="-46" y1="79.7" x2="46" y2="-79.7" />
+                <line x1="-23.8" y1="88.9" x2="23.8" y2="-88.9" />
+              </g>
+            </g>
+          </svg>
+
+          <h2 class="india-banner-heading">
+            A TASTE OF INDIA,
+            <span>SOMETHING FOR EVERY HOME</span>
+          </h2>
+        </div>
+
+        <div class="india-banner-right">
+          <div class="india-ingredients-grid">
+            <div class="ing-tile ing-noodles">
+              <img
+                src="https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?auto=format&fit=crop&w=600&q=85"
+                alt="Raw dried golden wheat noodles"
+                loading="eager"
+              />
+            </div>
+            <div class="ing-tile ing-rice">
+              <img
+                src="https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=600&q=85"
+                alt="Uncooked raw long-grain Indian basmati rice"
+                loading="eager"
+              />
+            </div>
+            <div class="ing-tile ing-spices">
+              <img
+                src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=500&q=85"
+                alt="Raw turmeric, Kashmiri red chilli, cumin, and cardamom spices"
+                loading="eager"
+              />
+            </div>
+            <div class="ing-tile ing-dal">
+              <img
+                src="https://images.unsplash.com/photo-1515543904379-3d757afe72e4?auto=format&fit=crop&w=500&q=85"
+                alt="Raw yellow toor dal lentils and whole pulses"
+                loading="eager"
+              />
+            </div>
+            <div class="ing-tile ing-herbs">
+              <img
+                src="https://images.unsplash.com/photo-1588879460618-9249e7d947d1?auto=format&fit=crop&w=500&q=85"
+                alt="Fresh raw coriander leaves and green chillies"
+                loading="eager"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+    `
+        : '';
+
+    const phBannerHtml =
+      slug === 'philippines'
+        ? `
+      <section class="ph-secondary-banner" dir="ltr" aria-label="A Taste of the Philippines, Something for Every Home">
+        <div class="ph-banner-left">
+          <svg class="ph-banner-flag" viewBox="0 0 900 450" role="img" aria-label="National Flag of the Philippines">
+            <rect width="900" height="225" x="0" y="0" fill="#0038A8" />
+            <rect width="900" height="225" x="0" y="225" fill="#CE1126" />
+            <polygon points="0,0 389.7,225 0,450" fill="#FFFFFF" />
+            <g transform="translate(132, 225)" fill="#FCD116">
+              <circle r="44" />
+              <g id="sun-ray-pair">
+                <polygon points="-7,-44 0,-86 7,-44" />
+                <polygon points="-13,-42 -9,-74 -5,-44" />
+                <polygon points="5,-44 9,-74 13,-42" />
+              </g>
+              <use href="#sun-ray-pair" transform="rotate(45)" />
+              <use href="#sun-ray-pair" transform="rotate(90)" />
+              <use href="#sun-ray-pair" transform="rotate(135)" />
+              <use href="#sun-ray-pair" transform="rotate(180)" />
+              <use href="#sun-ray-pair" transform="rotate(225)" />
+              <use href="#sun-ray-pair" transform="rotate(270)" />
+              <use href="#sun-ray-pair" transform="rotate(315)" />
+            </g>
+            <polygon fill="#FCD116" points="38,44 43.8,57.5 58.5,58.8 47.4,68.5 50.7,82.8 38,75.2 25.3,82.8 28.6,68.5 17.5,58.8 32.2,57.5" />
+            <polygon fill="#FCD116" points="38,367.2 43.8,380.7 58.5,382 47.4,391.7 50.7,406 38,398.4 25.3,406 28.6,391.7 17.5,382 32.2,380.7" />
+            <polygon fill="#FCD116" points="334,205 339.8,218.5 354.5,219.8 343.4,229.5 346.7,243.8 334,236.2 321.3,243.8 324.6,229.5 313.5,219.8 328.2,218.5" />
+          </svg>
+
+          <h2 class="ph-banner-heading">
+            A TASTE OF THE PHILIPPINES,
+            <span>SOMETHING FOR EVERY HOME</span>
+          </h2>
+        </div>
+
+        <div class="ph-banner-right">
+          <div class="ph-ingredients-grid">
+            <div class="ing-tile ing-noodles">
+              <img
+                src="https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?auto=format&fit=crop&w=600&q=85"
+                alt="Raw dried golden pancit bihon and canton noodles"
+                loading="eager"
+              />
+            </div>
+            <div class="ing-tile ing-rice">
+              <img
+                src="https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=600&q=85"
+                alt="Uncooked raw white Philippine jasmine and sinandomeng rice grains"
+                loading="eager"
+              />
+            </div>
+            <div class="ing-tile ing-mango">
+              <img
+                src="https://images.unsplash.com/photo-1553279768-865429fa0078?auto=format&fit=crop&w=500&q=85"
+                alt="Fresh golden Philippine carabao mangoes"
+                loading="eager"
+              />
+            </div>
+            <div class="ing-tile ing-aroma">
+              <img
+                src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=500&q=85"
+                alt="Raw garlic, ginger, black peppercorns, and bay leaves"
+                loading="eager"
+              />
+            </div>
+            <div class="ing-tile ing-citrus">
+              <img
+                src="https://images.unsplash.com/photo-1590502593747-42a996133562?auto=format&fit=crop&w=500&q=85"
+                alt="Fresh green calamansi limes and tropical herbs"
+                loading="eager"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+    `
+        : '';
+
+    const lkBannerHtml =
+      slug === 'sri-lanka'
+        ? `
+      <section class="lk-secondary-banner" dir="ltr" aria-label="A Taste of Sri Lanka, Something for Every Home">
+        <div class="lk-banner-left">
+          <svg class="lk-banner-flag" viewBox="0 0 1200 600" role="img" aria-label="National Flag of Sri Lanka">
+            <rect width="1200" height="600" fill="#FFBE29" />
+            <rect x="44" y="44" width="166" height="512" fill="#00534E" />
+            <rect x="210" y="44" width="166" height="512" fill="#EB7400" />
+            <rect x="420" y="44" width="736" height="512" fill="#8D153A" />
+            <g fill="#FFBE29">
+              <path d="M456,74 C474,84 484,102 478,122 C460,114 448,96 456,74 Z" />
+              <path d="M1120,74 C1102,84 1092,102 1098,122 C1116,114 1128,96 1120,74 Z" />
+              <path d="M456,526 C474,516 484,498 478,478 C460,486 448,504 456,526 Z" />
+              <path d="M1120,526 C1102,516 1092,498 1098,478 C1116,486 1128,504 1120,526 Z" />
+            </g>
+            <g fill="#FFBE29" stroke="#FFBE29" stroke-linejoin="round">
+              <polygon points="564,136 576,136 572,272 560,272" />
+              <rect x="550" y="266" width="32" height="10" />
+              <rect x="562" y="276" width="8" height="24" />
+              <circle cx="660" cy="212" r="34" />
+              <polygon points="636,184 648,162 660,180 672,162 684,184" />
+              <path d="M648,242 L790,256 L822,312 L794,358 L668,348 L632,296 Z" />
+              <path d="M642,262 L572,274 L572,290 L646,284 Z" />
+              <path d="M640,308 L586,334 L594,348 L652,326 Z" />
+              <path d="M776,346 L746,442 L772,446 L802,356 Z" />
+              <path d="M808,342 L846,442 L872,438 L832,334 Z" />
+              <path d="M820,278 C886,256 922,196 894,154 C878,132 850,144 858,168 C864,184 880,180 882,196 C884,222 856,252 818,264 Z" />
+            </g>
+          </svg>
+
+          <h2 class="lk-banner-heading">
+            A TASTE OF SRI LANKA,
+            <span>SOMETHING FOR EVERY HOME</span>
+          </h2>
+        </div>
+
+        <div class="lk-banner-right">
+          <div class="lk-ingredients-grid">
+            <div class="ing-tile ing-noodles">
+              <img
+                src="https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?auto=format&fit=crop&w=600&q=85"
+                alt="Raw dried string hopper idiappa rice noodles"
+                loading="eager"
+              />
+            </div>
+            <div class="ing-tile ing-rice">
+              <img
+                src="https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=600&q=85"
+                alt="Uncooked raw Sri Lankan red kekulu and white samba rice grains"
+                loading="eager"
+              />
+            </div>
+            <div class="ing-tile ing-spices">
+              <img
+                src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=500&q=85"
+                alt="Raw Ceylon cinnamon quills, green cardamom, cloves, and black peppercorns"
+                loading="eager"
+              />
+            </div>
+            <div class="ing-tile ing-coconut">
+              <img
+                src="https://images.unsplash.com/photo-1515543904379-3d757afe72e4?auto=format&fit=crop&w=500&q=85"
+                alt="Raw golden turmeric, coconut, and Sri Lankan lentils"
+                loading="eager"
+              />
+            </div>
+            <div class="ing-tile ing-herbs">
+              <img
+                src="https://images.unsplash.com/photo-1588879460618-9249e7d947d1?auto=format&fit=crop&w=500&q=85"
+                alt="Fresh green Ceylon curry leaves karapincha and green chillies"
+                loading="eager"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+    `
+        : '';
+
+    const thBannerHtml =
+      slug === 'thailand'
+        ? `
+      <section class="th-secondary-banner" dir="ltr" aria-label="A Taste of Thailand, Something for Every Home">
+        <div class="th-banner-left">
+          <svg class="th-banner-flag" viewBox="0 0 900 600" role="img" aria-label="National Flag of Thailand">
+            <rect width="900" height="100" x="0" y="0" fill="#A51931" />
+            <rect width="900" height="100" x="0" y="100" fill="#F4F5F8" />
+            <rect width="900" height="200" x="0" y="200" fill="#2D2A4A" />
+            <rect width="900" height="100" x="0" y="400" fill="#F4F5F8" />
+            <rect width="900" height="100" x="0" y="500" fill="#A51931" />
+          </svg>
+
+          <h2 class="th-banner-heading">
+            A TASTE OF THAILAND,
+            <span>SOMETHING FOR EVERY HOME</span>
+          </h2>
+        </div>
+
+        <div class="th-banner-right">
+          <div class="th-ingredients-grid">
+            <div class="ing-tile ing-noodles">
+              <img
+                src="https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?auto=format&fit=crop&w=600&q=85"
+                alt="Raw dried Thai pad thai sen lek rice noodles"
+                loading="eager"
+              />
+            </div>
+            <div class="ing-tile ing-rice">
+              <img
+                src="https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=600&q=85"
+                alt="Uncooked raw white Thai Hom Mali jasmine rice grains"
+                loading="eager"
+              />
+            </div>
+            <div class="ing-tile ing-lemongrass">
+              <img
+                src="https://images.unsplash.com/photo-1590502593747-42a996133562?auto=format&fit=crop&w=500&q=85"
+                alt="Fresh Thai lemongrass stalks, galangal, and kaffir lime"
+                loading="eager"
+              />
+            </div>
+            <div class="ing-tile ing-chillies">
+              <img
+                src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=500&q=85"
+                alt="Raw dried Thai bird's eye chillies, turmeric, and aromatic spices"
+                loading="eager"
+              />
+            </div>
+            <div class="ing-tile ing-basil">
+              <img
+                src="https://images.unsplash.com/photo-1588879460618-9249e7d947d1?auto=format&fit=crop&w=500&q=85"
+                alt="Fresh green Thai holy basil leaves and coriander"
+                loading="eager"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+    `
+        : '';
+
     container.innerHTML = `
+      ${indiaBannerHtml}
+      ${phBannerHtml}
+      ${lkBannerHtml}
+      ${thBannerHtml}
       <!-- Full-Shop Filter & Product Catalogue Structure (auto-selecting page region) -->
       <section id="regionCatalogSection" aria-label="${escapeHtml(k.name)} Product Catalogue">
         <div id="regRegionPillsContainer" class="region-strip"></div>

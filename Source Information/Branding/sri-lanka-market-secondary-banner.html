@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sri Lanka Market Secondary Page Banner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ==========================================================================
+       SECONDARY E-COMMERCE PAGE BANNER — SRI LANKAN MARKET (ULTRA-FLAT)
+       Desktop: 1440 x 150px | Tablet: 768 x 130px | Mobile: 375 x 165px
+       ========================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+    }
+
+    body {
+      background-color: #F6F2EA;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 16px;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .lk-secondary-banner {
+      position: relative;
+      display: flex;
+      width: 100%;
+      max-width: 1440px;
+      height: 150px;
+      background-color: #F7D08A;
+      border: 1px solid #DFC498;
+      overflow: hidden;
+    }
+
+    /* Left Marketing Zone (52%) with 9-Step Ceylon Ivory-to-Cinnamon-Gold Background */
+    .lk-banner-left {
+      position: relative;
+      z-index: 2;
+      flex: 0 0 52%;
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      padding: 0 28px 0 44px;
+      background: linear-gradient(
+        90deg,
+        #FFFDF8 0%,      #FFFDF8 11.11%,
+        #FEF8EB 11.11%,  #FEF8EB 22.22%,
+        #FDF2DE 22.22%,  #FDF2DE 33.33%,
+        #FCECD0 33.33%,  #FCECD0 44.44%,
+        #FBE7C2 44.44%,  #FBE7C2 55.55%,
+        #FAE1B4 55.55%,  #FAE1B4 66.66%,
+        #F9DBA6 66.66%,  #F9DBA6 77.77%,
+        #F8D698 77.77%,  #F8D698 88.88%,
+        #F7D08A 88.88%,  #F7D08A 100%
+      );
+    }
+
+    /* Sharp Flat Sri Lankan National Flag */
+    .lk-banner-flag {
+      flex-shrink: 0;
+      width: 64px;
+      height: 42px;
+      border: 1px solid rgba(122, 18, 50, 0.25);
+      display: block;
+    }
+
+    /* Two-Color Marketing Heading */
+    .lk-banner-heading {
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      color: #7A1232;
+    }
+
+    .lk-banner-heading span {
+      display: block;
+      color: #C85200;
+    }
+
+    /* Right Raw Ingredients Zone (48%) */
+    .lk-banner-right {
+      position: relative;
+      flex: 0 0 48%;
+      height: 100%;
+      background-color: #F7D08A;
+      overflow: hidden;
+    }
+
+    /* Smooth Alpha Feather Blend from Left Step-Down Zone into Raw Ingredients */
+    .lk-banner-right::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 110px;
+      background: linear-gradient(90deg, #F7D08A 0%, rgba(247, 208, 138, 0) 100%);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* 5-Panel Editorial Collage of Raw Sri Lankan Ingredients */
+    .lk-ingredients-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1.05fr 0.9fr 0.9fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 2px;
+      width: 100%;
+      height: 100%;
+      background-color: #F7D08A;
+    }
+
+    .ing-tile {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #EFC274;
+    }
+
+    .ing-tile img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: saturate(1.14) contrast(1.03);
+    }
+
+    /* Panel Layout Assignments */
+    .ing-noodles { grid-column: 1 / 2; grid-row: 1 / 3; }
+    .ing-rice    { grid-column: 2 / 3; grid-row: 1 / 3; }
+    .ing-spices  { grid-column: 3 / 4; grid-row: 1 / 2; }
+    .ing-coconut { grid-column: 3 / 4; grid-row: 2 / 3; }
+    .ing-herbs   { grid-column: 4 / 5; grid-row: 1 / 3; }
+
+    /* Tablet Breakpoint (768 x 130px) */
+    @media (max-width: 1024px) {
+      .lk-secondary-banner {
+        height: 130px;
+      }
+      .lk-banner-left {
+        flex: 0 0 54%;
+        gap: 16px;
+        padding: 0 18px 0 24px;
+      }
+      .lk-banner-flag {
+        width: 52px;
+        height: 34px;
+      }
+      .lk-banner-heading {
+        font-size: 16.5px;
+      }
+      .lk-banner-right {
+        flex: 0 0 46%;
+      }
+      .lk-banner-right::before {
+        width: 72px;
+      }
+    }
+
+    /* Mobile Breakpoint (375 x 165px) */
+    @media (max-width: 640px) {
+      .lk-secondary-banner {
+        flex-direction: column;
+        height: 165px;
+      }
+      .lk-banner-left {
+        flex: 0 0 54%;
+        width: 100%;
+        gap: 12px;
+        padding: 10px 14px;
+      }
+      .lk-banner-flag {
+        width: 38px;
+        height: 25px;
+      }
+      .lk-banner-heading {
+        font-size: 13px;
+        line-height: 1.2;
+      }
+      .lk-banner-right {
+        flex: 0 0 46%;
+        width: 100%;
+      }
+      .lk-banner-right::before {
+        inset: 0 0 auto 0;
+        width: 100%;
+        height: 22px;
+        background: linear-gradient(180deg, #F7D08A 0%, rgba(247, 208, 138, 0) 100%);
+      }
+      .lk-ingredients-grid {
+        grid-template-columns: repeat(5, 1fr);
+        grid-template-rows: 1fr;
+      }
+      .ing-noodles { grid-column: 1 / 2; grid-row: 1 / 2; }
+      .ing-rice    { grid-column: 2 / 3; grid-row: 1 / 2; }
+      .ing-spices  { grid-column: 3 / 4; grid-row: 1 / 2; }
+      .ing-coconut { grid-column: 4 / 5; grid-row: 1 / 2; }
+      .ing-herbs   { grid-column: 5 / 6; grid-row: 1 / 2; }
+    }
+  </style>
+</head>
+<body>
+
+  <section class="lk-secondary-banner" aria-label="A Taste of Sri Lanka, Something for Every Home">
+    <!-- Left Zone: Enlarged Flat Sri Lankan Flag + Two-Color Heading on 9-Step Ceylon Cinnamon-Gold Background -->
+    <div class="lk-banner-left">
+      <svg class="lk-banner-flag" viewBox="0 0 1200 600" role="img" aria-label="National Flag of Sri Lanka">
+        <!-- Outer Golden-Yellow Border -->
+        <rect width="1200" height="600" fill="#FFBE29" />
+        <!-- Green Vertical Stripe -->
+        <rect x="44" y="44" width="166" height="512" fill="#00534E" />
+        <!-- Saffron-Orange Vertical Stripe -->
+        <rect x="210" y="44" width="166" height="512" fill="#EB7400" />
+        <!-- Maroon Lion Field -->
+        <rect x="420" y="44" width="736" height="512" fill="#8D153A" />
+        <!-- Four Corner Golden Bo Leaves -->
+        <g fill="#FFBE29">
+          <path d="M456,74 C474,84 484,102 478,122 C460,114 448,96 456,74 Z" />
+          <path d="M1120,74 C1102,84 1092,102 1098,122 C1116,114 1128,96 1120,74 Z" />
+          <path d="M456,526 C474,516 484,498 478,478 C460,486 448,504 456,526 Z" />
+          <path d="M1120,526 C1102,516 1092,498 1098,478 C1116,486 1128,504 1120,526 Z" />
+        </g>
+        <!-- Golden Sinha Lion Holding Kastane Sword -->
+        <g fill="#FFBE29" stroke="#FFBE29" stroke-linejoin="round">
+          <!-- Sword Blade & Hilt -->
+          <polygon points="564,136 576,136 572,272 560,272" />
+          <rect x="550" y="266" width="32" height="10" />
+          <rect x="562" y="276" width="8" height="24" />
+          <!-- Lion Head, Crown & Mane -->
+          <circle cx="660" cy="212" r="34" />
+          <polygon points="636,184 648,162 660,180 672,162 684,184" />
+          <!-- Lion Torso & Foreleg Holding Sword -->
+          <path d="M648,242 L790,256 L822,312 L794,358 L668,348 L632,296 Z" />
+          <path d="M642,262 L572,274 L572,290 L646,284 Z" />
+          <!-- Raised Front Left Paw -->
+          <path d="M640,308 L586,334 L594,348 L652,326 Z" />
+          <!-- Hind Legs -->
+          <path d="M776,346 L746,442 L772,446 L802,356 Z" />
+          <path d="M808,342 L846,442 L872,438 L832,334 Z" />
+          <!-- Upward Curled Tail -->
+          <path d="M820,278 C886,256 922,196 894,154 C878,132 850,144 858,168 C864,184 880,180 882,196 C884,222 856,252 818,264 Z" />
+        </g>
+      </svg>
+
+      <h2 class="lk-banner-heading">
+        A TASTE OF SRI LANKA,
+        <span>SOMETHING FOR EVERY HOME</span>
+      </h2>
+    </div>
+
+    <!-- Right Zone: Raw String Hopper Noodles, Raw Red & White Rice, Ceylon Cinnamon & Spices, Coconut & Curry Leaves -->
+    <div class="lk-banner-right">
+      <div class="lk-ingredients-grid">
+        <div class="ing-tile ing-noodles">
+          <img
+            src="https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?auto=format&fit=crop&w=600&q=85"
+            alt="Raw dried string hopper idiappa rice noodles"
+            loading="eager"
+          />
+        </div>
+        <div class="ing-tile ing-rice">
+          <img
+            src="https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=600&q=85"
+            alt="Uncooked raw Sri Lankan red kekulu and white samba rice grains"
+            loading="eager"
+          />
+        </div>
+        <div class="ing-tile ing-spices">
+          <img
+            src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=500&q=85"
+            alt="Raw Ceylon cinnamon quills, green cardamom, cloves, and black peppercorns"
+            loading="eager"
+          />
+        </div>
+        <div class="ing-tile ing-coconut">
+          <img
+            src="https://images.unsplash.com/photo-1515543904379-3d757afe72e4?auto=format&fit=crop&w=500&q=85"
+            alt="Raw golden turmeric, coconut, and Sri Lankan lentils"
+            loading="eager"
+          />
+        </div>
+        <div class="ing-tile ing-herbs">
+          <img
+            src="https://images.unsplash.com/photo-1588879460618-9249e7d947d1?auto=format&fit=crop&w=500&q=85"
+            alt="Fresh green Ceylon curry leaves karapincha and green chillies"
+            loading="eager"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>
