@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Indian Market Secondary Page Banner</title>
+  <title>Indian Market Secondary Page Banner — Indian Pantry & Grocery Staples</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet" />
@@ -21,7 +21,7 @@
     }
 
     body {
-      background-color: #f4f1ec;
+      background-color: #F4F1EC;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -88,7 +88,7 @@
       color: #C84B11;
     }
 
-    /* Right Raw Ingredients Zone (48%) */
+    /* Right Indian Pantry Products Zone (48%) */
     .india-banner-right {
       position: relative;
       flex: 0 0 48%;
@@ -97,7 +97,7 @@
       overflow: hidden;
     }
 
-    /* Smooth Alpha Feather Blend from Left Step-Down Zone into Raw Ingredients */
+    /* Smooth Alpha Feather Blend from Left Step-Down Zone into Pantry Staples */
     .india-banner-right::before {
       content: "";
       position: absolute;
@@ -108,10 +108,16 @@
       pointer-events: none;
     }
 
-    /* 5-Panel Editorial Collage of Raw Indian Ingredients */
-    .india-ingredients-grid {
+    /* 6-Panel Editorial Collage Covering All Indian Grocery Categories:
+       1. Pastes & Purees (Ginger-Garlic, Tamarind, Tomato Puree)
+       2. Dairy & Coconut (Ghee, Paneer, Coconut Milk, Khoya)
+       3. Flours, Grains & Lentils (Atta, Besan, Sooji, Dal, Poha)
+       4. Spice Blends & Seasonings (Masala Blends, Kasuri Methi, Hing, Amchur)
+       5. Condiments, Pickles & Snacks (Achar, Papad, Sev/Boondi, Chutneys)
+       6. Flavorings & Sweeteners (Jaggery / Gur, Kewra & Rose Water) */
+    .india-pantry-grid {
       display: grid;
-      grid-template-columns: 1.15fr 1.05fr 0.9fr 0.9fr;
+      grid-template-columns: 1.05fr 1fr 1.05fr 0.9fr;
       grid-template-rows: 1fr 1fr;
       gap: 2px;
       width: 100%;
@@ -119,7 +125,7 @@
       background-color: #EBD6B8;
     }
 
-    .ing-tile {
+    .pantry-tile {
       position: relative;
       width: 100%;
       height: 100%;
@@ -127,7 +133,7 @@
       background-color: #E5CFAF;
     }
 
-    .ing-tile img {
+    .pantry-tile img {
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -135,11 +141,12 @@
     }
 
     /* Panel Layout Assignments */
-    .ing-noodles { grid-column: 1 / 2; grid-row: 1 / 3; }
-    .ing-rice    { grid-column: 2 / 3; grid-row: 1 / 3; }
-    .ing-spices  { grid-column: 3 / 4; grid-row: 1 / 2; }
-    .ing-dal     { grid-column: 3 / 4; grid-row: 2 / 3; }
-    .ing-herbs   { grid-column: 4 / 5; grid-row: 1 / 3; }
+    .pantry-grains   { grid-column: 1 / 2; grid-row: 1 / 3; } /* Atta, Besan, Dal, Poha */
+    .pantry-ghee     { grid-column: 2 / 3; grid-row: 1 / 2; } /* Ghee, Paneer, Coconut Milk, Khoya */
+    .pantry-pastes   { grid-column: 2 / 3; grid-row: 2 / 3; } /* Ginger-Garlic, Tamarind, Tomato Puree */
+    .pantry-masalas  { grid-column: 3 / 4; grid-row: 1 / 3; } /* Regional Masala Blends, Kasuri Methi, Hing, Amchur */
+    .pantry-achar    { grid-column: 4 / 5; grid-row: 1 / 2; } /* Achar, Papad, Sev, Boondi, Chutneys */
+    .pantry-jaggery  { grid-column: 4 / 5; grid-row: 2 / 3; } /* Jaggery (Gur), Kewra & Rose Water */
 
     /* Tablet Breakpoint (768 x 130px) */
     @media (max-width: 1024px) {
@@ -196,15 +203,16 @@
         height: 22px;
         background: linear-gradient(180deg, #EBD6B8 0%, rgba(235, 214, 184, 0) 100%);
       }
-      .india-ingredients-grid {
-        grid-template-columns: repeat(5, 1fr);
+      .india-pantry-grid {
+        grid-template-columns: repeat(6, 1fr);
         grid-template-rows: 1fr;
       }
-      .ing-noodles { grid-column: 1 / 2; grid-row: 1 / 2; }
-      .ing-rice    { grid-column: 2 / 3; grid-row: 1 / 2; }
-      .ing-spices  { grid-column: 3 / 4; grid-row: 1 / 2; }
-      .ing-dal     { grid-column: 4 / 5; grid-row: 1 / 2; }
-      .ing-herbs   { grid-column: 5 / 6; grid-row: 1 / 2; }
+      .pantry-grains  { grid-column: 1 / 2; grid-row: 1 / 2; }
+      .pantry-ghee    { grid-column: 2 / 3; grid-row: 1 / 2; }
+      .pantry-pastes  { grid-column: 3 / 4; grid-row: 1 / 2; }
+      .pantry-masalas { grid-column: 4 / 5; grid-row: 1 / 2; }
+      .pantry-achar   { grid-column: 5 / 6; grid-row: 1 / 2; }
+      .pantry-jaggery { grid-column: 6 / 7; grid-row: 1 / 2; }
     }
   </style>
 </head>
@@ -220,7 +228,7 @@
         <g transform="translate(450, 300)">
           <circle r="92" fill="none" stroke="#000080" stroke-width="11" />
           <circle r="16" fill="#000080" />
-          <g id="ashoka-spokes" stroke="#000080" stroke-width="5">
+          <g stroke="#000080" stroke-width="5">
             <line x1="0" y1="-92" x2="0" y2="92" />
             <line x1="-92" y1="0" x2="92" y2="0" />
             <line x1="-65" y1="-65" x2="65" y2="65" />
@@ -243,41 +251,48 @@
       </h2>
     </div>
 
-    <!-- Right Zone: Raw Noodles, Raw Basmati Rice, Whole Spices, Dal & Fresh Coriander -->
+    <!-- Right Zone: Authentic Indian Pantry & Grocery Products Across All 6 Categories -->
     <div class="india-banner-right">
-      <div class="india-ingredients-grid">
-        <div class="ing-tile ing-noodles">
+      <div class="india-pantry-grid">
+        <div class="pantry-tile pantry-grains">
           <img
-            src="https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?auto=format&fit=crop&w=600&q=85"
-            alt="Raw dried golden wheat noodles"
+            src="https://images.unsplash.com/photo-1515543904379-3d757afe72e4?auto=format&fit=crop&w=600&q=85"
+            alt="Atta whole wheat flour, besan gram flour, sooji semolina, pre-washed dal lentils, rajma, kabuli chana, and poha"
             loading="eager"
           />
         </div>
-        <div class="ing-tile ing-rice">
+        <div class="pantry-tile pantry-ghee">
           <img
-            src="https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=600&q=85"
-            alt="Uncooked raw long-grain Indian basmati rice"
+            src="https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?auto=format&fit=crop&w=500&q=85"
+            alt="Pure golden ghee clarified butter, paneer blocks, coconut milk, and khoya mawa"
             loading="eager"
           />
         </div>
-        <div class="ing-tile ing-spices">
+        <div class="pantry-tile pantry-pastes">
           <img
-            src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=500&q=85"
-            alt="Raw turmeric, Kashmiri red chilli, cumin, and cardamom spices"
+            src="https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=500&q=85"
+            alt="Ginger-garlic paste, tamarind concentrate, and rich tomato puree"
             loading="eager"
           />
         </div>
-        <div class="ing-tile ing-dal">
+        <div class="pantry-tile pantry-masalas">
           <img
-            src="https://images.unsplash.com/photo-1515543904379-3d757afe72e4?auto=format&fit=crop&w=500&q=85"
-            alt="Raw yellow toor dal lentils and whole pulses"
+            src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=600&q=85"
+            alt="Regional masala spice blends, garam masala, sambar powder, kasuri methi, hing, and amchur"
             loading="eager"
           />
         </div>
-        <div class="ing-tile ing-herbs">
+        <div class="pantry-tile pantry-achar">
           <img
-            src="https://images.unsplash.com/photo-1588879460618-9249e7d947d1?auto=format&fit=crop&w=500&q=85"
-            alt="Fresh raw coriander leaves and green chillies"
+            src="https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=500&q=85"
+            alt="Jarred mango achar pickle, papad wafers, sev, boondi, and ready-to-eat chutneys"
+            loading="eager"
+          />
+        </div>
+        <div class="pantry-tile pantry-jaggery">
+          <img
+            src="https://images.unsplash.com/photo-1606850780554-b55ea4dd0b70?auto=format&fit=crop&w=500&q=85"
+            alt="Unrefined jaggery gur blocks and bottled kewra and rose water"
             loading="eager"
           />
         </div>

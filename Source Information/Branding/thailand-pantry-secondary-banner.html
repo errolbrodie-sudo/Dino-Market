@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thailand Market Secondary Page Banner — Thai Pantry & Grocery Staples</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ==========================================================================
+       SECONDARY E-COMMERCE PAGE BANNER — THAILAND MARKET (ULTRA-FLAT)
+       Desktop: 1440 x 150px | Tablet: 768 x 130px | Mobile: 375 x 165px
+       ========================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+    }
+
+    body {
+      background-color: #F1F4F8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 16px;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .th-secondary-banner {
+      position: relative;
+      display: flex;
+      width: 100%;
+      max-width: 1440px;
+      height: 150px;
+      background-color: #EFC669;
+      border: 1px solid #CBD6E4;
+      overflow: hidden;
+    }
+
+    /* Left Marketing Zone (52%) with 9-Step Siamese Silk-Ivory to Thai Temple-Gold Background */
+    .th-banner-left {
+      position: relative;
+      z-index: 2;
+      flex: 0 0 52%;
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      padding: 0 28px 0 44px;
+      background: linear-gradient(
+        90deg,
+        #FFFEF9 0%,      #FFFEF9 11.11%,
+        #FDF7E7 11.11%,  #FDF7E7 22.22%,
+        #FBF0D5 22.22%,  #FBF0D5 33.33%,
+        #F9E9C3 33.33%,  #F9E9C3 44.44%,
+        #F7E2B1 44.44%,  #F7E2B1 55.55%,
+        #F5DB9F 55.55%,  #F5DB9F 66.66%,
+        #F3D48D 66.66%,  #F3D48D 77.77%,
+        #F1CD7B 77.77%,  #F1CD7B 88.88%,
+        #EFC669 88.88%,  #EFC669 100%
+      );
+    }
+
+    /* Sharp Flat National Flag of Thailand (Trairanga) */
+    .th-banner-flag {
+      flex-shrink: 0;
+      width: 64px;
+      height: 42px;
+      border: 1px solid rgba(31, 28, 61, 0.24);
+      display: block;
+    }
+
+    /* Two-Color Marketing Heading */
+    .th-banner-heading {
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      color: #1F1C3D;
+    }
+
+    .th-banner-heading span {
+      display: block;
+      color: #A51931;
+    }
+
+    /* Right Thai Pantry Products Zone (48%) */
+    .th-banner-right {
+      position: relative;
+      flex: 0 0 48%;
+      height: 100%;
+      background-color: #EFC669;
+      overflow: hidden;
+    }
+
+    /* Smooth Alpha Feather Blend from Left Step-Down Zone into Pantry Staples */
+    .th-banner-right::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 110px;
+      background: linear-gradient(90deg, #EFC669 0%, rgba(239, 198, 105, 0) 100%);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* 6-Panel Editorial Collage Covering All Thai Grocery Categories:
+       1. Rice, Noodles & Wrappers (Hom Mali Jasmine Rice, Khao Niao Glutinous Rice, Sen Mee/Lek/Yai Rice Noodles, Wun Sen Glass Noodles, Rice Paper)
+       2. Curry Pastes & Seasonings (Red, Green, Yellow, Panang & Massaman Curry Pastes, Nam Prik Pao, Kapi Shrimp Paste, Tom Yum Paste)
+       3. Sauces & Condiments (Nam Pla Fish Sauce, Si-io Khao & Dam Wan Soy Sauces, Oyster Sauce, Pla Ra, Sriracha & Sweet Chili, Pickled Garlic)
+       4. Coconut Products & Sweeteners (Kathi Coconut Milk & Hua Kathi Cream, Nam Tan Pip Palm Sugar Pucks)
+       5. Dried Aromatics & Fruits (Tamarind Pulp/Concentrate, Kaffir Lime Leaves, Lemongrass, Galangal, Dried Bird's Eye Chilies)
+       6. Dried Proteins & Toppings (Kung Haeng Dried Shrimp, Crispy Fried Shallots & Garlic, Roasted Peanuts & Cashews) */
+    .th-pantry-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 1fr 1.05fr 0.9fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 2px;
+      width: 100%;
+      height: 100%;
+      background-color: #EFC669;
+    }
+
+    .pantry-tile {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #E5B958;
+    }
+
+    .pantry-tile img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: saturate(1.14) contrast(1.03);
+    }
+
+    /* Panel Layout Assignments */
+    .pantry-noodles   { grid-column: 1 / 2; grid-row: 1 / 3; } /* Sen Mee/Lek/Yai, Wun Sen, Hom Mali & Khao Niao Rice, Rice Paper */
+    .pantry-pastes    { grid-column: 2 / 3; grid-row: 1 / 2; } /* Red/Green/Massaman Curry Pastes, Nam Prik Pao, Kapi, Tom Yum Paste */
+    .pantry-sauces    { grid-column: 2 / 3; grid-row: 2 / 3; } /* Nam Pla Fish Sauce, Thai Soy Sauces, Oyster Sauce, Pla Ra, Sweet Chili */
+    .pantry-aromatics { grid-column: 3 / 4; grid-row: 1 / 3; } /* Tamarind, Kaffir Lime Leaves, Lemongrass, Galangal, Bird's Eye Chilies */
+    .pantry-coconut   { grid-column: 4 / 5; grid-row: 1 / 2; } /* Kathi Coconut Milk & Cream, Nam Tan Pip Palm Sugar */
+    .pantry-toppings  { grid-column: 4 / 5; grid-row: 2 / 3; } /* Kung Haeng Dried Shrimp, Crispy Fried Shallots/Garlic, Peanuts & Cashews */
+
+    /* Tablet Breakpoint (768 x 130px) */
+    @media (max-width: 1024px) {
+      .th-secondary-banner {
+        height: 130px;
+      }
+      .th-banner-left {
+        flex: 0 0 54%;
+        gap: 16px;
+        padding: 0 18px 0 24px;
+      }
+      .th-banner-flag {
+        width: 52px;
+        height: 34px;
+      }
+      .th-banner-heading {
+        font-size: 16.5px;
+      }
+      .th-banner-right {
+        flex: 0 0 46%;
+      }
+      .th-banner-right::before {
+        width: 72px;
+      }
+    }
+
+    /* Mobile Breakpoint (375 x 165px) */
+    @media (max-width: 640px) {
+      .th-secondary-banner {
+        flex-direction: column;
+        height: 165px;
+      }
+      .th-banner-left {
+        flex: 0 0 54%;
+        width: 100%;
+        gap: 12px;
+        padding: 10px 14px;
+      }
+      .th-banner-flag {
+        width: 38px;
+        height: 25px;
+      }
+      .th-banner-heading {
+        font-size: 13px;
+        line-height: 1.2;
+      }
+      .th-banner-right {
+        flex: 0 0 46%;
+        width: 100%;
+      }
+      .th-banner-right::before {
+        inset: 0 0 auto 0;
+        width: 100%;
+        height: 22px;
+        background: linear-gradient(180deg, #EFC669 0%, rgba(239, 198, 105, 0) 100%);
+      }
+      .th-pantry-grid {
+        grid-template-columns: repeat(6, 1fr);
+        grid-template-rows: 1fr;
+      }
+      .pantry-noodles   { grid-column: 1 / 2; grid-row: 1 / 2; }
+      .pantry-pastes    { grid-column: 2 / 3; grid-row: 1 / 2; }
+      .pantry-sauces    { grid-column: 3 / 4; grid-row: 1 / 2; }
+      .pantry-aromatics { grid-column: 4 / 5; grid-row: 1 / 2; }
+      .pantry-coconut   { grid-column: 5 / 6; grid-row: 1 / 2; }
+      .pantry-toppings  { grid-column: 6 / 7; grid-row: 1 / 2; }
+    }
+  </style>
+</head>
+<body>
+
+  <section class="th-secondary-banner" aria-label="A Taste of Thailand, Something for Every Home">
+    <!-- Left Zone: Enlarged Flat National Flag of Thailand + Two-Color Heading on 9-Step Temple-Gold Background -->
+    <div class="th-banner-left">
+      <svg class="th-banner-flag" viewBox="0 0 900 600" role="img" aria-label="National Flag of Thailand">
+        <rect width="900" height="100" x="0" y="0" fill="#A51931" />
+        <rect width="900" height="100" x="0" y="100" fill="#F4F5F8" />
+        <rect width="900" height="200" x="0" y="200" fill="#2D2A4A" />
+        <rect width="900" height="100" x="0" y="400" fill="#F4F5F8" />
+        <rect width="900" height="100" x="0" y="500" fill="#A51931" />
+      </svg>
+
+      <h2 class="th-banner-heading">
+        A TASTE OF THAILAND,
+        <span>SOMETHING FOR EVERY HOME</span>
+      </h2>
+    </div>
+
+    <!-- Right Zone: Authentic Thai Pantry & Grocery Products Across All 6 Categories -->
+    <div class="th-banner-right">
+      <div class="th-pantry-grid">
+        <div class="pantry-tile pantry-noodles">
+          <img
+            src="https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?auto=format&fit=crop&w=600&q=85"
+            alt="Thai Hom Mali jasmine rice, glutinous sticky rice, dried sen rice noodles, wun sen glass noodles, and rice paper wrappers"
+            loading="eager"
+          />
+        </div>
+        <div class="pantry-tile pantry-pastes">
+          <img
+            src="https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=500&q=85"
+            alt="Red, green, yellow, Panang and Massaman Thai curry pastes, nam prik pao chili jam, kapi shrimp paste, and Tom Yum paste"
+            loading="eager"
+          />
+        </div>
+        <div class="pantry-tile pantry-sauces">
+          <img
+            src="https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=500&q=85"
+            alt="Nam pla fish sauce, Thai light and dark soy sauces, oyster sauce, pla ra, Sriracha, sweet chili sauce, and pickled garlic"
+            loading="eager"
+          />
+        </div>
+        <div class="pantry-tile pantry-aromatics">
+          <img
+            src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=600&q=85"
+            alt="Seedless tamarind pulp, dried kaffir lime leaves, lemongrass, galangal, and dried Thai bird's eye chilies"
+            loading="eager"
+          />
+        </div>
+        <div class="pantry-tile pantry-coconut">
+          <img
+            src="https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?auto=format&fit=crop&w=500&q=85"
+            alt="Canned and tetra-pak coconut milk kathi, coconut cream, and nam tan pip palm sugar pucks"
+            loading="eager"
+          />
+        </div>
+        <div class="pantry-tile pantry-toppings">
+          <img
+            src="https://images.unsplash.com/photo-1515543904379-3d757afe72e4?auto=format&fit=crop&w=500&q=85"
+            alt="Sun-dried shrimp kung haeng, crispy fried shallots and garlic, and roasted peanuts and cashews"
+            loading="eager"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>
