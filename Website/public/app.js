@@ -2767,7 +2767,6 @@ const app = {
       const p = data.product;
       const reg = data.region;
       const kitchenCfg = KITCHEN_STOREFRONTS[p.region_slug] || KITCHEN_STOREFRONTS.india;
-      const reviews = data.reviews || [];
       const related = data.related_products || [];
       const isWished = (state.wishlist || []).includes(p.id);
       const hasGenuineDiscount = p.compare_at_price_ils && Number(p.compare_at_price_ils) > Number(p.price_ils);
@@ -2815,6 +2814,23 @@ const app = {
                 `
                 : ''
             }
+            <div style="margin-top:16px;">
+              <h4 style="margin-top:0;">Nutrition per 100g / 100ml (<span lang="he" dir="rtl">סימון תזונתי</span>)</h4>
+              ${
+                nutritionEntries.length > 0
+                  ? `<table class="data-table">
+                      <tbody>
+                        ${nutritionEntries
+                          .map(
+                            ([kName, vVal]) =>
+                              `<tr><td><strong>${escapeHtml(kName.replace(/_/g, ' ').toUpperCase())}</strong></td><td>${escapeHtml(vVal)}</td></tr>`
+                          )
+                          .join('')}
+                      </tbody>
+                    </table>`
+                  : `<p style="font-size:14px;color:var(--dm-muted);">Full nutritional table printed on packaging.</p>`
+              }
+            </div>
           </div>
 
           <div>
@@ -2844,9 +2860,6 @@ const app = {
                     ? `<span style="text-decoration:line-through;color:var(--dm-muted);font-size:1rem;">₪${Number(p.compare_at_price_ils).toFixed(2)}</span>`
                     : ''
                 }
-                <span class="pdp-stock-badge" style="color:${p.stock_quantity > 0 ? 'var(--dm-green)' : 'var(--dm-chili)'};">
-                  ${p.stock_quantity > 0 ? `In stock (${p.stock_quantity} available)` : 'Out of stock'}
-                </span>
               </div>
               <div style="font-size:14px;color:var(--dm-muted);margin-top:4px;">
                 Includes 18% VAT (<span lang="he" dir="rtl">כולל מע״מ</span>) · ₪${Number(p.price_per_100_ils).toFixed(2)} per ${escapeHtml(p.unit_measure_type)} · Net: ${escapeHtml(p.size_label || p.net_weight_grams + 'g')}
@@ -2871,7 +2884,7 @@ const app = {
             </div>
 
             <div style="display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap;">
-              <input type="number" id="pdpQtyInput" value="1" min="1" max="${p.stock_quantity}" aria-label="Quantity" style="width:76px;min-height:48px;padding:10px;border:1.5px solid var(--dm-line-strong);border-radius:999px;font-weight:700;text-align:center;" />
+              <input type="number" id="pdpQtyInput" value="1" min="1" max="99" aria-label="Quantity" style="width:76px;min-height:48px;padding:10px;border:1.5px solid var(--dm-line-strong);border-radius:999px;font-weight:700;text-align:center;" />
               <button
                 type="button"
                 class="btn-primary btn-cta-lg"
@@ -2897,67 +2910,9 @@ const app = {
                   ? `<div style="color:var(--dm-chili);"><strong>Allergens:</strong> ${escapeHtml(p.allergens.join(', '))}</div>`
                   : `<div><strong>Allergens:</strong> None declared (see package label).</div>`
               }
-              <div><strong>Importer (Israel):</strong> ${escapeHtml(p.importer_israel)} · <strong>Best Before:</strong> ${escapeHtml(p.expiry_date)}</div>
+              <div><strong>Importer (Israel):</strong> ${escapeHtml(p.importer_israel)}</div>
               <div><strong>Storage:</strong> ${escapeHtml(p.storage_instructions)}</div>
             </div>
-          </div>
-        </div>
-
-        <div class="form-grid-2" style="margin-top:24px;border-top:1px solid var(--dm-line);padding-top:20px;">
-          <div>
-            <h4>Nutrition per 100g / 100ml (<span lang="he" dir="rtl">סימון תזונתי</span>)</h4>
-            ${
-              nutritionEntries.length > 0
-                ? `<table class="data-table">
-                    <tbody>
-                      ${nutritionEntries
-                        .map(
-                          ([kName, vVal]) =>
-                            `<tr><td><strong>${escapeHtml(kName.replace(/_/g, ' ').toUpperCase())}</strong></td><td>${escapeHtml(vVal)}</td></tr>`
-                        )
-                        .join('')}
-                    </tbody>
-                  </table>`
-                : `<p style="font-size:14px;color:var(--dm-muted);">Full nutritional table printed on packaging.</p>`
-            }
-          </div>
-
-          <div>
-            <h4>Customer Reviews (${reviews.length})</h4>
-            <div style="max-height:200px;overflow-y:auto;margin-bottom:12px;">
-              ${
-                reviews.length === 0
-                  ? `<p style="font-size:14px;color:var(--dm-muted);">No customer reviews yet. Only verified shopper reviews appear here.</p>`
-                  : reviews
-                      .map(
-                        (r) => `
-                        <div style="background:var(--dm-cream);padding:12px;border-radius:14px;margin-bottom:8px;font-size:14px;">
-                          <div style="display:flex;justify-content:space-between;">
-                            <strong>${escapeHtml(r.author_name)} ${r.is_verified_purchase ? '<span style="color:var(--dm-green);font-size:13px;">(Verified)</span>' : ''}</strong>
-                            <span>${escapeHtml(r.rating)}/5</span>
-                          </div>
-                          <div style="font-weight:700;margin:3px 0;">${escapeHtml(r.title)}</div>
-                          <div>${escapeHtml(r.body)}</div>
-                        </div>
-                      `
-                      )
-                      .join('')
-              }
-            </div>
-
-            <form onsubmit="app.submitProductReview(event, '${escapeHtml(p.slug)}')" style="background:var(--dm-cream);padding:14px;border-radius:18px;">
-              <div style="font-weight:700;font-size:14px;margin-bottom:8px;">Write a review</div>
-              <div style="display:flex;gap:8px;margin-bottom:8px;">
-                <select id="reviewRatingInput" style="min-height:44px;padding:6px 12px;border-radius:999px;border:1.5px solid var(--dm-line-strong);background:var(--dm-white);">
-                  <option value="5">5 / 5</option>
-                  <option value="4">4 / 5</option>
-                  <option value="3">3 / 5</option>
-                </select>
-                <input type="text" id="reviewTitleInput" placeholder="Short headline..." required style="flex:1;min-height:44px;padding:6px 14px;border:1.5px solid var(--dm-line-strong);border-radius:999px;background:var(--dm-white);" />
-              </div>
-              <textarea id="reviewBodyInput" rows="2" placeholder="How did you use this in your kitchen?" required style="width:100%;padding:10px 14px;border:1.5px solid var(--dm-line-strong);border-radius:16px;margin-bottom:8px;background:var(--dm-white);"></textarea>
-              <button type="submit" class="pill-control">Post review</button>
-            </form>
           </div>
         </div>
 
@@ -4153,7 +4108,13 @@ const app = {
       const data = await apiFetch('/api/admin/overview');
       state.adminData = data;
       const k = data.kpis;
-      const lowStockProds = (data.products || []).filter((p) => p.stock_quantity <= 10 && p.status !== 'archived');
+      const sortedAdminProducts = [...(data.products || [])]
+        .filter((p) => p.status !== 'archived')
+        .sort((a, b) => {
+          const labelA = `${a.title || ''} (${a.size_label || a.net_weight_grams + 'g'})`;
+          const labelB = `${b.title || ''} (${b.size_label || b.net_weight_grams + 'g'})`;
+          return labelA.localeCompare(labelB, undefined, { sensitivity: 'base', numeric: true });
+        });
 
       const orderStatusOptions = [
         'Pending Payment',
@@ -4180,7 +4141,7 @@ const app = {
         </div>
 
         <!-- KPI Summary Cards -->
-        <div class="trust-grid" style="margin-bottom:20px;">
+        <div class="trust-grid" style="margin-bottom:20px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));">
           <div class="card-panel" style="margin:0;border-left:5px solid var(--brand-forest);">
             <div style="font-size:0.8rem;color:var(--text-secondary);">Gross Captured Revenue (₪ ILS)</div>
             <div style="font-family:var(--font-heading);font-size:1.65rem;font-weight:900;color:var(--brand-forest);">₪${Number(k.total_revenue_ils).toFixed(2)}</div>
@@ -4192,10 +4153,6 @@ const app = {
           <div class="card-panel" style="margin:0;border-left:5px solid var(--brand-gold);">
             <div style="font-size:0.8rem;color:var(--text-secondary);">Total Orders Processed</div>
             <div style="font-family:var(--font-heading);font-size:1.65rem;font-weight:900;color:var(--brand-forest);">${k.total_orders}</div>
-          </div>
-          <div class="card-panel" style="margin:0;border-left:5px solid var(--brand-red);">
-            <div style="font-size:0.8rem;color:var(--text-secondary);">Low-Stock Alerts (≤10 units)</div>
-            <div style="font-family:var(--font-heading);font-size:1.65rem;font-weight:900;color:${lowStockProds.length > 0 ? 'var(--brand-red)' : 'var(--brand-forest)'};">${lowStockProds.length} SKU(s)</div>
           </div>
         </div>
 
@@ -4264,8 +4221,7 @@ const app = {
                 <tr><th>SKU</th><th>Product Title &amp; Size</th><th>Origin</th><th>Price (₪)</th><th>Compare-At Promo (₪)</th><th>Stock Qty</th><th>Actions</th></tr>
               </thead>
               <tbody>
-                ${data.products
-                  .filter((p) => p.status !== 'archived')
+                ${sortedAdminProducts
                   .map(
                     (p) => `
                     <tr>
@@ -4341,60 +4297,29 @@ const app = {
           }
         </div>
 
-        <!-- Module 3: Israeli Delivery Zones & Audit Logs -->
-        <div class="form-grid-2">
-          <div class="card-panel">
-            <h3>Configurable Israeli Domestic Delivery Zones</h3>
-            <table class="data-table">
-              <thead>
-                <tr><th>Zone</th><th>Standard (₪)</th><th>Locker (₪)</th><th>Free Over (₪)</th><th>Save</th></tr>
-              </thead>
-              <tbody>
-                ${data.shipping_zones
-                  .map(
-                    (z) => `
-                    <tr>
-                      <td><strong>${escapeHtml(z.name_en)}</strong><br/><span style="font-size:0.75rem;color:var(--text-secondary);">${escapeHtml(z.name_he)}</span></td>
-                      <td><input type="number" id="zStd_${escapeHtml(z.zone_code)}" value="${z.standard_rate_ils}" style="width:60px;padding:4px;" /></td>
-                      <td><input type="number" id="zLoc_${escapeHtml(z.zone_code)}" value="${z.locker_rate_ils}" style="width:60px;padding:4px;" /></td>
-                      <td><input type="number" id="zFree_${escapeHtml(z.zone_code)}" value="${z.free_threshold_ils}" style="width:68px;padding:4px;" /></td>
-                      <td><button type="button" class="btn-outline" style="padding:4px 8px;font-size:0.75rem;" onclick="app.adminSaveZone('${escapeHtml(z.zone_code)}')">Save</button></td>
-                    </tr>
-                  `
-                  )
-                  .join('')}
-              </tbody>
-            </table>
-          </div>
-
-          <div class="card-panel">
-            <h3>Immutable Admin Audit Logs &amp; Newsletter Subscribers (${state.newsletterSubscribers.length})</h3>
-            <div style="max-height:240px;overflow-y:auto;">
-              <table class="data-table">
-                <thead>
-                  <tr><th>Time</th><th>Actor</th><th>Action</th><th>Details</th></tr>
-                </thead>
-                <tbody>
-                  ${
-                    data.audit_logs.length === 0
-                      ? `<tr><td colspan="4" style="color:var(--text-secondary);">All administrative mutations are recorded in <code>admin_audit_logs</code>.</td></tr>`
-                      : data.audit_logs
-                          .map(
-                            (l) => `
-                            <tr>
-                              <td style="font-size:0.74rem;">${new Date(l.created_at).toLocaleTimeString()}</td>
-                              <td style="font-size:0.76rem;">${escapeHtml(l.actor_email)}</td>
-                              <td><strong>${escapeHtml(l.action)}</strong></td>
-                              <td style="font-size:0.76rem;">${escapeHtml(l.details)}</td>
-                            </tr>
-                          `
-                          )
-                          .join('')
-                  }
-                </tbody>
-              </table>
-            </div>
-          </div>
+        <!-- Module 3: Israeli Delivery Zones -->
+        <div class="card-panel">
+          <h3>Configurable Israeli Domestic Delivery Zones</h3>
+          <table class="data-table">
+            <thead>
+              <tr><th>Zone</th><th>Standard (₪)</th><th>Locker (₪)</th><th>Free Over (₪)</th><th>Save</th></tr>
+            </thead>
+            <tbody>
+              ${data.shipping_zones
+                .map(
+                  (z) => `
+                  <tr>
+                    <td><strong>${escapeHtml(z.name_en)}</strong><br/><span style="font-size:0.75rem;color:var(--text-secondary);">${escapeHtml(z.name_he)}</span></td>
+                    <td><input type="number" id="zStd_${escapeHtml(z.zone_code)}" value="${z.standard_rate_ils}" style="width:60px;padding:4px;" /></td>
+                    <td><input type="number" id="zLoc_${escapeHtml(z.zone_code)}" value="${z.locker_rate_ils}" style="width:60px;padding:4px;" /></td>
+                    <td><input type="number" id="zFree_${escapeHtml(z.zone_code)}" value="${z.free_threshold_ils}" style="width:68px;padding:4px;" /></td>
+                    <td><button type="button" class="btn-outline" style="padding:4px 8px;font-size:0.75rem;" onclick="app.adminSaveZone('${escapeHtml(z.zone_code)}')">Save</button></td>
+                  </tr>
+                `
+                )
+                .join('')}
+            </tbody>
+          </table>
         </div>
       `;
     } catch (err) {
@@ -4468,7 +4393,11 @@ const app = {
   },
 
   exportProductsCsv() {
-    const prods = state.allProducts.length > 0 ? state.allProducts : getLocalProducts();
+    const prods = [...(state.allProducts.length > 0 ? state.allProducts : getLocalProducts())].sort((a, b) => {
+      const labelA = `${a.title || ''} (${a.size_label || a.net_weight_grams + 'g'})`;
+      const labelB = `${b.title || ''} (${b.size_label || b.net_weight_grams + 'g'})`;
+      return labelA.localeCompare(labelB, undefined, { sensitivity: 'base', numeric: true });
+    });
     const header = ['sku', 'title', 'vendor_brand', 'region_slug', 'category_slug', 'size_label', 'price_ils', 'stock_quantity'];
     const rows = prods.map((p) =>
       header.map((k) => `"${String(p[k] ?? '').replace(/"/g, '""')}"`).join(',')

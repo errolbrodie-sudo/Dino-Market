@@ -292,12 +292,13 @@ const NAVIGATION_SPEC = [
     name: 'Pantry',
     name_he: 'מזווה ובישול',
     slug: 'pantry',
-    description: 'Extra-long basmati rice, traditional noodles, specialty flours, and natural unrefined cane jaggery.',
+    description: 'Extra-long basmati rice, traditional noodles, specialty flours, spreads & cheese, and natural unrefined cane jaggery.',
     subcategories: [
       { name: 'Rice', name_he: 'אורז בסמטי ואורז אסייתי', slug: 'rice' },
       { name: 'Noodles', name_he: 'אטריות יבשות', slug: 'noodles' },
       { name: 'Flour', name_he: 'קמחים מיוחדים', slug: 'flour' },
-      { name: 'Sugar', name_he: 'סוכר קנים וג׳אגרי טבעי', slug: 'sugar' }
+      { name: 'Sugar', name_he: 'סוכר קנים וג׳אגרי טבעי', slug: 'sugar' },
+      { name: 'Spreads & Dairy', name_he: 'ממרחים וגבינות', slug: 'spreads-dairy' }
     ]
   },
   {
@@ -664,7 +665,7 @@ const SEED_PRODUCTS = [
     unit_measure_type: '100ml',
     stock_quantity: 64,
     expiry_date: '2028-01-20',
-    primary_image_url: 'images/products/silver-swan-soy-sauce-front.jpg',
+    primary_image_url: 'images/products/silver-swan-soy-sauce-front.jpg?v=20261119',
     secondary_image_url: 'images/products/silver-swan-soy-sauce-back.jpg',
     is_authentic_photo: 1,
     is_featured: 1,
@@ -804,26 +805,624 @@ const SEED_PRODUCTS = [
     rating_average: 5.0,
     rating_count: 1,
     sales_count: 230
+  },
+  {
+    sku: 'DM-PH-002',
+    barcode_ean: '4800361390804',
+    title: 'Maggi Magic Sarap All-in-One Seasoning Granules (150g)',
+    title_he: 'מאגי מג׳יק סאראפ גרגירי תיבול לכל תבשיל 150 גרם',
+    slug: 'maggi-magic-sarap-all-in-one-seasoning-150g',
+    vendor_brand: 'Maggi',
+    category_slug: 'sauce-seasoning',
+    subcategory_slug: 'spices-seasonings',
+    region_slug: 'philippines',
+    short_description: 'Iconic Filipino all-in-one seasoning granules made with fresh garlic, onion, real chicken taste, and iron fortification.',
+    description: 'Maggi Magic Sarap All-in-One Seasoning Granules bring instant savory umami ("Mas Pinasarap, May Dagdag Linamnam") to stir-fries, sinigang, fried rice, marinades, eggs, and everyday Filipino home cooking. Fortified with iron and Halal certified (IDCP).',
+    ingredients: 'Iodized Salt, Sugar, Flavour Enhancers (Monosodium Glutamate, Disodium Inosinate, Disodium Guanylate), Garlic, Onion, Chicken Fat & Meat Powder, Spices, Iron Pyrophosphate, Egg Yolk Powder.',
+    allergens_json: JSON.stringify(['Egg', 'May contain Wheat (Gluten), Soy, Milk, Celery & Crustaceans']),
+    dietary_tags_json: JSON.stringify(['Halal (IDCP)', 'Fortified with Iron']),
+    red_labels_json: JSON.stringify(['High Sodium (נתרן בכמות גבוהה)']),
+    nutrition_json: JSON.stringify({
+      calories_per_100g: 150,
+      protein_g: 8.5,
+      carbs_g: 24.0,
+      sugars_g: 12.0,
+      total_fat_g: 2.2,
+      saturated_fat_g: 0.9,
+      sodium_mg: 21500
+    }),
+    i18n_json: JSON.stringify({
+      en: {
+        title: 'Maggi Magic Sarap All-in-One Seasoning Granules (150g)',
+        description: 'Iconic Filipino all-in-one savory seasoning granules with garlic, onion, and iron fortification.'
+      },
+      he: {
+        title: 'מאגי מג׳יק סאראפ גרגירי תיבול אול-אין-וואן (150 גרם)',
+        description: 'גרגירי התיבול הפיליפיניים האהובים עם שום, בצל וברזל למוקפצים, אורז מטוגן, מרקים ומרינדות.'
+      },
+      hi: {
+        title: 'मैगी मैजिक सराप ऑल-इन-वन सीज़निंग ग्रैन्यूल्स (150g)',
+        description: 'लहसुन, प्याज और आयरन से भरपूर प्रामाणिक फिलिपिनो ऑल-इन-वन मसाला ग्रैन्यूल्स।'
+      },
+      th: {
+        title: 'แม็กกี้ เมจิก ซารัป ผงปรุงรสอเนกประสงค์ชนิดเกล็ด (150 กรัม)',
+        description: 'ผงปรุงรสยอดนิยมจากฟิลิปปินส์ หอมกระเทียมและหัวหอม เสริมธาตุเหล็ก สำหรับผัดและหมัก'
+      },
+      si: {
+        title: 'මැගී මැජික් සරප් සියලුම ආහාර සඳහා රසකාරක කැට (150g)',
+        description: 'සුදුළූණු, ළූණු සහ යකඩ අඩංගු ප්‍රසිද්ධ පිලිපීන රසකාරක කැට.'
+      },
+      tl: {
+        title: 'Maggi Magic Sarap All-in-One Seasoning Granules (150g)',
+        description: 'Mas pinasarap at may dagdag linamnam na all-in-one seasoning granules na may iron para sa lutong bahay.'
+      }
+    }),
+    importer_israel: 'Dinu Market Imports, Israel',
+    price_ils: 22.00,
+    compare_at_price_ils: null,
+    net_weight_grams: 150,
+    unit_measure_type: '100g',
+    stock_quantity: 55,
+    expiry_date: '2027-08-30',
+    primary_image_url: 'images/products/maggi-magic-sarap-150g.jpg',
+    secondary_image_url: '',
+    is_authentic_photo: 1,
+    is_featured: 1,
+    rating_average: 4.9,
+    rating_count: 1,
+    sales_count: 190
+  },
+  {
+    sku: 'DM-PH-003',
+    barcode_ean: '014285000306',
+    title: 'UFC Tamis Anghang Sweet & Spicy Banana Sauce (320g Bottle)',
+    title_he: 'רוטב בננה מתוק-חריף UFC טאמיס אנגהאנג 320 גרם',
+    slug: 'ufc-tamis-anghang-banana-sauce-320g',
+    vendor_brand: 'UFC (NutriAsia)',
+    category_slug: 'sauce-seasoning',
+    subcategory_slug: 'ketchups',
+    region_slug: 'philippines',
+    short_description: 'The Philippines’ #1 sweet and mildly spicy ("Tamis Anghang") banana ketchup for fried chicken, lumpia, tortang talong, and Filipino spaghetti.',
+    description: 'Crafted by NutriAsia from select Philippine saba bananas, savory spices, and chili, UFC Tamis Anghang Banana Sauce balances fruity sweetness with a gentle kick. Essential for dipping lumpia shanghai, fried chicken, silog breakfasts, and sweet-style Filipino spaghetti.',
+    ingredients: 'Water, Sugar, Banana (10%), Modified Corn Starch, Vinegar, Iodized Salt, Onion, Chili, Garlic, Sodium Benzoate (E211) as preservative, Food Colors (FD&C Red #40, FD&C Yellow #6).',
+    allergens_json: JSON.stringify([]),
+    dietary_tags_json: JSON.stringify(['Vegan', 'Vegetarian']),
+    red_labels_json: JSON.stringify(['High Sodium (נתרן בכמות גבוהה)', 'High Sugar (סוכר בכמות גבוהה)']),
+    nutrition_json: JSON.stringify({
+      calories_per_100g: 120,
+      protein_g: 0.4,
+      carbs_g: 29.0,
+      sugars_g: 22.0,
+      total_fat_g: 0.0,
+      saturated_fat_g: 0.0,
+      sodium_mg: 980
+    }),
+    i18n_json: JSON.stringify({
+      en: {
+        title: 'UFC Tamis Anghang Sweet & Spicy Banana Sauce (320g Bottle)',
+        description: 'Classic Filipino sweet & spicy banana ketchup for fried chicken, lumpia, and Filipino spaghetti.'
+      },
+      he: {
+        title: 'רוטב בננה מתוק-חריף UFC טאמיס אנגהאנג (320 גרם)',
+        description: 'קטשופ הבננות הפיליפיני הקלאסי בשילוב מתוק ופיקנטי עדין, מושלם לאגרולים, עוף מטוגן וספגטי פיליפיני.'
+      },
+      hi: {
+        title: 'यूएफसी तमिस अंगहांग स्वीट एंड स्पाइसी बनाना सॉस (320g बोतल)',
+        description: 'फ्राइड चिकन, स्प्रिंग रोल्स और पास्ता के लिए प्रसिद्ध फिलिपिनो मीठा और मसालेदार बनाना केचप।'
+      },
+      th: {
+        title: 'ยูเอฟซี ซอสกล้วยรสหวานเผ็ด ทามิส อังฮัง (ขวด 320 กรัม)',
+        description: 'ซอสกล้วยสไตล์ฟิลิปปินส์แท้ รสหวานอมเผ็ดกลมกล่อม ทานคู่ไก่ทอด ปอเปี๊ยะ และสปาเก็ตตี้'
+      },
+      si: {
+        title: 'UFC ටමිස් අංහං පැණි සහ සැර කෙසෙල් සෝස් (320g බෝතලය)',
+        description: 'බැදපු කුකුළු මස්, ස්ප්‍රින්ග් රෝල්ස් සහ ස්පැගටි සඳහා ප්‍රසිද්ධ පිලිපීන කෙසෙල් සෝස්.'
+      },
+      tl: {
+        title: 'UFC Tamis Anghang Banana Sauce (320g Bote)',
+        description: 'Ang pambansang tamis-anghang banana ketchup na swak sa pritong manok, lumpia, at Pinoy spaghetti.'
+      }
+    }),
+    importer_israel: 'Dinu Market Imports, Israel',
+    price_ils: 12.00,
+    compare_at_price_ils: null,
+    net_weight_grams: 320,
+    unit_measure_type: '100g',
+    stock_quantity: 48,
+    expiry_date: '2027-07-15',
+    primary_image_url: 'images/products/ufc-banana-sauce-320g.jpg',
+    secondary_image_url: '',
+    is_authentic_photo: 1,
+    is_featured: 1,
+    rating_average: 4.9,
+    rating_count: 1,
+    sales_count: 175
+  },
+  {
+    sku: 'DM-PH-004',
+    barcode_ean: '4800086020109',
+    title: 'Super Q Golden Bihon Cornstarch Sticks Noodles (500g)',
+    title_he: 'אטריות ביהון מוזהבות מקורנפלור סופר קיו 500 גרם',
+    slug: 'super-q-golden-bihon-cornstarch-sticks-500g',
+    vendor_brand: 'Super Q',
+    category_slug: 'pantry',
+    subcategory_slug: 'noodles',
+    region_slug: 'philippines',
+    short_description: 'Fine, springy Filipino golden bihon noodles crafted from cornstarch and water — the authentic base for Pancit Bihon Guisado and Pancit Palabok.',
+    description: 'Super Q Original Golden Bihon Cornstarch Sticks cook quickly while holding a firm, non-soggy bite that absorbs savory soy, citrus calamansi, and broth flavors. Naturally gluten-free and ideal for festive Pancit Bihon Guisado, Pancit Malabon, and noodle soups.',
+    ingredients: 'Cornstarch, Water.',
+    allergens_json: JSON.stringify([]),
+    dietary_tags_json: JSON.stringify(['Vegan', 'Vegetarian', 'Gluten-Free']),
+    red_labels_json: JSON.stringify([]),
+    nutrition_json: JSON.stringify({
+      calories_per_100g: 352,
+      protein_g: 0.5,
+      carbs_g: 87.0,
+      sugars_g: 0.0,
+      total_fat_g: 0.2,
+      saturated_fat_g: 0.0,
+      sodium_mg: 18
+    }),
+    i18n_json: JSON.stringify({
+      en: {
+        title: 'Super Q Golden Bihon Cornstarch Sticks Noodles (500g)',
+        description: 'Authentic Filipino golden bihon noodles for Pancit Bihon Guisado and Pancit Palabok.'
+      },
+      he: {
+        title: 'אטריות ביהון מוזהבות סופר קיו (500 גרם)',
+        description: 'אטריות דקות וגמישות מעמילן תירס להכנת פאנסיט ביהון פיליפיני מוקפץ ומרקים מסורתיים. ללא גלוטן.'
+      },
+      hi: {
+        title: 'सुपर क्यू गोल्डन बिहोन कॉर्नस्टार्च नूडल्स (500g)',
+        description: 'पैनसिट बिहोन स्टर-फ्राई और सूप के लिए प्रामाणिक फिलिपिनो ग्लूटेन-मुक्त नूडल्स।'
+      },
+      th: {
+        title: 'ซูเปอร์ คิว เส้นหมี่บีฮอนสีทองจากแป้งข้าวโพด (500 กรัม)',
+        description: 'เส้นหมี่ผัดสไตล์ฟิลิปปินส์เหนียวนุ่ม ไม่เละง่าย ปราศจากกลูเตน สำหรับทำปันซิตบีฮอน'
+      },
+      si: {
+        title: 'සුපර් Q ගෝල්ඩන් බිහොන් ඉරිඟු පිටි නූඩ්ල්ස් (500g)',
+        description: 'පැන්සිට් බිහොන් සහ සුප් සඳහා ග්ලූටන් රහිත සම්ප්‍රදායික පිලිපීන නූඩ්ල්ස්.'
+      },
+      tl: {
+        title: 'Super Q Golden Bihon Cornstarch Sticks (500g)',
+        description: 'Ang orihinal na Golden Bihon na hindi madaling malata, perpekto para sa Pancit Bihon Guisado at Palabok.'
+      }
+    }),
+    importer_israel: 'Dinu Market Imports, Israel',
+    price_ils: 13.00,
+    compare_at_price_ils: null,
+    net_weight_grams: 500,
+    unit_measure_type: '100g',
+    stock_quantity: 60,
+    expiry_date: '2028-05-25',
+    primary_image_url: 'images/products/super-q-golden-bihon-500g.jpg',
+    secondary_image_url: '',
+    is_authentic_photo: 1,
+    is_featured: 1,
+    rating_average: 4.9,
+    rating_count: 1,
+    sales_count: 162
+  },
+  {
+    sku: 'DM-PH-005',
+    barcode_ean: '7622210615091',
+    title: 'Eden Original Processed Filled Cheese Spread (430g Block)',
+    title_he: 'גבינת עדן מקורית למריחה ולבישול פיליפיני 430 גרם',
+    slug: 'eden-original-processed-filled-cheese-430g',
+    vendor_brand: 'Eden (Mondelēz)',
+    category_slug: 'pantry',
+    subcategory_slug: 'spreads-dairy',
+    region_slug: 'philippines',
+    short_description: 'Creamy, sliceable and grateable Filipino cheese block loved on warm pandesal, Pinoy-style sweet spaghetti, baked macaroni, and bibingka.',
+    description: 'Eden Original Processed Filled Cheese Spread (430g family block) is a beloved Filipino household staple with a rich, creamy cheddar-style taste that melts smoothly over sweet Filipino spaghetti, caldereta, pandesal sandwiches, puto, and ensaymada.',
+    ingredients: 'Water, Cheddar Cheese (Milk, Salt, Starter Culture, Rennet), Vegetable Oil (Palm Oil), Milk Solids, Modified Starch, Emulsifying Salts (INS 339, INS 452), Salt, Acidity Regulator (Lactic Acid), Preservative (Potassium Sorbate, Nisin), Vitamin A, Vitamin B2, Calcium, Natural Color (Annatto).',
+    allergens_json: JSON.stringify(['Milk (Dairy)']),
+    dietary_tags_json: JSON.stringify(['Vegetarian', 'Source of Calcium & Vitamins A & B2']),
+    red_labels_json: JSON.stringify(['High Saturated Fat (שומן רווי בכמות גבוהה)']),
+    nutrition_json: JSON.stringify({
+      calories_per_100g: 300,
+      protein_g: 10.0,
+      carbs_g: 13.3,
+      sugars_g: 3.3,
+      total_fat_g: 23.3,
+      saturated_fat_g: 11.7,
+      sodium_mg: 1180
+    }),
+    i18n_json: JSON.stringify({
+      en: {
+        title: 'Eden Original Processed Filled Cheese Spread (430g Block)',
+        description: 'Creamy Filipino cheese block for pandesal, Pinoy spaghetti, caldereta, and ensaymada.'
+      },
+      he: {
+        title: 'גבינת עדן מקורית בלוק משפחתי (430 גרם)',
+        description: 'בלוק הגבינה הקרמית הפיליפינית האהובה לכריכי פנדסאל, גירוד מעל ספגטי פיליפיני ומאפים.'
+      },
+      hi: {
+        title: 'ईडन ओरिजिनल प्रोसेस्ड चीज़ स्प्रेड ब्लॉक (430g)',
+        description: 'सैंडविच, पास्ता और बेकिंग के लिए मलाईदार फिलिपिनो चीज़ ब्लॉक।'
+      },
+      th: {
+        title: 'อีเดน ออริจินัล ชีสก้อนปรุงสำเร็จสไตล์ฟิลิปปินส์ (430 กรัม)',
+        description: 'ชีสก้อนเนื้อเนียนหอมมัน สำหรับทาขนมปัง ขูดโรยสปาเก็ตตี้ และอบขนม'
+      },
+      si: {
+        title: 'ඊඩන් ඔරිජිනල් ක්‍රීමි චීස් කුට්ටිය (430g)',
+        description: 'සැන්ඩ්විච්, පැස්ටා සහ බේකරි ආහාර සඳහා ප්‍රසිද්ධ පිලිපීන චීස්.'
+      },
+      tl: {
+        title: 'Eden Original Processed Filled Cheese (430g)',
+        description: 'Malinamnam at creamy na keso para sa mainit na pandesal, Pinoy spaghetti, puto, at ensaymada.'
+      }
+    }),
+    importer_israel: 'Dinu Market Imports, Israel',
+    price_ils: 47.00,
+    compare_at_price_ils: null,
+    net_weight_grams: 430,
+    unit_measure_type: '100g',
+    stock_quantity: 34,
+    expiry_date: '2027-06-17',
+    primary_image_url: 'images/products/eden-original-cheese-430g.jpg',
+    secondary_image_url: '',
+    is_authentic_photo: 1,
+    is_featured: 1,
+    rating_average: 5.0,
+    rating_count: 1,
+    sales_count: 145
+  },
+  {
+    sku: 'DM-PH-006',
+    barcode_ean: '4806508340013',
+    title: 'Cabalen Bagoong Alamang Salted Shrimp Fry (340g Jar)',
+    title_he: 'קבאלן באגואונג אלאמאנג ממרח שרימפס מומלח מסורתי 340 גרם',
+    slug: 'cabalen-bagoong-alamang-salted-shrimp-fry-340g',
+    vendor_brand: 'Cabalen',
+    category_slug: 'sauce-seasoning',
+    subcategory_slug: 'dipping-sauces',
+    region_slug: 'philippines',
+    short_description: 'Authentic Kapampangan sautéed salted shrimp paste with no MSG and no extenders — indispensable alongside Kare-Kare, pinakbet, and green mangoes.',
+    description: 'Cabalen Bagoong Alamang (Salted Shrimp Fry) is slow-cooked in the traditional Kapampangan style using 100% natural tiny shrimp, garlic, cane vinegar, and seasonings with zero MSG and zero extenders. Ready to serve straight from the jar with oxtail Kare-Kare, crispy binagoongan, pinakbet, or sliced tart green mango.',
+    ingredients: 'Salted Fermented Krill/Shrimp (Alamang), Cane Vinegar, Vegetable Oil, Garlic, Onion, Sugar, Spices.',
+    allergens_json: JSON.stringify(['Crustacean Shellfish (Shrimp)']),
+    dietary_tags_json: JSON.stringify(['No MSG', 'No Extenders', '100% Natural']),
+    red_labels_json: JSON.stringify(['High Sodium (נתרן בכמות גבוהה)']),
+    nutrition_json: JSON.stringify({
+      calories_per_100g: 195,
+      protein_g: 12.0,
+      carbs_g: 14.0,
+      sugars_g: 9.0,
+      total_fat_g: 10.2,
+      saturated_fat_g: 2.1,
+      sodium_mg: 3800
+    }),
+    i18n_json: JSON.stringify({
+      en: {
+        title: 'Cabalen Bagoong Alamang Salted Shrimp Fry (340g Jar)',
+        description: 'Authentic Kapampangan sautéed shrimp paste with no MSG or extenders for Kare-Kare and pinakbet.'
+      },
+      he: {
+        title: 'קבאלן באגואונג אלאמאנג ממרח חסילונים מומלח (צנצנת 340 גרם)',
+        description: 'ממרח שרימפס פיליפיני מסורתי מבושל מוכן להגשה ללא מונוסודיום גלוטמט, לצד קארה-קארה ותבשילים.'
+      },
+      hi: {
+        title: 'कबालेन बागूंग अलामांग सॉल्टेड श्रिम्प फ्राई पेस्ट (340g जार)',
+        description: 'बिना एमएसजी के पारंपरिक फिलिपिनो भुना हुआ झींगा पेस्ट (100% प्राकृतिक)।'
+      },
+      th: {
+        title: 'คาบาเลน บากูง อลามัง กะปิกุ้งผัดปรุงรสพร้อมทาน (กระปุก 340 กรัม)',
+        description: 'กะปิกุ้งผัดต้นตำรับฟิลิปปินส์ ธรรมชาติ 100% ไม่ใส่ผงชูรส ทานคู่แกงคาเร-คาเรและมะม่วงดิบ'
+      },
+      si: {
+        title: 'කබාලෙන් බගූං අලමං ලුණු දැමූ ඉස්සන් පේස්ට් (340g බෝතලය)',
+        description: 'MSG රහිත 100% ස්වභාවික සම්ප්‍රදායික පිලිපීන ඉස්සන් බැදුම් පේස්ට්.'
+      },
+      tl: {
+        title: 'Cabalen Bagoong Alamang Salted Shrimp Fry (340g Garapon)',
+        description: 'Authentic Kapampangan gisadong bagoong alamang — walang MSG at walang extenders, swak sa Kare-Kare at manggang hilaw.'
+      }
+    }),
+    importer_israel: 'Dinu Market Imports, Israel',
+    price_ils: 25.00,
+    compare_at_price_ils: null,
+    net_weight_grams: 340,
+    unit_measure_type: '100g',
+    stock_quantity: 28,
+    expiry_date: '2027-10-01',
+    primary_image_url: 'images/products/cabalen-bagoong-alamang-340g.jpg',
+    secondary_image_url: '',
+    is_authentic_photo: 1,
+    is_featured: 1,
+    rating_average: 4.9,
+    rating_count: 1,
+    sales_count: 112
+  },
+  {
+    sku: 'DM-PH-007',
+    barcode_ean: '4800086010100',
+    title: 'Super Q Special Pancit Canton Flour Noodles (454g / 16oz)',
+    title_he: 'אטריות פאנסיט קנטון מיוחדות למוקפץ סופר קיו 454 גרם',
+    slug: 'super-q-special-pancit-canton-454g',
+    vendor_brand: 'Super Q',
+    category_slug: 'pantry',
+    subcategory_slug: 'noodles',
+    region_slug: 'philippines',
+    short_description: 'Golden wheat-flour egg noodles crafted for celebratory Filipino Pancit Canton, Bam-I (Pancit Bisaya), and savory wok stir-fries.',
+    description: 'Super Q Special Pancit Canton (454g / 16 oz family pack) features pre-steamed golden wheat noodles that cook in minutes with meat, shrimp, cabbage, carrots, soy sauce, and calamansi for classic birthday and fiesta Pancit Canton.',
+    ingredients: 'Wheat Flour, Vegetable Oil (Palm Oil), Water, Iodized Salt, Acidity Regulators (Sodium Carbonate, Potassium Carbonate), Tartrazine (E102).',
+    allergens_json: JSON.stringify(['Wheat (Gluten)', 'May contain Egg & Soy']),
+    dietary_tags_json: JSON.stringify(['Vegetarian', 'HACCP Certified']),
+    red_labels_json: JSON.stringify([]),
+    nutrition_json: JSON.stringify({
+      calories_per_100g: 445,
+      protein_g: 9.2,
+      carbs_g: 62.0,
+      sugars_g: 1.0,
+      total_fat_g: 17.5,
+      saturated_fat_g: 8.0,
+      sodium_mg: 420
+    }),
+    i18n_json: JSON.stringify({
+      en: {
+        title: 'Super Q Special Pancit Canton Flour Noodles (454g / 16oz)',
+        description: 'Golden Filipino Pancit Canton noodles for fiesta stir-fries and Bam-I.'
+      },
+      he: {
+        title: 'אטריות פאנסיט קנטון מיוחדות סופר קיו (454 גרם)',
+        description: 'אטריות חיטה זהובות להקפצה מהירה בסגנון פאנסיט קנטון פיליפיני חגיגי עם ירקות ורוטב סויה.'
+      },
+      hi: {
+        title: 'सुपर क्यू स्पेशल पैनसिट कैंटन नूडल्स (454g / 16oz)',
+        description: 'चाउमीन और फिलिपिनो पैनसिट कैंटन स्टर-फ्राई के लिए सुनहरे गेहूं नूडल्स।'
+      },
+      th: {
+        title: 'ซูเปอร์ คิว บะหมี่ปันซิตกันตงสูตรพิเศษ (454 กรัม)',
+        description: 'เส้นบะหมี่เหลืองสไตล์ฟิลิปปินส์ เหนียวนุ่ม สำหรับผัดปันซิตกันตงและผัดหมี่งานเลี้ยง'
+      },
+      si: {
+        title: 'සුපර් Q විශේෂ පැන්සිට් කැන්ටන් නූඩ්ල්ස් (454g)',
+        description: 'එළවළු සහ සෝයා සෝස් සමඟ බැදීමට සුදුසු රන්වන් පිලිපීන නූඩ්ල්ස්.'
+      },
+      tl: {
+        title: 'Super Q Special Pancit Canton (454g / 16oz)',
+        description: 'Malinamnam na gintong Pancit Canton noodles para sa handaan, kaarawan, at Bam-I.'
+      }
+    }),
+    importer_israel: 'Dinu Market Imports, Israel',
+    price_ils: 19.00,
+    compare_at_price_ils: null,
+    net_weight_grams: 454,
+    unit_measure_type: '100g',
+    stock_quantity: 44,
+    expiry_date: '2028-07-01',
+    primary_image_url: 'images/products/super-q-pancit-canton-454g.jpg',
+    secondary_image_url: '',
+    is_authentic_photo: 1,
+    is_featured: 1,
+    rating_average: 4.9,
+    rating_count: 1,
+    sales_count: 154
+  },
+  {
+    sku: 'DM-PH-008',
+    barcode_ean: '4806504710148',
+    title: 'Buenas Coconut Sport Macapuno String in Syrup (907g / 32oz Jar)',
+    title_he: 'בואנס רצועות קוקוס מאקאפונו מתוקות בסירופ 907 גרם',
+    slug: 'buenas-coconut-sport-macapuno-string-907g',
+    vendor_brand: 'Buenas',
+    category_slug: 'canned-jarred-goods',
+    subcategory_slug: 'canned-jarred-fruits',
+    region_slug: 'philippines',
+    short_description: 'Tender, gelatinous Philippine macapuno coconut strings preserved in sweet syrup — a crown jewel topping for Halo-Halo, leche flan, ice cream, and pastries.',
+    description: 'Buenas Coconut Sport Macapuno String (large 32 oz / 907g glass jar) is made from prized Philippine macapuno coconuts, prized for their soft, rich, jelly-like flesh. Ready to spoon directly onto Halo-Halo shaved ice, buko pandan, ube cakes, sweet buns, and tropical desserts. Halal certified (IDCP) and GMP/HACCP certified.',
+    ingredients: 'Coconut Sport (Macapuno) Strings, Cane Sugar, Water.',
+    allergens_json: JSON.stringify(['Coconut']),
+    dietary_tags_json: JSON.stringify(['Vegan', 'Vegetarian', 'Gluten-Free', 'Halal (IDCP)']),
+    red_labels_json: JSON.stringify(['High Sugar (סוכר בכמות גבוהה)']),
+    nutrition_json: JSON.stringify({
+      calories_per_100g: 295,
+      protein_g: 0.8,
+      carbs_g: 66.0,
+      sugars_g: 54.0,
+      total_fat_g: 3.1,
+      saturated_fat_g: 2.7,
+      sodium_mg: 22
+    }),
+    i18n_json: JSON.stringify({
+      en: {
+        title: 'Buenas Coconut Sport Macapuno String in Syrup (907g / 32oz Jar)',
+        description: 'Tender Philippine macapuno coconut strings in sweet syrup for Halo-Halo and desserts.'
+      },
+      he: {
+        title: 'בואנס רצועות קוקוס מאקאפונו בסירופ מתוק (צנצנת 907 גרם)',
+        description: 'רצועות קוקוס מאקאפונו פיליפיני רכות ועשירות בסירופ, מושלמות להאלו-האלו, גלידות וקינוחים.'
+      },
+      hi: {
+        title: 'बुएनास कोकोनट स्पोर्ट मकापुनो स्ट्रिंग सिरप में (907g जार)',
+        description: 'हालो-हालो, आइसक्रीम और मिठाइयों के लिए मीठे सिरप में मुलायम फिलिपिनो नारियल के लच्छे।'
+      },
+      th: {
+        title: 'บูเอนาส เนื้อมะพร้าวกะทิเส้น มาคาปูโน ในน้ำเชื่อม (กระปุก 907 กรัม)',
+        description: 'เนื้อมะพร้าวกะทิเส้นนุ่มละมุนในน้ำเชื่อม สำหรับทำฮาโล-ฮาโล ไอศกรีม และขนมหวาน'
+      },
+      si: {
+        title: 'බුවෙනාස් මකපුනෝ පොල් තීරු පැණි සිරප් වල (907g බෝතලය)',
+        description: 'හලෝ-හලෝ, අයිස්ක්‍රීම් සහ අතුරුපස සඳහා පැණි සිරප් වල දැමූ මෘදු පොල් තීරු.'
+      },
+      tl: {
+        title: 'Buenas Coconut Sport Macapuno String in Syrup (907g / 32oz)',
+        description: 'Malambot at matamis na hibla ng macapuno para sa Halo-Halo, leche flan, ube cake, at panghimagas.'
+      }
+    }),
+    importer_israel: 'Dinu Market Imports, Israel',
+    price_ils: 48.00,
+    compare_at_price_ils: null,
+    net_weight_grams: 907,
+    unit_measure_type: '100g',
+    stock_quantity: 26,
+    expiry_date: '2027-02-28',
+    primary_image_url: 'images/products/buenas-macapuno-string-907g.jpg',
+    secondary_image_url: '',
+    is_authentic_photo: 1,
+    is_featured: 1,
+    rating_average: 5.0,
+    rating_count: 1,
+    sales_count: 98
+  },
+  {
+    sku: 'DM-PH-009',
+    barcode_ean: '4806014800017',
+    title: 'Boy Bawang Cornick Crunchy Garlic Corn Nuts (100g)',
+    title_he: 'בוי באוואנג קורניק חטיף גרעיני תירס קלויים בטעם שום 100 גרם',
+    slug: 'boy-bawang-cornick-garlic-flavor-100g',
+    vendor_brand: 'Boy Bawang',
+    category_slug: 'snacks',
+    subcategory_slug: 'nuts-seeds',
+    region_slug: 'philippines',
+    short_description: 'Ultra-crunchy puffed Filipino cornick tossed with real roasted garlic chips — light, savory, and irresistibly crisp.',
+    description: 'Boy Bawang ("Garlic Boy") Cornick in Original Garlic Flavor is the Philippines’ favorite crunchy corn snack, popped to an airy crunch and seasoned with real fried garlic chips. Great as a movie snack, merienda crunch, or crispy topping over lugaw and goto.',
+    ingredients: 'Corn, Vegetable Oil (Coconut / Palmolein Oil), Garlic, Iodized Salt, Sugar, Monosodium Glutamate (E621), Chili Powder.',
+    allergens_json: JSON.stringify(['Manufactured on equipment that also processes Peanuts, Soy & Wheat']),
+    dietary_tags_json: JSON.stringify(['Vegetarian']),
+    red_labels_json: JSON.stringify(['High Saturated Fat (שומן רווי בכמות גבוהה)', 'High Sodium (נתרן בכמות גבוהה)']),
+    nutrition_json: JSON.stringify({
+      calories_per_100g: 467,
+      protein_g: 6.7,
+      carbs_g: 66.7,
+      sugars_g: 3.3,
+      total_fat_g: 20.0,
+      saturated_fat_g: 13.3,
+      sodium_mg: 760
+    }),
+    i18n_json: JSON.stringify({
+      en: {
+        title: 'Boy Bawang Cornick Crunchy Garlic Corn Nuts (100g)',
+        description: 'Light, ultra-crunchy Filipino roasted garlic cornick snack with real garlic chips.'
+      },
+      he: {
+        title: 'בוי באוואנג קורניק חטיף תירס פריך עם שבבי שום (100 גרם)',
+        description: 'חטיף התירס הקלוי הפיליפיני המפורסם במרקם פריך במיוחד עם שבבי שום קלוי אמיתיים.'
+      },
+      hi: {
+        title: 'बॉय बावांग कॉर्निक क्रंची गार्लिक कॉर्न स्नैक (100g)',
+        description: 'असली भुने हुए लहसुन चिप्स के साथ कुरकुरा फिलिपिनो कॉर्न स्नैक।'
+      },
+      th: {
+        title: 'บอย บาวัง คอร์นิก ข้าวโพดอบกรอบรสกระเทียมแท้ (100 กรัม)',
+        description: 'ขนมข้าวโพดกรอบยอดฮิตจากฟิลิปปินส์ คลุกเคล้ากระเทียมเจียวแท้หอมกรอบเคี้ยวเพลิน'
+      },
+      si: {
+        title: 'බෝයි බවාං කෝනික් සුදුළූණු රසැති හැපෙනසුළු බඩඉරිඟු ස්නැක් (100g)',
+        description: 'සැබෑ බැදපු සුදුළූණු කැබලි මිශ්‍ර රසවත් පිලිපීන බඩඉරිඟු අතුරු ආහාරය.'
+      },
+      tl: {
+        title: 'Boy Bawang Cornick Garlic Flavor (100g)',
+        description: 'Malutong at malinamnam na cornick na may tunay na garlic chips — paboritong pang-merienda at pulutan.'
+      }
+    }),
+    importer_israel: 'Dinu Market Imports, Israel',
+    price_ils: 7.00,
+    compare_at_price_ils: null,
+    net_weight_grams: 100,
+    unit_measure_type: '100g',
+    stock_quantity: 80,
+    expiry_date: '2027-09-01',
+    primary_image_url: 'images/products/boy-bawang-cornick-garlic-100g.jpg',
+    secondary_image_url: '',
+    is_authentic_photo: 1,
+    is_featured: 1,
+    rating_average: 4.9,
+    rating_count: 1,
+    sales_count: 240
+  },
+  {
+    sku: 'DM-PH-010',
+    barcode_ean: '4806502350025',
+    title: 'King Choc Nut Peanut Milk Chocolate Bars (200g — 24 × 8g Pack)',
+    title_he: 'קינג צ׳וק-נאט חטיפי שוקולד חלב ובוטנים פיליפיני 200 גרם (24 יח׳)',
+    slug: 'king-choc-nut-peanut-milk-chocolate-200g',
+    vendor_brand: 'Unisman (King Choc Nut)',
+    category_slug: 'sweets',
+    subcategory_slug: 'chocolates',
+    region_slug: 'philippines',
+    short_description: 'Nostalgic melt-in-your-mouth Filipino roasted peanut and milk chocolate bars — pack of 24 individually wrapped 8g bars.',
+    description: 'Unisman King Choc Nut (24 × 8g = 200g pack) is the iconic childhood sweet of the Philippines, blending finely ground roasted peanuts, cocoa powder, milk powder, and cane sugar into crumbly, melt-in-your-mouth mini bars.',
+    ingredients: 'Roasted Peanuts, Cane Sugar, Milk Powder, Cocoa Powder, Vanilla.',
+    allergens_json: JSON.stringify(['Peanuts', 'Milk (Dairy)']),
+    dietary_tags_json: JSON.stringify(['Vegetarian']),
+    red_labels_json: JSON.stringify(['High Saturated Fat (שומן רווי בכמות גבוהה)', 'High Sugar (סוכר בכמות גבוהה)']),
+    nutrition_json: JSON.stringify({
+      calories_per_100g: 500,
+      protein_g: 12.5,
+      carbs_g: 58.3,
+      sugars_g: 45.8,
+      total_fat_g: 25.0,
+      saturated_fat_g: 10.4,
+      sodium_mg: 62
+    }),
+    i18n_json: JSON.stringify({
+      en: {
+        title: 'King Choc Nut Peanut Milk Chocolate Bars (200g — 24 × 8g Pack)',
+        description: 'Classic nostalgic Filipino peanut milk chocolate bars (24 × 8g pack).'
+      },
+      he: {
+        title: 'קינג צ׳וק-נאט חטיפי בוטנים ושוקולד חלב (מארז 24 יח׳ - 200 גרם)',
+        description: 'ממתק הבוטנים והשוקולד הפיליפיני הנוסטלגי במרקם נימוח, במארז של 24 חטיפים עטופים בנפרד.'
+      },
+      hi: {
+        title: 'किंग चॉक-नट पीनट मिल्क चॉकलेट बार (200g — 24 × 8g पैक)',
+        description: 'भुनी हुई मूंगफली और मिल्क चॉकलेट से बनी प्रसिद्ध फिलिपिनो मिनी चॉकलेट बार (24 पीस)।'
+      },
+      th: {
+        title: 'คิง ช็อกนัท ขนมช็อกโกแลตนมผสมถั่วลิสงคั่วบด (200 กรัม — 24 ชิ้น)',
+        description: 'ขนมช็อกโกแลตถั่วลิสงระดับตำนานของฟิลิปปินส์ เนื้อเนียนละลายในปาก บรรจุ 24 ชิ้น'
+      },
+      si: {
+        title: 'කිං චොක්-නට් රටකජු කිරි චොකලට් (200g — කෑලි 24 ඇසුරුම)',
+        description: 'බැදපු රටකජු සහ කිරි චොකලට් වලින් සාදන ලද රසවත් පිලිපීන රසකැවිලි කෑලි 24ක්.'
+      },
+      tl: {
+        title: 'King Choc Nut Peanut Milk Chocolate (200g — 24 × 8g)',
+        description: 'Ang paboritong pambatang panghimagas ng Pinoy na gawa sa mani at tsokolate (24 piraso).'
+      }
+    }),
+    importer_israel: 'Dinu Market Imports, Israel',
+    price_ils: 14.00,
+    compare_at_price_ils: null,
+    net_weight_grams: 200,
+    unit_measure_type: '100g',
+    stock_quantity: 65,
+    expiry_date: '2028-02-06',
+    primary_image_url: 'images/products/king-choc-nut-200g.jpg',
+    secondary_image_url: '',
+    is_authentic_photo: 1,
+    is_featured: 1,
+    rating_average: 5.0,
+    rating_count: 1,
+    sales_count: 205
   }
 ];
 
 function seedAndSyncDatabase() {
   const now = new Date().toISOString();
 
-  // 1. Seed Categories & Subcategories (Excluding Mighty Rewards)
-  const catCount = db.prepare('SELECT COUNT(*) AS cnt FROM categories').get().cnt;
-  if (catCount === 0) {
-    const insertCat = db.prepare(`
-      INSERT INTO categories (id, parent_slug, name, name_he, slug, description, display_order, is_active)
-      VALUES (?, ?, ?, ?, ?, ?, ?, 1)
-    `);
-    NAVIGATION_SPEC.forEach((cat, idx) => {
-      insertCat.run(crypto.randomUUID(), null, cat.name, cat.name_he, cat.slug, cat.description, idx + 1);
-      cat.subcategories.forEach((sub, sIdx) => {
-        insertCat.run(crypto.randomUUID(), cat.slug, sub.name, sub.name_he, sub.slug, `${cat.name}: ${sub.name}`, sIdx + 1);
-      });
+  // 1. Seed & Sync Categories & Subcategories (Excluding Mighty Rewards)
+  const upsertCat = db.prepare(`
+    INSERT INTO categories (id, parent_slug, name, name_he, slug, description, display_order, is_active)
+    VALUES (?, ?, ?, ?, ?, ?, ?, 1)
+    ON CONFLICT(slug) DO UPDATE SET
+      parent_slug = excluded.parent_slug,
+      name = excluded.name,
+      name_he = excluded.name_he,
+      description = excluded.description,
+      display_order = excluded.display_order,
+      is_active = 1
+  `);
+  NAVIGATION_SPEC.forEach((cat, idx) => {
+    upsertCat.run(crypto.randomUUID(), null, cat.name, cat.name_he, cat.slug, cat.description, idx + 1);
+    cat.subcategories.forEach((sub, sIdx) => {
+      upsertCat.run(crypto.randomUUID(), cat.slug, sub.name, sub.name_he, sub.slug, `${cat.name}: ${sub.name}`, sIdx + 1);
     });
-  }
+  });
   db.exec(`UPDATE categories SET description = REPLACE(description, '\u2014', ':');`);
 
   // 2. Enforce strictly the 4 sourcing regions: India, Thailand, Sri Lanka, Philippines
@@ -869,12 +1468,25 @@ function seedAndSyncDatabase() {
     )
     ON CONFLICT(slug) DO UPDATE SET
       sku = excluded.sku,
+      barcode_ean = excluded.barcode_ean,
       title = excluded.title,
       title_he = excluded.title_he,
+      vendor_brand = excluded.vendor_brand,
+      category_slug = excluded.category_slug,
+      subcategory_slug = excluded.subcategory_slug,
       region_slug = excluded.region_slug,
       short_description = excluded.short_description,
       description = excluded.description,
+      ingredients = excluded.ingredients,
+      allergens_json = excluded.allergens_json,
+      dietary_tags_json = excluded.dietary_tags_json,
+      red_labels_json = excluded.red_labels_json,
+      nutrition_json = excluded.nutrition_json,
       i18n_json = excluded.i18n_json,
+      price_ils = excluded.price_ils,
+      net_weight_grams = excluded.net_weight_grams,
+      unit_measure_type = excluded.unit_measure_type,
+      expiry_date = excluded.expiry_date,
       primary_image_url = excluded.primary_image_url,
       secondary_image_url = excluded.secondary_image_url,
       is_authentic_photo = 1,
