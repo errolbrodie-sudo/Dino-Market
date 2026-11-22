@@ -10,6 +10,7 @@
   --dm-ink: #1C1A17;
   --dm-green: #0F4D2C;
   --dm-green-dark: #0A3520;
+  --dm-green-soft: #3D6E52;
   --dm-chili: #C8261E;
   --dm-chili-dark: #A51E17;
   --dm-turmeric: #F2B21B;
@@ -356,7 +357,7 @@ textarea {
    TOP GREEN DELIVERY BAR + DEMO/ADMIN CONTROLS
    ========================================================================== */
 .announcement-bar {
-  background-color: var(--dm-green);
+  background-color: var(--dm-green-soft);
   color: var(--dm-cream);
   font-size: 0.9rem;
   font-weight: 500;
@@ -559,20 +560,25 @@ textarea {
 }
 
 .search-submit-btn {
-  min-height: 36px;
-  padding: 0 16px;
+  width: 38px;
+  height: 38px;
+  min-height: 38px;
+  padding: 0;
   border-radius: 999px;
   border: none;
-  background: var(--dm-green);
-  color: var(--dm-white);
-  font-weight: 700;
-  font-size: 0.88rem;
+  background: transparent;
+  color: var(--dm-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
+  transition: color 0.15s ease, background-color 0.15s ease;
 }
 
 .search-submit-btn:hover {
-  background: var(--dm-green-dark);
+  color: var(--dm-ink);
+  background: var(--dm-cream);
 }
 
 /* Kitchen Pills in Header (when viewing a kitchen storefront) */
@@ -771,6 +777,11 @@ textarea {
 
 .basket-pill-btn:hover {
   opacity: 0.92;
+}
+
+.basket-pill-btn .basket-pill-text,
+.basket-pill-btn .cart-count-pill {
+  display: none;
 }
 
 .cart-count-pill {
@@ -1687,6 +1698,24 @@ textarea {
   margin-bottom: 22px;
 }
 
+.clear-filters-text {
+  display: inline-block;
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--dm-green);
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.clear-filters-text:hover,
+.clear-filters-text:focus-visible {
+  color: var(--dm-ink);
+  text-decoration: underline;
+}
+
 .catalog-layout {
   display: grid;
   grid-template-columns: 270px 1fr;
@@ -2044,7 +2073,7 @@ textarea {
    GREEN SITE FOOTER (--dm-green)
    ========================================================================== */
 .site-footer {
-  background-color: var(--dm-green);
+  background-color: var(--dm-green-soft);
   color: var(--dm-cream);
   padding: 52px 0 28px;
   margin-top: 56px;
@@ -2058,7 +2087,7 @@ textarea {
 }
 
 .site-footer h4 {
-  color: var(--dm-turmeric);
+  color: #FFE07D;
   font-size: 13px;
   font-weight: 700;
   text-transform: uppercase;
@@ -2356,8 +2385,7 @@ textarea {
   .header-center-slot,
   .header-whatsapp-btn,
   .account-pill-btn,
-  .basket-pill-text,
-  .basket-pill-total {
+  .basket-pill-text {
     display: none;
   }
 

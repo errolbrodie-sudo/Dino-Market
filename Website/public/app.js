@@ -425,7 +425,7 @@ const I18N_DICTIONARY = {
     sign_in_register: 'Sign In',
     admin_dashboard: 'Admin',
     basket_label: 'Basket',
-    search_placeholder: "Search Lucky Me, Mama, Haldiram's, Silver Swan, Maliban...",
+    search_placeholder: "Lucky Me, Mama, Haldiram's, Silver Swan, Maliban...",
     search_btn: 'Search',
     clear_all_filters: 'Clear all filters',
     all_4_regions: 'All 4 Kitchens',
@@ -1689,9 +1689,7 @@ const app = {
       mobSearchInput.dir = isHebrew ? 'rtl' : 'ltr';
     }
     document.querySelectorAll('.search-submit-btn').forEach((sb) => {
-      sb.textContent = t('search_btn');
-      sb.setAttribute('lang', state.lang);
-      sb.setAttribute('dir', isHebrew ? 'rtl' : 'ltr');
+      sb.setAttribute('aria-label', t('search_btn'));
     });
 
     this.syncWhatsAppLinks();
@@ -2093,7 +2091,7 @@ const app = {
         ? `
       <section class="india-secondary-banner region-secondary-banner" dir="ltr" aria-label="Desh Ka Swaad — Premium Packaged Indian Foods">
         <img
-          src="/images/banners/India-Banner.jpeg?v=20261118regbanners"
+          src="/images/banners/India-Banner.jpeg?v=20261122shop1"
           alt="Desh Ka Swaad — Premium Packaged Indian Foods"
           class="region-banner-full-img"
           loading="eager"
@@ -2107,7 +2105,7 @@ const app = {
         ? `
       <section class="ph-secondary-banner region-secondary-banner" dir="ltr" aria-label="Lasang Pinoy — Premium Packaged Filipino Foods">
         <img
-          src="/images/banners/Philippine-Banner.jpeg?v=20261118regbanners"
+          src="/images/banners/Philippine-Banner.jpeg?v=20261122shop1"
           alt="Lasang Pinoy — Premium Packaged Filipino Foods"
           class="region-banner-full-img"
           loading="eager"
@@ -2121,7 +2119,7 @@ const app = {
         ? `
       <section class="lk-secondary-banner region-secondary-banner" dir="ltr" aria-label="Lanka Swaadaya — Premium Packaged Sri Lankan Foods">
         <img
-          src="/images/banners/Sri-Lanka-Banner.jpeg?v=20261118regbanners"
+          src="/images/banners/Sri-Lanka-Banner.jpeg?v=20261122shop1"
           alt="Lanka Swaadaya — Premium Packaged Sri Lankan Foods"
           class="region-banner-full-img"
           loading="eager"
@@ -2135,7 +2133,7 @@ const app = {
         ? `
       <section class="th-secondary-banner region-secondary-banner" dir="ltr" aria-label="Premium Packaged Thai Foods">
         <img
-          src="/images/banners/Thailand-Banner.jpeg?v=20261118regbanners"
+          src="/images/banners/Thailand-Banner.jpeg?v=20261122shop1"
           alt="Premium Packaged Thai Foods"
           class="region-banner-full-img"
           loading="eager"
@@ -2155,9 +2153,9 @@ const app = {
       <section id="regionCatalogSection" aria-label="${escapeHtml(k.name)} Product Catalogue">
         <div id="regRegionPillsContainer" class="region-strip"></div>
         <div class="clear-filters-row">
-          <button type="button" class="pill-control" onclick="app.resetRegionalCatalogFilters()">
+          <span role="button" tabindex="0" class="clear-filters-text" onclick="app.resetRegionalCatalogFilters()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();app.resetRegionalCatalogFilters();}">
             ${escapeHtml(t('clear_all_filters'))}
-          </button>
+          </span>
         </div>
 
         <div class="catalog-layout">
@@ -3173,6 +3171,7 @@ const app = {
 
   switchView(viewName, scrollToTop = true, pushUrl = true) {
     state.currentView = viewName;
+    document.body.setAttribute('data-view', viewName);
     ['storefront', 'shop', 'region', 'checkout', 'account', 'admin'].forEach((v) => {
       const el = document.getElementById(`view-${v}`);
       if (el) el.style.display = v === viewName ? 'block' : 'none';
