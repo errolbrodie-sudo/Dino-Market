@@ -2161,17 +2161,6 @@ const app = {
         <div class="catalog-layout">
           <aside class="filter-sidebar" aria-label="Product Filters">
             <div class="filter-group">
-              <label class="filter-label" for="regFilterRegionSelect">Kitchen</label>
-              <select id="regFilterRegionSelect" class="select-control" onchange="app.selectRegionalCatalogRegion(this.value)">
-                <option value="" ${selectedReg === '' ? 'selected' : ''}>All 4 Kitchens (Philippines, Thailand, India, Sri Lanka)</option>
-                <option value="philippines" ${selectedReg === 'philippines' ? 'selected' : ''}>Philippines</option>
-                <option value="thailand" ${selectedReg === 'thailand' ? 'selected' : ''}>Thailand</option>
-                <option value="india" ${selectedReg === 'india' ? 'selected' : ''}>India</option>
-                <option value="sri-lanka" ${selectedReg === 'sri-lanka' ? 'selected' : ''}>Sri Lanka</option>
-              </select>
-            </div>
-
-            <div class="filter-group">
               <label class="filter-label" for="regFilterCategorySelect">${escapeHtml(t('filter_dept_title'))}</label>
               <select id="regFilterCategorySelect" class="select-control" onchange="app.onRegionalDepartmentChange(this.value)">
                 <option value="">All Categories</option>
