@@ -189,7 +189,7 @@ const KITCHEN_STOREFRONTS = {
       'images/products/silver-swan-soy-sauce-front.jpg',
       'images/products/silver-swan-soy-sauce-back.jpg',
       'images/products/lal-qilla-basmati-rice-front.jpg',
-      'images/products/gorus-cookies-front.jpg'
+      'images/products/gorus-cookies-front.png?v=20261123prod1'
     ],
     aislesHeading: {
       tl: 'Mamili ayon sa pasilyo',
@@ -322,7 +322,7 @@ const KITCHEN_STOREFRONTS = {
     packshots: [
       'images/products/haldirams-gulab-jamun-front.jpg',
       'images/products/lal-qilla-basmati-rice-front.jpg',
-      'images/products/gorus-cookies-front.jpg',
+      'images/products/gorus-cookies-front.png?v=20261123prod1',
       'images/products/flavorz-jaggery-front.jpg'
     ],
     aislesHeading: {
@@ -388,7 +388,7 @@ const KITCHEN_STOREFRONTS = {
     },
     packshots: [
       'images/products/flavorz-jaggery-front.jpg',
-      'images/products/gorus-cookies-front.jpg',
+      'images/products/gorus-cookies-front.png?v=20261123prod1',
       'images/products/lal-qilla-basmati-rice-front.jpg',
       'images/products/rusky-atta-toast-front.jpg'
     ],
@@ -443,6 +443,32 @@ const I18N_DICTIONARY = {
     in_basket: 'in basket',
     in_stock: 'In stock',
     out_of_stock: 'Out of stock',
+    demo_customer_btn: 'Demo Customer',
+    admin_dashboard_btn: 'Admin Dashboard',
+    whatsapp_label: 'WhatsApp',
+    home_browse_all_btn: 'Browse all products',
+    home_back_in_stock_title: 'Back in stock this week',
+    home_back_in_stock_lead: 'Freshly unpacked at our Israel warehouse — grab them before Friday.',
+    home_view_full_shop_btn: 'View full shop →',
+    footer_tagline: '4 KITCHENS · DELIVERED IN ISRAEL',
+    footer_email_label: 'Email:',
+    footer_phone_label: 'Phone / SMS:',
+    footer_support_hours: '(Sun–Thu, 08:30–18:00)',
+    order_on_whatsapp: 'Order on WhatsApp',
+    footer_care_heading: 'Customer Care & Policies',
+    footer_link_about: 'About Dinu Market',
+    footer_link_contact: 'Contact & Support Hours',
+    footer_link_shipping: 'Israel Delivery Zones & Cutoffs',
+    footer_link_returns: 'Returns & Refunds Policy',
+    footer_link_privacy: 'Privacy & Cookie Policy',
+    footer_link_terms: 'Terms & Conditions',
+    footer_vat_heading: 'VAT, Dietary & Payments',
+    footer_vat_copy: 'All prices are displayed in Israeli New Shekels (₪ ILS) and include 18% Israeli VAT (כולל מע״מ). Browse authentic groceries from four home kitchens.',
+    footer_payments_copy: 'Accepted payments: Visa · Mastercard · American Express · Isracard · Bit · Apple Pay · Google Pay',
+    footer_copyright: '© 2026 Dinu Market Israel Ltd. Domestic delivery across Israel only.',
+    footer_pci_note: 'All prices in ₪ ILS include 18% VAT · PCI-DSS Level 1 tokenized checkout',
+    all_categories_pill: 'All',
+    all_products_btn: 'All Products',
     categories: {
       'shop-by-region': 'Shop by Kitchen',
       sweets: 'Sweets',
@@ -482,6 +508,32 @@ const I18N_DICTIONARY = {
     in_basket: 'בסל',
     in_stock: 'במלאי',
     out_of_stock: 'אזל מהמלאי',
+    demo_customer_btn: 'לקוח לדוגמה',
+    admin_dashboard_btn: 'לוח ניהול',
+    whatsapp_label: 'וואטסאפ',
+    home_browse_all_btn: 'לכל המוצרים',
+    home_back_in_stock_title: 'חזר למלאי השבוע',
+    home_back_in_stock_lead: 'נפרק השבוע במחסן שלנו בישראל — מהרו להזמין לפני סוף השבוע.',
+    home_view_full_shop_btn: 'לכל החנות ←',
+    footer_tagline: '4 מטבחים · משלוחים בכל רחבי ישראל',
+    footer_email_label: 'אימייל:',
+    footer_phone_label: 'טלפון / SMS:',
+    footer_support_hours: '(א׳–ה׳, 08:30–18:00)',
+    order_on_whatsapp: 'הזמנה בוואטסאפ',
+    footer_care_heading: 'שירות לקוחות ומדיניות',
+    footer_link_about: 'אודות דינו מרקט',
+    footer_link_contact: 'יצירת קשר ושעות פעילות',
+    footer_link_shipping: 'אזורי משלוח בישראל וזמני הזמנה',
+    footer_link_returns: 'מדיניות החזרות וביטולים',
+    footer_link_privacy: 'מדיניות פרטיות וקובצי Cookie',
+    footer_link_terms: 'תקנון ותנאי שימוש',
+    footer_vat_heading: 'מע״מ, כשרות ותשלומים',
+    footer_vat_copy: 'כל המחירים באתר מוצגים בשקלים חדשים (₪) וכוללים 18% מע״מ כחוק. מבחר מוצרי מזון אותנטיים מארבעה מטבחים עם סימון תזונתי מלא בעברית.',
+    footer_payments_copy: 'אמצעי תשלום: ויזה · מאסטרקארד · אמריקן אקספרס · ישראכרט · Bit · Apple Pay · Google Pay',
+    footer_copyright: '© 2026 דינו מרקט ישראל בע״מ. משלוחים לכל רחבי ישראל בלבד.',
+    footer_pci_note: 'כל המחירים בש״ח כוללים 18% מע״מ · סליקה מאובטחת בתקן PCI-DSS רמה 1',
+    all_categories_pill: 'הכל',
+    all_products_btn: 'כל המוצרים',
     categories: {
       'shop-by-region': 'לפי מטבח',
       sweets: 'ממתקים וקינוחים',
@@ -872,7 +924,7 @@ const DEFAULT_CATALOG_PRODUCTS = [
     stock_quantity: 45,
     low_stock_threshold: 8,
     expiry_date: '2027-06-06',
-    primary_image_url: 'images/products/gorus-cookies-front.jpg',
+    primary_image_url: 'images/products/gorus-cookies-front.png?v=20261123prod1',
     secondary_image_url: 'images/products/gorus-cookies-back.jpg',
     variants: [{ code: 'single', label: 'Single Pack (1x)', multiplier: 1.0 }],
     status: 'active',
@@ -1650,7 +1702,8 @@ const app = {
   },
 
   setLanguage(langCode, saveCookie = true) {
-    state.lang = I18N_DICTIONARY[langCode] ? langCode : 'en';
+    const normalized = state.currentView === 'admin' && langCode !== 'he' ? 'en' : langCode;
+    state.lang = I18N_DICTIONARY[normalized] ? normalized : 'en';
     if (saveCookie) {
       state.userExplicitLang = true;
       setCookie('dinu_lang', state.lang, 365);
@@ -1678,6 +1731,11 @@ const app = {
       }
     });
 
+    const backInStockSec = document.getElementById('backInStockSection');
+    if (backInStockSec) backInStockSec.setAttribute('dir', isHebrew ? 'rtl' : 'ltr');
+    const siteFooter = document.getElementById('siteFooter');
+    if (siteFooter) siteFooter.setAttribute('dir', isHebrew ? 'rtl' : 'ltr');
+
     const searchInput = document.getElementById('globalSearchInput');
     if (searchInput) {
       searchInput.placeholder = t('search_placeholder');
@@ -1703,6 +1761,9 @@ const app = {
     this.renderCartDrawer();
     if (state.currentView === 'region' && state.activeRegionPage) {
       this.renderRegionalPage();
+    }
+    if (state.currentView === 'admin') {
+      this.renderAdminViewFromData(state.adminData);
     }
   },
 
@@ -1759,7 +1820,7 @@ const app = {
         class="kitchen-nav-pill"
         onclick="event.preventDefault(); app.openShopView();"
       >
-        <span>All Products</span>
+        <span dir="${state.lang === 'he' ? 'rtl' : 'ltr'}">${escapeHtml(t('all_products_btn'))}</span>
       </a>
     `;
 
@@ -2208,7 +2269,7 @@ const app = {
           class="category-filter-pill ${!activeShopCat ? 'active' : ''}"
           onclick="app.selectShopCategoryPill('')"
         >
-          All
+          ${escapeHtml(t('all_categories_pill'))}
         </button>
       `;
       const shopBtns = departments
@@ -2236,7 +2297,7 @@ const app = {
           class="category-filter-pill ${!activeRegCat ? 'active' : ''}"
           onclick="app.selectRegionalCategoryPill('')"
         >
-          All
+          ${escapeHtml(t('all_categories_pill'))}
         </button>
       `;
       const regBtns = departments
@@ -3213,7 +3274,12 @@ const app = {
 
     if (viewName === 'checkout') this.renderCheckoutView();
     if (viewName === 'account') this.loadAndRenderAccountView();
-    if (viewName === 'admin') this.loadAndRenderAdminView();
+    if (viewName === 'admin') {
+      if (state.lang !== 'he' && state.lang !== 'en') {
+        this.setLanguage('en', false);
+      }
+      this.loadAndRenderAdminView();
+    }
     if (scrollToTop) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -4104,224 +4170,266 @@ const app = {
     try {
       const data = await apiFetch('/api/admin/overview');
       state.adminData = data;
-      const k = data.kpis;
-      const sortedAdminProducts = [...(data.products || [])]
-        .filter((p) => p.status !== 'archived')
-        .sort((a, b) => {
-          const labelA = `${a.title || ''} (${a.size_label || a.net_weight_grams + 'g'})`;
-          const labelB = `${b.title || ''} (${b.size_label || b.net_weight_grams + 'g'})`;
-          return labelA.localeCompare(labelB, undefined, { sensitivity: 'base', numeric: true });
-        });
+      this.renderAdminViewFromData(data);
+    } catch (err) {
+      showToast(err.message);
+    }
+  },
 
-      const orderStatusOptions = [
-        'Pending Payment',
-        'Payment Received',
-        'Processing',
-        'Packed',
-        'Dispatched',
-        'Out for Delivery',
-        'Delivered',
-        'Cancelled',
-        'Refunded'
-      ];
+  renderAdminViewFromData(data) {
+    const container = document.getElementById('view-admin');
+    if (!container || !data) return;
 
-      container.innerHTML = `
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+    const isHe = state.lang === 'he';
+    container.setAttribute('dir', isHe ? 'rtl' : 'ltr');
+    container.setAttribute('lang', isHe ? 'he' : 'en');
+
+    const k = data.kpis;
+    const sortedAdminProducts = [...(data.products || [])]
+      .filter((p) => p.status !== 'archived')
+      .sort((a, b) => {
+        const titleA = isHe && a.title_he ? a.title_he : a.title || '';
+        const titleB = isHe && b.title_he ? b.title_he : b.title || '';
+        const labelA = `${titleA} (${a.size_label || a.net_weight_grams + 'g'})`;
+        const labelB = `${titleB} (${b.size_label || b.net_weight_grams + 'g'})`;
+        return labelA.localeCompare(labelB, isHe ? 'he' : 'en', { sensitivity: 'base', numeric: true });
+      });
+
+    const orderStatusOptions = [
+      { val: 'Pending Payment', label: isHe ? 'ממתין לתשלום' : 'Pending Payment' },
+      { val: 'Payment Received', label: isHe ? 'התשלום התקבל' : 'Payment Received' },
+      { val: 'Processing', label: isHe ? 'בטיפול' : 'Processing' },
+      { val: 'Packed', label: isHe ? 'נארז' : 'Packed' },
+      { val: 'Dispatched', label: isHe ? 'יצא למשלוח' : 'Dispatched' },
+      { val: 'Out for Delivery', label: isHe ? 'בדרך ללקוח' : 'Out for Delivery' },
+      { val: 'Delivered', label: isHe ? 'נמסר' : 'Delivered' },
+      { val: 'Cancelled', label: isHe ? 'בוטל' : 'Cancelled' },
+      { val: 'Refunded', label: isHe ? 'זוכה' : 'Refunded' }
+    ];
+
+    const borderSide = isHe ? 'border-right' : 'border-left';
+
+    container.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+        <div>
+          <span class="badge-authentic">${isHe ? 'פורטל ניהול מרכזי SUPABASE POSTGRESQL + RLS' : 'CENTRALISED SUPABASE POSTGRESQL + RLS ADMIN PORTAL'}</span>
+          <h2 style="margin:4px 0 0;">${isHe ? 'דינו מרקט — לוח בקרה וניהול מלאי' : 'DINU MARKET Administration &amp; Inventory Dashboard'}</h2>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+          <div style="display:inline-flex;border:1.5px solid var(--dm-line-strong);border-radius:999px;overflow:hidden;background:var(--dm-white);">
+            <button type="button" style="border:none;padding:6px 14px;font-weight:700;font-size:0.84rem;cursor:pointer;background:${!isHe ? 'var(--dm-green-soft)' : 'transparent'};color:${!isHe ? '#FFFFFF' : 'var(--dm-ink)'};" onclick="app.setLanguage('en')">English</button>
+            <button type="button" lang="he" dir="rtl" style="border:none;padding:6px 14px;font-weight:700;font-size:0.84rem;cursor:pointer;background:${isHe ? 'var(--dm-green-soft)' : 'transparent'};color:${isHe ? '#FFFFFF' : 'var(--dm-ink)'};" onclick="app.setLanguage('he')">עברית</button>
+          </div>
+          <button type="button" class="btn-outline" onclick="app.exportProductsCsv()">${isHe ? 'ייצוא קטלוג ל-CSV' : 'Export Catalogue CSV'}</button>
+          <button type="button" class="btn-outline" onclick="app.switchView('storefront')">${isHe ? 'חזרה לחנות ←' : '← Return to Storefront'}</button>
+        </div>
+      </div>
+
+      <!-- KPI Summary Cards -->
+      <div class="trust-grid" style="margin-bottom:20px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));">
+        <div class="card-panel" style="margin:0;${borderSide}:5px solid var(--brand-forest);">
+          <div style="font-size:0.8rem;color:var(--text-secondary);">${isHe ? 'סה״כ הכנסות שנגבו (₪)' : 'Gross Captured Revenue (₪ ILS)'}</div>
+          <div style="font-family:var(--font-heading);font-size:1.65rem;font-weight:900;color:var(--brand-forest);" dir="ltr">₪${Number(k.total_revenue_ils).toFixed(2)}</div>
+        </div>
+        <div class="card-panel" style="margin:0;${borderSide}:5px solid var(--brand-green);">
+          <div style="font-size:0.8rem;color:var(--text-secondary);">${isHe ? 'מוצרים ומק״טים פעילים' : 'Active Products &amp; SKUs'}</div>
+          <div style="font-family:var(--font-heading);font-size:1.65rem;font-weight:900;color:var(--brand-forest);">${k.total_products} (${k.authentic_photo_products} ${isHe ? 'תמונות מקור' : 'Real Photos'})</div>
+        </div>
+        <div class="card-panel" style="margin:0;${borderSide}:5px solid var(--brand-gold);">
+          <div style="font-size:0.8rem;color:var(--text-secondary);">${isHe ? 'סה״כ הזמנות שטופלו' : 'Total Orders Processed'}</div>
+          <div style="font-family:var(--font-heading);font-size:1.65rem;font-weight:900;color:var(--brand-forest);">${k.total_orders}</div>
+        </div>
+      </div>
+
+      <!-- Centralised Supabase Architecture Banner -->
+      <div class="card-panel" style="background:#F3F8F4;border:1.5px solid var(--brand-green);margin-bottom:20px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
           <div>
-            <span class="badge-authentic">CENTRALISED SUPABASE POSTGRESQL + RLS ADMIN PORTAL</span>
-            <h2 style="margin:4px 0 0;">DINU MARKET Administration &amp; Inventory Dashboard</h2>
-          </div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;">
-            <button type="button" class="btn-outline" onclick="app.exportProductsCsv()">Export Catalogue CSV</button>
-            <button type="button" class="btn-outline" onclick="app.switchView('storefront')">← Return to Storefront</button>
-          </div>
-        </div>
-
-        <!-- KPI Summary Cards -->
-        <div class="trust-grid" style="margin-bottom:20px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));">
-          <div class="card-panel" style="margin:0;border-left:5px solid var(--brand-forest);">
-            <div style="font-size:0.8rem;color:var(--text-secondary);">Gross Captured Revenue (₪ ILS)</div>
-            <div style="font-family:var(--font-heading);font-size:1.65rem;font-weight:900;color:var(--brand-forest);">₪${Number(k.total_revenue_ils).toFixed(2)}</div>
-          </div>
-          <div class="card-panel" style="margin:0;border-left:5px solid var(--brand-green);">
-            <div style="font-size:0.8rem;color:var(--text-secondary);">Active Products &amp; SKUs</div>
-            <div style="font-family:var(--font-heading);font-size:1.65rem;font-weight:900;color:var(--brand-forest);">${k.total_products} (${k.authentic_photo_products} Real Photos)</div>
-          </div>
-          <div class="card-panel" style="margin:0;border-left:5px solid var(--brand-gold);">
-            <div style="font-size:0.8rem;color:var(--text-secondary);">Total Orders Processed</div>
-            <div style="font-family:var(--font-heading);font-size:1.65rem;font-weight:900;color:var(--brand-forest);">${k.total_orders}</div>
-          </div>
-        </div>
-
-        <!-- Centralised Supabase Architecture Banner -->
-        <div class="card-panel" style="background:#F3F8F4;border:1.5px solid var(--brand-green);margin-bottom:20px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
-            <div>
-              <strong>Centralised Supabase Backend Architecture (24 Tables + Storage + RLS)</strong>
-              <div style="font-size:0.82rem;color:var(--text-secondary);margin-top:4px;">
-                Schema: <code>supabase/migrations/001_initial_schema.sql</code> • Tables: <code>countries_of_origin</code>, <code>categories</code>, <code>brands</code>, <code>products</code>, <code>product_images</code>, <code>product_variants</code>, <code>inventory_levels</code>, <code>product_pricing</code>, <code>promotional_offers</code>, <code>profiles</code>, <code>customer_addresses</code>, <code>carts</code>, <code>cart_items</code>, <code>shipping_methods</code>, <code>discount_codes</code>, <code>orders</code>, <code>order_items</code>, <code>payments</code>, <code>shipping_records</code>, <code>product_reviews</code>, <code>website_content</code>, <code>newsletter_subscribers</code>, <code>wishlists</code>, <code>admin_audit_logs</code>.<br/>
-                Storage Folders: <code>/products/india/</code>, <code>/products/thailand/</code>, <code>/products/sri-lanka/</code>, <code>/products/philippines/</code>.
-              </div>
-            </div>
-            <span class="badge-authentic">ATOMIC INVENTORY LOCKS ACTIVE</span>
-          </div>
-        </div>
-
-        <!-- Module 1: Add New Product + Bulk CSV Import + Live Product Price, Promo & Inventory Manager -->
-        <div class="card-panel">
-          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
-            <h3 style="margin:0;">Catalogue, Pricing, Promotions &amp; Inventory Management (${data.products.length} Products)</h3>
-            <div style="display:flex;gap:8px;align-items:center;">
-              <label class="btn-outline" style="padding:6px 12px;font-size:0.8rem;cursor:pointer;">
-                Bulk CSV Import
-                <input type="file" accept=".csv" style="display:none;" onchange="app.importProductsCsv(event)" />
-              </label>
-              <button type="button" class="btn-outline" style="padding:6px 12px;font-size:0.8rem;" onclick="app.exportProductsCsv()">Export CSV</button>
+            <strong>${isHe ? 'ארכיטקטורת שרת מרכזית Supabase (24 טבלאות + אחסון + RLS)' : 'Centralised Supabase Backend Architecture (24 Tables + Storage + RLS)'}</strong>
+            <div style="font-size:0.82rem;color:var(--text-secondary);margin-top:4px;">
+              ${isHe ? 'סכמה:' : 'Schema:'} <code dir="ltr">supabase/migrations/001_initial_schema.sql</code> • ${isHe ? 'תיקיות אחסון:' : 'Storage Folders:'} <code dir="ltr">/products/india/</code>, <code dir="ltr">/products/thailand/</code>, <code dir="ltr">/products/sri-lanka/</code>, <code dir="ltr">/products/philippines/</code>.
             </div>
           </div>
+          <span class="badge-authentic">${isHe ? 'נעילות מלאי אטומיות פעילות' : 'ATOMIC INVENTORY LOCKS ACTIVE'}</span>
+        </div>
+      </div>
 
-          <form onsubmit="app.adminCreateProduct(event)" style="background:var(--surface);padding:14px;border-radius:8px;margin-bottom:18px;">
-            <h4 style="margin-top:0;">Add New Product to Supabase Catalogue</h4>
-            <div class="form-grid-2">
-              <div class="form-field"><label>Product Title (EN) *</label><input type="text" id="admProdTitle" required placeholder="e.g., Thai Kitchen Coconut Milk 400ml" /></div>
-              <div class="form-field"><label>Product Title (HE)</label><input type="text" id="admProdTitleHe" placeholder="חלב קוקוס תאילנדי 400 מ״ל" /></div>
-            </div>
-            <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;">
-              <div class="form-field"><label>Brand / Vendor *</label><input type="text" id="admProdVendor" value="Haldiram's" required /></div>
-              <div class="form-field"><label>Size / Weight *</label><input type="text" id="admProdSize" value="250g" required placeholder="250g, 1 kg, 1000 ml" /></div>
-              <div class="form-field">
-                <label>Category *</label>
-                <select id="admProdCat">
-                  <option value="sweets">Sweets</option>
-                  <option value="snacks">Snacks</option>
-                  <option value="pantry">Pantry (Rice, Flour &amp; Grains)</option>
-                  <option value="sauce-seasoning">Sauce &amp; Seasoning</option>
-                  <option value="canned-jarred-goods">Canned &amp; Jarred Goods</option>
-                  <option value="drinks">Drinks</option>
-                  <option value="instant-foods">Instant Foods</option>
-                </select>
-              </div>
-              <div class="form-field">
-                <label>Country of Origin *</label>
-                <select id="admProdRegion">
-                  ${state.regions.map((r) => `<option value="${escapeHtml(r.slug)}">${escapeHtml(r.name)}</option>`).join('')}
-                </select>
-              </div>
-              <div class="form-field"><label>Selling Price (₪ ILS) *</label><input type="number" step="0.1" id="admProdPrice" value="18.90" required /></div>
-            </div>
-            <button type="submit" class="btn-primary">+ Create Product in Catalogue</button>
-          </form>
-
-          <div style="max-height:420px;overflow-y:auto;">
-            <table class="data-table">
-              <thead>
-                <tr><th>SKU</th><th>Product Title &amp; Size</th><th>Origin</th><th>Price (₪)</th><th>Compare-At Promo (₪)</th><th>Stock Qty</th><th>Actions</th></tr>
-              </thead>
-              <tbody>
-                ${sortedAdminProducts
-                  .map(
-                    (p) => `
-                    <tr>
-                      <td><code>${escapeHtml(p.sku)}</code></td>
-                      <td>
-                        <strong>${escapeHtml(p.title)}</strong>
-                        <span style="font-size:0.75rem;color:var(--text-secondary);">(${escapeHtml(p.size_label || p.net_weight_grams + 'g')})</span>
-                        ${p.is_authentic_photo ? '<span class="badge-authentic" style="margin-left:6px;">PHOTO</span>' : ''}
-                      </td>
-                      <td>${escapeHtml((p.region_slug || 'india').toUpperCase())}</td>
-                      <td>
-                        <input type="number" step="0.1" id="admPrice_${escapeHtml(p.id)}" value="${p.price_ils}" style="width:74px;padding:4px;" />
-                      </td>
-                      <td>
-                        <input type="number" step="0.1" id="admPromo_${escapeHtml(p.id)}" value="${p.compare_at_price_ils || ''}" placeholder="None" style="width:78px;padding:4px;" />
-                      </td>
-                      <td>
-                        <input type="number" id="admStock_${escapeHtml(p.id)}" value="${p.stock_quantity}" style="width:64px;padding:4px;" />
-                      </td>
-                      <td style="display:flex;gap:6px;">
-                        <button type="button" class="btn-primary" style="padding:5px 10px;font-size:0.75rem;" onclick="app.adminUpdateProduct('${escapeHtml(p.id)}')">Save</button>
-                        <button type="button" class="btn-outline" style="padding:5px 8px;font-size:0.75rem;color:var(--brand-red);border-color:var(--brand-red);" onclick="app.adminArchiveProduct('${escapeHtml(p.id)}')">Archive</button>
-                      </td>
-                    </tr>
-                  `
-                  )
-                  .join('')}
-              </tbody>
-            </table>
+      <!-- Module 1: Add New Product + Bulk CSV Import + Live Product Price, Promo & Inventory Manager -->
+      <div class="card-panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+          <h3 style="margin:0;">${isHe ? `ניהול קטלוג, מחירים, מבצעים ומלאי (${data.products.length} מוצרים)` : `Catalogue, Pricing, Promotions &amp; Inventory Management (${data.products.length} Products)`}</h3>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <label class="btn-outline" style="padding:6px 12px;font-size:0.8rem;cursor:pointer;">
+              ${isHe ? 'ייבוא CSV מרוכז' : 'Bulk CSV Import'}
+              <input type="file" accept=".csv" style="display:none;" onchange="app.importProductsCsv(event)" />
+            </label>
+            <button type="button" class="btn-outline" style="padding:6px 12px;font-size:0.8rem;" onclick="app.exportProductsCsv()">${isHe ? 'ייצוא CSV' : 'Export CSV'}</button>
           </div>
         </div>
 
-        <!-- Module 2: Orders, 9 Required Order Statuses, Dispatch Tracking & Gateway Refunds -->
-        <div class="card-panel">
-          <h3>Order Management &amp; Fulfilment Workflow (${data.orders.length} Orders — All 9 Statuses Supported)</h3>
-          ${
-            data.orders.length === 0
-              ? `<p style="color:var(--text-secondary);">No customer orders placed yet. Complete a test checkout (Guest or Signed-In) to manage orders here.</p>`
-              : `<table class="data-table">
-                  <thead>
-                    <tr><th>Order #</th><th>Customer</th><th>Total (₪)</th><th>Order Status (Section 11)</th><th>Courier Tracking #</th><th>Actions</th></tr>
-                  </thead>
-                  <tbody>
-                    ${data.orders
-                      .map(
-                        (o) => `
-                        <tr>
-                          <td><strong>${escapeHtml(o.order_number)}</strong><br/><span style="font-size:0.75rem;color:var(--text-secondary);">${escapeHtml(o.tax_invoice_number)}</span></td>
-                          <td>${escapeHtml(o.customer_name)}<br/><span style="font-size:0.75rem;">${escapeHtml(o.customer_email)}</span></td>
-                          <td><strong>₪${Number(o.total_ils).toFixed(2)}</strong><br/><span style="font-size:0.75rem;">${escapeHtml(o.payment_status)}</span></td>
-                          <td>
-                            <select id="admOrdStatus_${escapeHtml(o.id)}" style="padding:4px;">
-                              ${orderStatusOptions
-                                .map((st) => `<option value="${escapeHtml(st)}" ${o.status === st ? 'selected' : ''}>${escapeHtml(st)}</option>`)
-                                .join('')}
-                            </select>
-                          </td>
-                          <td><input type="text" id="admOrdTrack_${escapeHtml(o.id)}" value="${escapeHtml(o.tracking_number)}" style="width:135px;padding:4px;" /></td>
-                          <td style="display:flex;gap:6px;">
-                            <button type="button" class="btn-primary" style="padding:5px 10px;font-size:0.75rem;" onclick="app.adminUpdateOrderStatus('${escapeHtml(o.id)}')">Update</button>
-                            ${
-                              o.payment_status !== 'refunded' && o.status !== 'Refunded'
-                                ? `<button type="button" class="btn-red" style="padding:5px 10px;font-size:0.75rem;" onclick="app.adminRefundOrder('${escapeHtml(o.id)}')">Refund</button>`
-                                : ''
-                            }
-                          </td>
-                        </tr>
-                      `
-                      )
-                      .join('')}
-                  </tbody>
-                </table>`
-          }
-        </div>
+        <form onsubmit="app.adminCreateProduct(event)" style="background:var(--surface);padding:14px;border-radius:8px;margin-bottom:18px;">
+          <h4 style="margin-top:0;">${isHe ? 'הוספת מוצר חדש לקטלוג' : 'Add New Product to Supabase Catalogue'}</h4>
+          <div class="form-grid-2">
+            <div class="form-field"><label>${isHe ? 'שם מוצר (אנגלית) *' : 'Product Title (EN) *'}</label><input type="text" id="admProdTitle" dir="ltr" required placeholder="e.g., Thai Kitchen Coconut Milk 400ml" /></div>
+            <div class="form-field"><label>${isHe ? 'שם מוצר (עברית)' : 'Product Title (HE)'}</label><input type="text" id="admProdTitleHe" dir="rtl" placeholder="חלב קוקוס תאילנדי 400 מ״ל" /></div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;">
+            <div class="form-field"><label>${isHe ? 'מותג / יצרן *' : 'Brand / Vendor *'}</label><input type="text" id="admProdVendor" value="Haldiram's" required /></div>
+            <div class="form-field"><label>${isHe ? 'משקל / גודל אריזה *' : 'Size / Weight *'}</label><input type="text" id="admProdSize" dir="ltr" value="250g" required placeholder="250g, 1 kg, 1000 ml" /></div>
+            <div class="form-field">
+              <label>${isHe ? 'קטגוריה *' : 'Category *'}</label>
+              <select id="admProdCat">
+                <option value="sweets">${isHe ? 'ממתקים וקינוחים' : 'Sweets'}</option>
+                <option value="snacks">${isHe ? 'חטיפים מלוחים' : 'Snacks'}</option>
+                <option value="pantry">${isHe ? 'מזווה ואורז' : 'Pantry (Rice, Flour &amp; Grains)'}</option>
+                <option value="sauce-seasoning">${isHe ? 'רטבים ותבלינים' : 'Sauce &amp; Seasoning'}</option>
+                <option value="canned-jarred-goods">${isHe ? 'שימורים וצנצנות' : 'Canned &amp; Jarred Goods'}</option>
+                <option value="drinks">${isHe ? 'משקאות ותה' : 'Drinks'}</option>
+                <option value="instant-foods">${isHe ? 'נודלס ואוכל מהיר' : 'Instant Foods'}</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label>${isHe ? 'ארץ מקור *' : 'Country of Origin *'}</label>
+              <select id="admProdRegion">
+                ${state.regions.map((r) => `<option value="${escapeHtml(r.slug)}">${escapeHtml(isHe && r.name_he ? r.name_he : r.name)}</option>`).join('')}
+              </select>
+            </div>
+            <div class="form-field"><label>${isHe ? 'מחיר מכירה (₪) *' : 'Selling Price (₪ ILS) *'}</label><input type="number" step="0.1" id="admProdPrice" dir="ltr" value="18.90" required /></div>
+          </div>
+          <button type="submit" class="btn-primary">${isHe ? '+ יצירת מוצר בקטלוג' : '+ Create Product in Catalogue'}</button>
+        </form>
 
-        <!-- Module 3: Israeli Delivery Zones -->
-        <div class="card-panel">
-          <h3>Configurable Israeli Domestic Delivery Zones</h3>
+        <div style="max-height:420px;overflow-y:auto;">
           <table class="data-table">
             <thead>
-              <tr><th>Zone</th><th>Standard (₪)</th><th>Locker (₪)</th><th>Free Over (₪)</th><th>Save</th></tr>
+              <tr>
+                <th>${isHe ? 'מק״ט' : 'SKU'}</th>
+                <th>${isHe ? 'שם המוצר וגודל' : 'Product Title &amp; Size'}</th>
+                <th>${isHe ? 'ארץ מקור' : 'Origin'}</th>
+                <th>${isHe ? 'מחיר (₪)' : 'Price (₪)'}</th>
+                <th>${isHe ? 'מחיר לפני הנחה (₪)' : 'Compare-At Promo (₪)'}</th>
+                <th>${isHe ? 'מלאי' : 'Stock Qty'}</th>
+                <th>${isHe ? 'פעולות' : 'Actions'}</th>
+              </tr>
             </thead>
             <tbody>
-              ${data.shipping_zones
-                .map(
-                  (z) => `
+              ${sortedAdminProducts
+                .map((p) => {
+                  const dispTitle = isHe && p.title_he ? p.title_he : p.title;
+                  const regObj = state.regions.find((r) => r.slug === p.region_slug);
+                  const dispOrigin = isHe && regObj?.name_he ? regObj.name_he : (p.region_slug || 'india').toUpperCase();
+                  return `
                   <tr>
-                    <td><strong>${escapeHtml(z.name_en)}</strong><br/><span style="font-size:0.75rem;color:var(--text-secondary);">${escapeHtml(z.name_he)}</span></td>
-                    <td><input type="number" id="zStd_${escapeHtml(z.zone_code)}" value="${z.standard_rate_ils}" style="width:60px;padding:4px;" /></td>
-                    <td><input type="number" id="zLoc_${escapeHtml(z.zone_code)}" value="${z.locker_rate_ils}" style="width:60px;padding:4px;" /></td>
-                    <td><input type="number" id="zFree_${escapeHtml(z.zone_code)}" value="${z.free_threshold_ils}" style="width:68px;padding:4px;" /></td>
-                    <td><button type="button" class="btn-outline" style="padding:4px 8px;font-size:0.75rem;" onclick="app.adminSaveZone('${escapeHtml(z.zone_code)}')">Save</button></td>
+                    <td dir="ltr"><code>${escapeHtml(p.sku)}</code></td>
+                    <td>
+                      <strong>${escapeHtml(dispTitle)}</strong>
+                      <span style="font-size:0.75rem;color:var(--text-secondary);" dir="ltr">(${escapeHtml(p.size_label || p.net_weight_grams + 'g')})</span>
+                      ${p.is_authentic_photo ? `<span class="badge-authentic" style="margin-inline-start:6px;">${isHe ? 'תמונה' : 'PHOTO'}</span>` : ''}
+                    </td>
+                    <td>${escapeHtml(dispOrigin)}</td>
+                    <td>
+                      <input type="number" step="0.1" id="admPrice_${escapeHtml(p.id)}" dir="ltr" value="${p.price_ils}" style="width:74px;padding:4px;" />
+                    </td>
+                    <td>
+                      <input type="number" step="0.1" id="admPromo_${escapeHtml(p.id)}" dir="ltr" value="${p.compare_at_price_ils || ''}" placeholder="${isHe ? 'ללא' : 'None'}" style="width:78px;padding:4px;" />
+                    </td>
+                    <td>
+                      <input type="number" id="admStock_${escapeHtml(p.id)}" dir="ltr" value="${p.stock_quantity}" style="width:64px;padding:4px;" />
+                    </td>
+                    <td style="display:flex;gap:6px;">
+                      <button type="button" class="btn-primary" style="padding:5px 10px;font-size:0.75rem;" onclick="app.adminUpdateProduct('${escapeHtml(p.id)}')">${isHe ? 'שמירה' : 'Save'}</button>
+                      <button type="button" class="btn-outline" style="padding:5px 8px;font-size:0.75rem;color:var(--brand-red);border-color:var(--brand-red);" onclick="app.adminArchiveProduct('${escapeHtml(p.id)}')">${isHe ? 'ארכיון' : 'Archive'}</button>
+                    </td>
                   </tr>
-                `
-                )
+                `;
+                })
                 .join('')}
             </tbody>
           </table>
         </div>
-      `;
-    } catch (err) {
-      showToast(err.message);
-    }
+      </div>
+
+      <!-- Module 2: Orders -->
+      <div class="card-panel">
+        <h3>${isHe ? `ניהול הזמנות ומשלוחים (${data.orders.length} הזמנות)` : `Order Management &amp; Fulfilment Workflow (${data.orders.length} Orders — All 9 Statuses Supported)`}</h3>
+        ${
+          data.orders.length === 0
+            ? `<p style="color:var(--text-secondary);">${isHe ? 'טרם בוצעו הזמנות לקוחות. בצעו הזמנה לדוגמה כדי לנהל הזמנות כאן.' : 'No customer orders placed yet. Complete a test checkout (Guest or Signed-In) to manage orders here.'}</p>`
+            : `<table class="data-table">
+                <thead>
+                  <tr>
+                    <th>${isHe ? 'מס׳ הזמנה' : 'Order #'}</th>
+                    <th>${isHe ? 'לקוח' : 'Customer'}</th>
+                    <th>${isHe ? 'סה״כ (₪)' : 'Total (₪)'}</th>
+                    <th>${isHe ? 'סטטוס הזמנה' : 'Order Status (Section 11)'}</th>
+                    <th>${isHe ? 'מס׳ מעקב משלוח' : 'Courier Tracking #'}</th>
+                    <th>${isHe ? 'פעולות' : 'Actions'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${data.orders
+                    .map(
+                      (o) => `
+                      <tr>
+                        <td dir="ltr"><strong>${escapeHtml(o.order_number)}</strong><br/><span style="font-size:0.75rem;color:var(--text-secondary);">${escapeHtml(o.tax_invoice_number)}</span></td>
+                        <td>${escapeHtml(o.customer_name)}<br/><span style="font-size:0.75rem;" dir="ltr">${escapeHtml(o.customer_email)}</span></td>
+                        <td dir="ltr"><strong>₪${Number(o.total_ils).toFixed(2)}</strong><br/><span style="font-size:0.75rem;">${escapeHtml(o.payment_status)}</span></td>
+                        <td>
+                          <select id="admOrdStatus_${escapeHtml(o.id)}" style="padding:4px;">
+                            ${orderStatusOptions
+                              .map((st) => `<option value="${escapeHtml(st.val)}" ${o.status === st.val ? 'selected' : ''}>${escapeHtml(st.label)}</option>`)
+                              .join('')}
+                          </select>
+                        </td>
+                        <td><input type="text" id="admOrdTrack_${escapeHtml(o.id)}" dir="ltr" value="${escapeHtml(o.tracking_number)}" style="width:135px;padding:4px;" /></td>
+                        <td style="display:flex;gap:6px;">
+                          <button type="button" class="btn-primary" style="padding:5px 10px;font-size:0.75rem;" onclick="app.adminUpdateOrderStatus('${escapeHtml(o.id)}')">${isHe ? 'עדכון' : 'Update'}</button>
+                          ${
+                            o.payment_status !== 'refunded' && o.status !== 'Refunded'
+                              ? `<button type="button" class="btn-red" style="padding:5px 10px;font-size:0.75rem;" onclick="app.adminRefundOrder('${escapeHtml(o.id)}')">${isHe ? 'זיכוי' : 'Refund'}</button>`
+                              : ''
+                          }
+                        </td>
+                      </tr>
+                    `
+                    )
+                    .join('')}
+                </tbody>
+              </table>`
+        }
+      </div>
+
+      <!-- Module 3: Israeli Delivery Zones -->
+      <div class="card-panel">
+        <h3>${isHe ? 'אזורי משלוח ותעריפים בישראל' : 'Configurable Israeli Domestic Delivery Zones'}</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>${isHe ? 'אזור חלוקה' : 'Zone'}</th>
+              <th>${isHe ? 'משלוח רגיל (₪)' : 'Standard (₪)'}</th>
+              <th>${isHe ? 'לוקר / נק׳ איסוף (₪)' : 'Locker (₪)'}</th>
+              <th>${isHe ? 'משלוח חינם מעל (₪)' : 'Free Over (₪)'}</th>
+              <th>${isHe ? 'שמירה' : 'Save'}</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${data.shipping_zones
+              .map(
+                (z) => `
+                <tr>
+                  <td><strong>${escapeHtml(isHe ? z.name_he : z.name_en)}</strong><br/><span style="font-size:0.75rem;color:var(--text-secondary);">${escapeHtml(isHe ? z.name_en : z.name_he)}</span></td>
+                  <td><input type="number" id="zStd_${escapeHtml(z.zone_code)}" dir="ltr" value="${z.standard_rate_ils}" style="width:60px;padding:4px;" /></td>
+                  <td><input type="number" id="zLoc_${escapeHtml(z.zone_code)}" dir="ltr" value="${z.locker_rate_ils}" style="width:60px;padding:4px;" /></td>
+                  <td><input type="number" id="zFree_${escapeHtml(z.zone_code)}" dir="ltr" value="${z.free_threshold_ils}" style="width:68px;padding:4px;" /></td>
+                  <td><button type="button" class="btn-outline" style="padding:4px 8px;font-size:0.75rem;" onclick="app.adminSaveZone('${escapeHtml(z.zone_code)}')">${isHe ? 'שמירה' : 'Save'}</button></td>
+                </tr>
+              `
+              )
+              .join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
   },
 
   async adminCreateProduct(e) {

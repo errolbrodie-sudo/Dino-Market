@@ -463,7 +463,7 @@ const SEED_PRODUCTS = [
     unit_measure_type: '100g',
     stock_quantity: 45,
     expiry_date: '2027-06-06',
-    primary_image_url: 'images/products/gorus-cookies-front.jpg',
+    primary_image_url: 'images/products/gorus-cookies-front.png?v=20261123prod1',
     secondary_image_url: 'images/products/gorus-cookies-back.jpg',
     is_authentic_photo: 1,
     is_featured: 1,

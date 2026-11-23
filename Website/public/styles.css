@@ -762,6 +762,17 @@ body[data-view="region"] .header-actions {
   background: var(--dm-cream);
 }
 
+body[data-view="admin"] #langMenuPopover button[data-admin-hide="true"] {
+  display: none;
+}
+
+#view-admin[dir="rtl"] .data-table th,
+#view-admin[dir="rtl"] .data-table td,
+#siteFooter[dir="rtl"] .footer-links a,
+#siteFooter[dir="rtl"] .footer-links button {
+  text-align: right;
+}
+
 .header-btn-admin {
   border-color: var(--dm-green);
   color: var(--dm-green);

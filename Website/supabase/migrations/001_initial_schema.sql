@@ -605,7 +605,7 @@ INSERT INTO public.products (
         'Maharaja Ltd., HaAvoda 32, Ashdod, Israel',
         9.50, 15.00, NULL, NULL,
         45, 8, '2027-06-06',
-        'images/products/gorus-cookies-front.jpg', 'images/products/gorus-cookies-back.jpg',
+        'images/products/gorus-cookies-front.png?v=20261123prod1', 'images/products/gorus-cookies-back.jpg',
         'active', TRUE, TRUE, TRUE, FALSE
     ),
     (

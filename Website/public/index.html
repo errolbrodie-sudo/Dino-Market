@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&amp;family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@700;800&amp;family=Noto+Sans+Thai:wght@500;700&amp;family=Noto+Sans+Sinhala:wght@500;700&amp;family=Noto+Sans+Devanagari:wght@500;700&amp;family=Noto+Sans+Hebrew:wght@500;700&amp;display=swap" />
-  <link rel="stylesheet" href="styles.css?v=20261123jpg3" />
+  <link rel="stylesheet" href="styles.css?v=20261123i18n1" />
   <script type="application/ld+json" id="seoStructuredData">
   {
     "@context": "https://schema.org",
@@ -37,8 +37,8 @@
   <div class="announcement-bar" role="region" aria-label="Account Quick Access">
     <div class="announcement-inner">
       <div class="announcement-right">
-        <button type="button" onclick="app.quickDemoLogin('customer')">Demo Customer</button>
-        <button type="button" onclick="app.quickDemoLogin('admin')">Admin Dashboard</button>
+        <button type="button" onclick="app.quickDemoLogin('customer')" data-i18n="demo_customer_btn">Demo Customer</button>
+        <button type="button" onclick="app.quickDemoLogin('admin')" data-i18n="admin_dashboard_btn">Admin Dashboard</button>
       </div>
     </div>
   </div>
@@ -111,10 +111,10 @@
           <div id="langMenuPopover" class="lang-menu-popover" role="listbox" aria-label="Choose Language" style="display:none;">
             <button type="button" role="option" onclick="app.setLanguage('en')">English (EN)</button>
             <button type="button" role="option" lang="he" dir="rtl" onclick="app.setLanguage('he')">עברית (HE)</button>
-            <button type="button" role="option" lang="tl" onclick="app.setLanguage('tl')">Filipino (TL)</button>
-            <button type="button" role="option" lang="th" onclick="app.setLanguage('th')">ไทย (TH)</button>
-            <button type="button" role="option" lang="hi" onclick="app.setLanguage('hi')">हिन्दी (HI)</button>
-            <button type="button" role="option" lang="si" onclick="app.setLanguage('si')">සිංහල (SI)</button>
+            <button type="button" role="option" lang="tl" data-admin-hide="true" onclick="app.setLanguage('tl')">Filipino (TL)</button>
+            <button type="button" role="option" lang="th" data-admin-hide="true" onclick="app.setLanguage('th')">ไทย (TH)</button>
+            <button type="button" role="option" lang="hi" data-admin-hide="true" onclick="app.setLanguage('hi')">हिन्दी (HI)</button>
+            <button type="button" role="option" lang="si" data-admin-hide="true" onclick="app.setLanguage('si')">සිංහල (SI)</button>
           </div>
           <select id="langSelector" style="display:none;" aria-hidden="true" tabindex="-1" onchange="app.setLanguage(this.value)">
             <option value="en">English</option>
@@ -145,7 +145,7 @@
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm5.82 14.01c-.24.68-1.41 1.3-1.95 1.38-.5.08-1.13.11-1.83-.11-.42-.13-.97-.31-1.67-.61-2.94-1.27-4.86-4.24-5.01-4.44-.15-.2-1.2-1.59-1.2-3.04 0-1.45.76-2.16 1.03-2.46.27-.3.59-.37.79-.37.2 0 .4.01.57.01.18 0 .43-.07.67.51.24.59.83 2.03.9 2.18.07.15.12.32.02.52-.1.2-.15.32-.3.49-.15.17-.31.38-.45.51-.15.15-.3.31-.13.61.17.3.76 1.25 1.63 2.02 1.12 1 2.06 1.31 2.36 1.46.3.15.47.12.64-.07.17-.2.74-.86.94-1.16.2-.3.4-.25.67-.15.27.1 1.73.82 2.03.97.3.15.5.22.57.35.07.12.07.72-.17 1.4z"/>
           </svg>
-          <span>WhatsApp</span>
+          <span data-i18n="whatsapp_label">WhatsApp</span>
         </a>
 
         <button type="button" class="basket-pill-btn" onclick="app.toggleCartDrawer(true)" aria-label="Open Shopping Trolley">
@@ -230,7 +230,7 @@
             </div>
           </div>
           <div class="hero-cta-row" id="heroRegionCtaRow">
-            <button type="button" class="pill-control btn-cta-secondary" onclick="app.openShopView()">
+            <button type="button" class="pill-control btn-cta-secondary" onclick="app.openShopView()" data-i18n="home_browse_all_btn">
               Browse all products
             </button>
           </div>
@@ -240,12 +240,12 @@
       <!-- 4. "Back in stock this week" (4 New Arrivals cards with country badges) -->
       <section class="page-section" id="backInStockSection" aria-labelledby="backInStockHeading">
         <div class="container">
-          <div class="section-head-row">
+          <div class="section-head-row" id="homeBackInStockHeadRow">
             <div>
-              <h2 class="section-h2" id="backInStockHeading">Back in stock this week</h2>
-              <p class="section-lead">Freshly unpacked at our Israel warehouse — grab them before Friday.</p>
+              <h2 class="section-h2" id="backInStockHeading" data-i18n="home_back_in_stock_title">Back in stock this week</h2>
+              <p class="section-lead" data-i18n="home_back_in_stock_lead">Freshly unpacked at our Israel warehouse — grab them before Friday.</p>
             </div>
-            <button type="button" class="pill-control" onclick="app.openShopView()">View full shop →</button>
+            <button type="button" class="pill-control" onclick="app.openShopView()" data-i18n="home_view_full_shop_btn">View full shop →</button>
           </div>
           <div id="newArrivalsGrid" class="product-grid home-four-grid"></div>
         </div>
@@ -349,20 +349,20 @@
        GREEN SITE FOOTER (--dm-green, real contact details, WhatsApp,
        VAT note, dietary filters mention, care links & payment text)
        ==================================================================== -->
-  <footer class="site-footer">
+  <footer class="site-footer" id="siteFooter">
     <div class="container">
       <div class="footer-grid">
         <div>
           <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
             <img src="images/brand/dinu-logo.png" alt="Dinu Market Logo" style="height:56px;width:auto;background:#FFFFFF;padding:5px;border-radius:12px;" />
             <div>
-              <div style="font-family:var(--dm-font-display);font-weight:800;font-size:1.4rem;color:var(--dm-cream);">Dinu<span style="color:var(--dm-chili);">.</span>Market</div>
-              <div style="font-size:0.82rem;color:var(--dm-turmeric);font-weight:700;letter-spacing:0.5px;">4 KITCHENS · DELIVERED IN ISRAEL</div>
+              <div style="font-family:var(--dm-font-display);font-weight:800;font-size:1.4rem;color:var(--dm-cream);" dir="ltr">Dinu<span style="color:var(--dm-chili);">.</span>Market</div>
+              <div style="font-size:0.82rem;color:#FFE07D;font-weight:700;letter-spacing:0.5px;" data-i18n="footer_tagline">4 KITCHENS · DELIVERED IN ISRAEL</div>
             </div>
           </div>
           <div style="font-size:0.9rem;color:var(--dm-cream);line-height:1.7;margin-bottom:14px;">
-            <div>Email: <a id="footerSupportEmail" href="mailto:support@dinumarket.co.il" class="footer-inline-link">support@dinumarket.co.il</a></div>
-            <div>Phone / SMS: <a id="footerSupportPhone" href="tel:+972548124900" class="footer-inline-link">054-812-4900</a> (Sun–Thu, 08:30–18:00)</div>
+            <div><span data-i18n="footer_email_label">Email:</span> <a id="footerSupportEmail" href="mailto:support@dinumarket.co.il" class="footer-inline-link" dir="ltr">support@dinumarket.co.il</a></div>
+            <div><span data-i18n="footer_phone_label">Phone / SMS:</span> <a id="footerSupportPhone" href="tel:+972548124900" class="footer-inline-link" dir="ltr">054-812-4900</a> <span data-i18n="footer_support_hours">(Sun–Thu, 08:30–18:00)</span></div>
           </div>
           <div>
             <a
@@ -376,37 +376,37 @@
               <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm5.82 14.01c-.24.68-1.41 1.3-1.95 1.38-.5.08-1.13.11-1.83-.11-.42-.13-.97-.31-1.67-.61-2.94-1.27-4.86-4.24-5.01-4.44-.15-.2-1.2-1.59-1.2-3.04 0-1.45.76-2.16 1.03-2.46.27-.3.59-.37.79-.37.2 0 .4.01.57.01.18 0 .43-.07.67.51.24.59.83 2.03.9 2.18.07.15.12.32.02.52-.1.2-.15.32-.3.49-.15.17-.31.38-.45.51-.15.15-.3.31-.13.61.17.3.76 1.25 1.63 2.02 1.12 1 2.06 1.31 2.36 1.46.3.15.47.12.64-.07.17-.2.74-.86.94-1.16.2-.3.4-.25.67-.15.27.1 1.73.82 2.03.97.3.15.5.22.57.35.07.12.07.72-.17 1.4z"/>
               </svg>
-              <span>Order on WhatsApp</span>
+              <span data-i18n="order_on_whatsapp">Order on WhatsApp</span>
             </a>
           </div>
         </div>
 
         <div>
-          <h4>Customer Care &amp; Policies</h4>
+          <h4 data-i18n="footer_care_heading">Customer Care &amp; Policies</h4>
           <ul class="footer-links">
-            <li><button type="button" onclick="app.showPolicyModal('about')">About Dinu Market</button></li>
-            <li><button type="button" onclick="app.showPolicyModal('contact')">Contact &amp; Support Hours</button></li>
-            <li><button type="button" onclick="app.showPolicyModal('shipping')">Israel Delivery Zones &amp; Cutoffs</button></li>
-            <li><button type="button" onclick="app.showPolicyModal('returns')">Returns &amp; Refunds Policy</button></li>
-            <li><button type="button" onclick="app.showPolicyModal('privacy')">Privacy &amp; Cookie Policy</button></li>
-            <li><button type="button" onclick="app.showPolicyModal('terms')">Terms &amp; Conditions</button></li>
+            <li><button type="button" onclick="app.showPolicyModal('about')" data-i18n="footer_link_about">About Dinu Market</button></li>
+            <li><button type="button" onclick="app.showPolicyModal('contact')" data-i18n="footer_link_contact">Contact &amp; Support Hours</button></li>
+            <li><button type="button" onclick="app.showPolicyModal('shipping')" data-i18n="footer_link_shipping">Israel Delivery Zones &amp; Cutoffs</button></li>
+            <li><button type="button" onclick="app.showPolicyModal('returns')" data-i18n="footer_link_returns">Returns &amp; Refunds Policy</button></li>
+            <li><button type="button" onclick="app.showPolicyModal('privacy')" data-i18n="footer_link_privacy">Privacy &amp; Cookie Policy</button></li>
+            <li><button type="button" onclick="app.showPolicyModal('terms')" data-i18n="footer_link_terms">Terms &amp; Conditions</button></li>
           </ul>
         </div>
 
         <div>
-          <h4>VAT, Dietary &amp; Payments</h4>
-          <p style="font-size:0.9rem;color:rgba(255,247,234,0.88);margin-bottom:12px;">
-            All prices are displayed in Israeli New Shekels (₪ ILS) and include 18% Israeli VAT (<span lang="he" dir="rtl">כולל מע״מ</span>). Filter any aisle by Kosher, Vegan, Vegetarian or Gluten-Free.
+          <h4 data-i18n="footer_vat_heading">VAT, Dietary &amp; Payments</h4>
+          <p style="font-size:0.9rem;color:rgba(255,247,234,0.88);margin-bottom:12px;" data-i18n="footer_vat_copy">
+            All prices are displayed in Israeli New Shekels (₪ ILS) and include 18% Israeli VAT (כולל מע״מ). Filter any aisle by Kosher, Vegan, Vegetarian or Gluten-Free.
           </p>
-          <p style="font-size:0.88rem;color:var(--dm-cream);font-weight:600;margin:0;">
+          <p style="font-size:0.88rem;color:var(--dm-cream);font-weight:600;margin:0;" data-i18n="footer_payments_copy">
             Accepted payments: Visa · Mastercard · American Express · Isracard · Bit · Apple Pay · Google Pay
           </p>
         </div>
       </div>
 
       <div class="footer-bottom-bar">
-        <div>© 2026 Dinu Market Israel Ltd. Domestic delivery across Israel only.</div>
-        <div>All prices in ₪ ILS include 18% VAT · PCI-DSS Level 1 tokenized checkout</div>
+        <div data-i18n="footer_copyright">© 2026 Dinu Market Israel Ltd. Domestic delivery across Israel only.</div>
+        <div data-i18n="footer_pci_note">All prices in ₪ ILS include 18% VAT · PCI-DSS Level 1 tokenized checkout</div>
       </div>
     </div>
   </footer>
@@ -422,12 +422,12 @@
     <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
       <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm5.82 14.01c-.24.68-1.41 1.3-1.95 1.38-.5.08-1.13.11-1.83-.11-.42-.13-.97-.31-1.67-.61-2.94-1.27-4.86-4.24-5.01-4.44-.15-.2-1.2-1.59-1.2-3.04 0-1.45.76-2.16 1.03-2.46.27-.3.59-.37.79-.37.2 0 .4.01.57.01.18 0 .43-.07.67.51.24.59.83 2.03.9 2.18.07.15.12.32.02.52-.1.2-.15.32-.3.49-.15.17-.31.38-.45.51-.15.15-.3.31-.13.61.17.3.76 1.25 1.63 2.02 1.12 1 2.06 1.31 2.36 1.46.3.15.47.12.64-.07.17-.2.74-.86.94-1.16.2-.3.4-.25.67-.15.27.1 1.73.82 2.03.97.3.15.5.22.57.35.07.12.07.72-.17 1.4z"/>
     </svg>
-    <span>Order on WhatsApp</span>
+    <span data-i18n="order_on_whatsapp">Order on WhatsApp</span>
   </a>
 
   <!-- Toast Container -->
   <div id="toastContainer" class="toast-container" aria-live="polite"></div>
 
-  <script src="app.js?v=20261123jpg3"></script>
+  <script src="app.js?v=20261123i18n1"></script>
 </body>
 </html>
