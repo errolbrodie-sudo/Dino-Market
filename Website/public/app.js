@@ -1738,7 +1738,7 @@ const app = {
   renderHeaderKitchenPills() {
     const slot = document.getElementById('headerKitchenPillsSlot');
     if (!slot) return;
-    slot.innerHTML = KITCHEN_ORDER.map((slug) => {
+    const regionPillsHtml = KITCHEN_ORDER.map((slug) => {
       const k = KITCHEN_STOREFRONTS[slug];
       const isActive = state.currentView === 'region' && state.activeRegionPage === slug;
       return `
@@ -1752,6 +1752,18 @@ const app = {
         </button>
       `;
     }).join('');
+
+    const allProductsBtnHtml = `
+      <a
+        href="/shop"
+        class="kitchen-nav-pill"
+        onclick="event.preventDefault(); app.openShopView();"
+      >
+        <span>All Products</span>
+      </a>
+    `;
+
+    slot.innerHTML = regionPillsHtml + allProductsBtnHtml;
   },
 
   renderNavigation() {
@@ -2091,7 +2103,7 @@ const app = {
         ? `
       <section class="india-secondary-banner region-secondary-banner" dir="ltr" aria-label="Desh Ka Swaad — Premium Packaged Indian Foods">
         <img
-          src="/images/banners/India-Banner.jpeg?v=20261122shop1"
+          src="/images/banners/India-Banner.jpeg?v=20261123jpg3"
           alt="Desh Ka Swaad — Premium Packaged Indian Foods"
           class="region-banner-full-img"
           loading="eager"
@@ -2105,7 +2117,7 @@ const app = {
         ? `
       <section class="ph-secondary-banner region-secondary-banner" dir="ltr" aria-label="Lasang Pinoy — Premium Packaged Filipino Foods">
         <img
-          src="/images/banners/Philippine-Banner.jpeg?v=20261122shop1"
+          src="/images/banners/Philippine-Banner.jpeg?v=20261123jpg3"
           alt="Lasang Pinoy — Premium Packaged Filipino Foods"
           class="region-banner-full-img"
           loading="eager"
@@ -2119,7 +2131,7 @@ const app = {
         ? `
       <section class="lk-secondary-banner region-secondary-banner" dir="ltr" aria-label="Lanka Swaadaya — Premium Packaged Sri Lankan Foods">
         <img
-          src="/images/banners/Sri-Lanka-Banner.jpeg?v=20261122shop1"
+          src="/images/banners/Sri-Lanka-Banner.jpeg?v=20261123jpg3"
           alt="Lanka Swaadaya — Premium Packaged Sri Lankan Foods"
           class="region-banner-full-img"
           loading="eager"
@@ -2133,7 +2145,7 @@ const app = {
         ? `
       <section class="th-secondary-banner region-secondary-banner" dir="ltr" aria-label="Premium Packaged Thai Foods">
         <img
-          src="/images/banners/Thailand-Banner.jpeg?v=20261122shop1"
+          src="/images/banners/Thailand-Banner.jpeg?v=20261123jpg3"
           alt="Premium Packaged Thai Foods"
           class="region-banner-full-img"
           loading="eager"
@@ -2149,90 +2161,11 @@ const app = {
     }
 
     container.innerHTML = `
-      <!-- Full-Shop Filter & Product Catalogue Structure (auto-selecting page region) -->
+      <!-- Regional Product Catalogue with Centralized Category Buttons -->
       <section id="regionCatalogSection" aria-label="${escapeHtml(k.name)} Product Catalogue">
-        <div id="regRegionPillsContainer" class="region-strip"></div>
-        <div class="clear-filters-row">
-          <span role="button" tabindex="0" class="clear-filters-text" onclick="app.resetRegionalCatalogFilters()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();app.resetRegionalCatalogFilters();}">
-            ${escapeHtml(t('clear_all_filters'))}
-          </span>
-        </div>
+        <div id="regCategoryPillsContainer" class="category-pills-bar" role="navigation" aria-label="Product Categories"></div>
 
         <div class="catalog-layout">
-          <aside class="filter-sidebar" aria-label="Product Filters">
-            <div class="filter-group">
-              <label class="filter-label" for="regFilterCategorySelect">${escapeHtml(t('filter_dept_title'))}</label>
-              <select id="regFilterCategorySelect" class="select-control" onchange="app.onRegionalDepartmentChange(this.value)">
-                <option value="">All Categories</option>
-                ${departments
-                  .map(
-                    (d) =>
-                      `<option value="${escapeHtml(d.slug)}" ${selectedCat === d.slug ? 'selected' : ''}>${escapeHtml(getCategoryLabel(d))}</option>`
-                  )
-                  .join('')}
-              </select>
-            </div>
-
-            <div class="filter-group">
-              <label class="filter-label" for="regFilterSubcategorySelect">${escapeHtml(t('filter_subcat_title'))}</label>
-              <select id="regFilterSubcategorySelect" class="select-control" onchange="app.applyRegionalCatalogFilters()">
-                <option value="">All Subcategories</option>
-                ${subcats
-                  .map(
-                    (s) =>
-                      `<option value="${escapeHtml(s.slug)}" ${state.regionPageFilters.subcategory === s.slug ? 'selected' : ''}>${escapeHtml(s.name)}</option>`
-                  )
-                  .join('')}
-              </select>
-            </div>
-
-            <div class="filter-group">
-              <label class="filter-label" for="regFilterVendorSelect">${escapeHtml(t('filter_brand_title'))}</label>
-              <select id="regFilterVendorSelect" class="select-control" onchange="app.applyRegionalCatalogFilters()">
-                <option value="">All Brands</option>
-              </select>
-            </div>
-
-            <div class="filter-group">
-              <label class="filter-label" for="regFilterSizeSelect">Pack Size</label>
-              <select id="regFilterSizeSelect" class="select-control" onchange="app.applyRegionalCatalogFilters()">
-                <option value="" ${!state.regionPageFilters.size ? 'selected' : ''}>All Sizes</option>
-                <option value="250g" ${state.regionPageFilters.size === '250g' ? 'selected' : ''}>250g</option>
-                <option value="500g" ${state.regionPageFilters.size === '500g' ? 'selected' : ''}>500g</option>
-                <option value="1000 ml" ${state.regionPageFilters.size === '1000 ml' ? 'selected' : ''}>1000 ml (1 Liter)</option>
-                <option value="1 kg" ${state.regionPageFilters.size === '1 kg' ? 'selected' : ''}>1 kg</option>
-                <option value="5 kg" ${state.regionPageFilters.size === '5 kg' ? 'selected' : ''}>5 kg</option>
-              </select>
-            </div>
-
-            <div class="filter-group">
-              <label class="filter-label" for="regFilterDietarySelect">${escapeHtml(t('filter_dietary_title'))}</label>
-              <select id="regFilterDietarySelect" class="select-control" onchange="app.applyRegionalCatalogFilters()">
-                <option value="" ${!state.regionPageFilters.dietary ? 'selected' : ''}>All Dietary Types</option>
-                <option value="Kosher" ${state.regionPageFilters.dietary === 'Kosher' ? 'selected' : ''}>Kosher Certified</option>
-                <option value="Vegan" ${state.regionPageFilters.dietary === 'Vegan' ? 'selected' : ''}>Vegan</option>
-                <option value="Vegetarian" ${state.regionPageFilters.dietary === 'Vegetarian' ? 'selected' : ''}>Vegetarian</option>
-                <option value="Gluten-Free" ${state.regionPageFilters.dietary === 'Gluten-Free' ? 'selected' : ''}>Gluten-Free</option>
-              </select>
-            </div>
-
-            <div class="filter-group" style="border-bottom:none;margin-bottom:0;padding-bottom:0;">
-              <label class="filter-label" for="regFilterMaxPriceRange">
-                <span>${escapeHtml(t('filter_max_price'))}</span> <strong id="regMaxPriceLabel">₪${maxPriceVal}</strong>
-              </label>
-              <input
-                type="range"
-                id="regFilterMaxPriceRange"
-                min="10"
-                max="150"
-                step="5"
-                value="${maxPriceVal}"
-                style="width:100%;accent-color:var(--dm-green);"
-                oninput="document.getElementById('regMaxPriceLabel').textContent='₪'+this.value; app.applyRegionalCatalogFilters();"
-              />
-            </div>
-          </aside>
-
           <section aria-label="Product Catalogue Results">
             <div class="catalog-toolbar">
               <div>
@@ -2258,8 +2191,84 @@ const app = {
     `;
 
     this.renderRegionalCatalogStrip();
+    this.renderCategoryPillsBars();
     this.loadRegionalCatalogProducts();
     this.syncHeaderHeight();
+  },
+
+  renderCategoryPillsBars() {
+    const departments = state.navigation.filter((c) => c.slug !== 'shop-by-region');
+
+    const shopCatContainer = document.getElementById('shopCategoryPillsContainer');
+    if (shopCatContainer) {
+      const activeShopCat = state.filters.category || '';
+      const allShopBtn = `
+        <button
+          type="button"
+          class="category-filter-pill ${!activeShopCat ? 'active' : ''}"
+          onclick="app.selectShopCategoryPill('')"
+        >
+          All
+        </button>
+      `;
+      const shopBtns = departments
+        .map(
+          (cat) => `
+          <button
+            type="button"
+            class="category-filter-pill ${activeShopCat === cat.slug ? 'active' : ''}"
+            onclick="app.selectShopCategoryPill('${escapeHtml(cat.slug)}')"
+          >
+            ${escapeHtml(getCategoryLabel(cat))}
+          </button>
+        `
+        )
+        .join('');
+      shopCatContainer.innerHTML = allShopBtn + shopBtns;
+    }
+
+    const regCatContainer = document.getElementById('regCategoryPillsContainer');
+    if (regCatContainer) {
+      const activeRegCat = state.regionPageFilters.category || '';
+      const allRegBtn = `
+        <button
+          type="button"
+          class="category-filter-pill ${!activeRegCat ? 'active' : ''}"
+          onclick="app.selectRegionalCategoryPill('')"
+        >
+          All
+        </button>
+      `;
+      const regBtns = departments
+        .map(
+          (cat) => `
+          <button
+            type="button"
+            class="category-filter-pill ${activeRegCat === cat.slug ? 'active' : ''}"
+            onclick="app.selectRegionalCategoryPill('${escapeHtml(cat.slug)}')"
+          >
+            ${escapeHtml(getCategoryLabel(cat))}
+          </button>
+        `
+        )
+        .join('');
+      regCatContainer.innerHTML = allRegBtn + regBtns;
+    }
+  },
+
+  selectShopCategoryPill(catSlug) {
+    state.filters.tripBox = false;
+    state.filters.category = catSlug && state.filters.category === catSlug ? '' : catSlug;
+    state.filters.subcategory = '';
+    this.renderCategoryPillsBars();
+    this.loadProducts();
+  },
+
+  selectRegionalCategoryPill(catSlug) {
+    state.regionPageFilters.category = catSlug && state.regionPageFilters.category === catSlug ? '' : catSlug;
+    state.regionPageFilters.subcategory = '';
+    this.renderCategoryPillsBars();
+    this.loadRegionalCatalogProducts();
   },
 
   renderRegionalCatalogStrip() {
@@ -2424,10 +2433,9 @@ const app = {
     if (list.length === 0) {
       grid.innerHTML = `
         <div class="catalog-empty-state">
-          <h3>No matching items in this filter</h3>
-          <p class="catalog-empty-copy">Clear filters to browse this kitchen, select All 4 Kitchens, or message us on WhatsApp if you're looking for a specific brand.</p>
+          <h3>No matching items in this category</h3>
+          <p class="catalog-empty-copy">Select another category above or message us on WhatsApp if you're looking for a specific brand.</p>
           <div class="catalog-empty-actions">
-            <button type="button" class="btn-primary" onclick="app.resetRegionalCatalogFilters()">${escapeHtml(t('clear_all_filters'))}</button>
             <a href="${escapeHtml(getWhatsAppUrl(f.region || state.activeRegionPage))}" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">Ask on WhatsApp</a>
           </div>
         </div>
@@ -2464,6 +2472,7 @@ const app = {
   },
 
   populateFilterDropdowns() {
+    this.renderCategoryPillsBars();
     const catSelect = document.getElementById('filterCategorySelect');
     if (!catSelect) return;
     const departments = state.navigation.filter((c) => c.slug !== 'shop-by-region');
@@ -2652,13 +2661,13 @@ const app = {
     if (heading) heading.textContent = parts.length > 0 ? parts.join(' · ') : t('all_products_heading');
     if (countBadge) countBadge.textContent = `(${state.products.length} items)`;
 
+    this.renderCategoryPillsBars();
     if (state.products.length === 0) {
       grid.innerHTML = `
         <div class="catalog-empty-state">
-          <h3>No matching items in this filter</h3>
-          <p class="catalog-empty-copy">Clear filters to browse all four kitchens, or message us on WhatsApp if you're looking for a specific brand.</p>
+          <h3>No matching items in this category</h3>
+          <p class="catalog-empty-copy">Select another category above or message us on WhatsApp if you're looking for a specific brand.</p>
           <div class="catalog-empty-actions">
-            <button type="button" class="btn-primary" onclick="app.resetAllFilters()">${escapeHtml(t('clear_all_filters'))}</button>
             <a href="${escapeHtml(getWhatsAppUrl())}" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">Ask on WhatsApp</a>
           </div>
         </div>

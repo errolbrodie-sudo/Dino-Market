@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&amp;family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@700;800&amp;family=Noto+Sans+Thai:wght@500;700&amp;family=Noto+Sans+Sinhala:wght@500;700&amp;family=Noto+Sans+Devanagari:wght@500;700&amp;family=Noto+Sans+Hebrew:wght@500;700&amp;display=swap" />
-  <link rel="stylesheet" href="styles.css?v=20261122trolley1" />
+  <link rel="stylesheet" href="styles.css?v=20261123jpg3" />
   <script type="application/ld+json" id="seoStructuredData">
   {
     "@context": "https://schema.org",
@@ -192,11 +192,11 @@
         <div class="container">
           <div class="regions-graphic-banner">
             <img
-              src="images/brand/regions-graphic.jpg"
+              src="images/brand/different-panels-banner.png?v=20261123land2"
               alt="Shop by region: Philippines (פיליפינים · Pilipinas), Thailand (תאילנד · ประเทศไทย), Sri Lanka (סרי לנקה · ශ්‍රී ලංකාව), and India (הודו · भारत)"
               class="regions-graphic-img"
-              width="1024"
-              height="571"
+              width="2125"
+              height="573"
             />
             <div class="regions-graphic-links" dir="ltr">
               <a
@@ -205,36 +205,28 @@
                 onclick="event.preventDefault(); app.openRegionalPage('philippines');"
                 aria-label="Philippines · פיליפינים · Pilipinas"
                 title="Philippines · Pilipinas"
-              >
-                <img src="images/flags/philippines.png" alt="" class="pane-flag-badge pane-flag-ph" />
-              </a>
+              ></a>
               <a
                 href="/th"
                 class="regions-graphic-hotspot"
                 onclick="event.preventDefault(); app.openRegionalPage('thailand');"
                 aria-label="Thailand · תאילנד · ประเทศไทย"
                 title="Thailand · ประเทศไทย"
-              >
-                <img src="images/flags/thailand.png" alt="" class="pane-flag-badge pane-flag-th" />
-              </a>
+              ></a>
               <a
                 href="/lk"
                 class="regions-graphic-hotspot"
                 onclick="event.preventDefault(); app.openRegionalPage('sri-lanka');"
                 aria-label="Sri Lanka · סרי לנקה · ශ්‍රී ලංකාව"
                 title="Sri Lanka · ශ්‍රී ලංකාව"
-              >
-                <img src="images/flags/sri-lanka.png" alt="" class="pane-flag-badge pane-flag-lk" />
-              </a>
+              ></a>
               <a
                 href="/in"
                 class="regions-graphic-hotspot"
                 onclick="event.preventDefault(); app.openRegionalPage('india');"
                 aria-label="India · הודו · भारत"
                 title="India · भारत"
-              >
-                <img src="images/flags/india.svg" alt="" class="pane-flag-badge pane-flag-in" />
-              </a>
+              ></a>
             </div>
           </div>
           <div class="hero-cta-row" id="heroRegionCtaRow">
@@ -265,84 +257,15 @@
       <section id="catalog">
         <div class="section-head-row" style="margin-bottom:20px;">
           <div>
-            <h1 class="section-h2" style="margin:0 0 6px;">All 4 Kitchens · Full Shop</h1>
-            <p class="section-lead" id="shopSubtitleLead">
-              Filter by kitchen, aisle, brand, pack size, dietary needs and price in ₪ ILS.
-            </p>
+            <h1 class="section-h2" style="margin:0;">All 4 Kitchens · Full Shop</h1>
           </div>
           <button type="button" class="pill-control" onclick="app.navigateToHome()">← Back to home</button>
         </div>
 
         <div id="regionPillsContainer" class="region-strip"></div>
-        <div class="clear-filters-row">
-          <span role="button" tabindex="0" class="clear-filters-text" onclick="app.resetAllFilters()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();app.resetAllFilters();}" data-i18n="clear_all_filters">
-            Clear all filters
-          </span>
-        </div>
+        <div id="shopCategoryPillsContainer" class="category-pills-bar" role="navigation" aria-label="Product Categories"></div>
 
         <div class="catalog-layout">
-          <aside class="filter-sidebar" aria-label="Product Filters">
-            <div class="filter-group">
-              <label class="filter-label" for="filterCategorySelect" data-i18n="filter_dept_title">Aisle / Category</label>
-              <select id="filterCategorySelect" class="select-control" onchange="app.onDepartmentSelectChange(this.value)">
-                <option value="">All Categories</option>
-              </select>
-            </div>
-
-            <div class="filter-group">
-              <label class="filter-label" for="filterSubcategorySelect" data-i18n="filter_subcat_title">Subcategory</label>
-              <select id="filterSubcategorySelect" class="select-control" onchange="app.applyCatalogFilters()">
-                <option value="">All Subcategories</option>
-              </select>
-            </div>
-
-            <div class="filter-group">
-              <label class="filter-label" for="filterVendorSelect" data-i18n="filter_brand_title">Brand</label>
-              <select id="filterVendorSelect" class="select-control" onchange="app.applyCatalogFilters()">
-                <option value="">All Brands</option>
-              </select>
-            </div>
-
-            <div class="filter-group">
-              <label class="filter-label" for="filterSizeSelect">Pack Size</label>
-              <select id="filterSizeSelect" class="select-control" onchange="app.applyCatalogFilters()">
-                <option value="">All Sizes</option>
-                <option value="250g">250g</option>
-                <option value="500g">500g</option>
-                <option value="1000 ml">1000 ml (1 Liter)</option>
-                <option value="1 kg">1 kg</option>
-                <option value="5 kg">5 kg</option>
-              </select>
-            </div>
-
-            <div class="filter-group">
-              <label class="filter-label" for="filterDietarySelect" data-i18n="filter_dietary_title">Dietary</label>
-              <select id="filterDietarySelect" class="select-control" onchange="app.applyCatalogFilters()">
-                <option value="">All Dietary Types</option>
-                <option value="Kosher">Kosher Certified</option>
-                <option value="Vegan">Vegan</option>
-                <option value="Vegetarian">Vegetarian</option>
-                <option value="Gluten-Free">Gluten-Free</option>
-              </select>
-            </div>
-
-            <div class="filter-group" style="border-bottom:none;margin-bottom:0;padding-bottom:0;">
-              <label class="filter-label" for="filterMaxPriceRange">
-                <span data-i18n="filter_max_price">Max Price (₪ ILS):</span> <strong id="maxPriceLabel">₪150</strong>
-              </label>
-              <input
-                type="range"
-                id="filterMaxPriceRange"
-                min="10"
-                max="150"
-                step="5"
-                value="150"
-                style="width:100%;accent-color:var(--dm-green);"
-                oninput="document.getElementById('maxPriceLabel').textContent='₪'+this.value; app.applyCatalogFilters();"
-              />
-            </div>
-          </aside>
-
           <section aria-label="Product Catalogue Results">
             <div class="catalog-toolbar">
               <div>
@@ -505,6 +428,6 @@
   <!-- Toast Container -->
   <div id="toastContainer" class="toast-container" aria-live="polite"></div>
 
-  <script src="app.js?v=20261122trolley1"></script>
+  <script src="app.js?v=20261123jpg3"></script>
 </body>
 </html>

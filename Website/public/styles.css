@@ -512,6 +512,19 @@ textarea {
   justify-content: center;
 }
 
+body[data-view="region"] .header-main {
+  max-width: 1440px;
+  gap: 14px;
+}
+
+body[data-view="region"] .header-center-slot {
+  justify-content: flex-start;
+}
+
+body[data-view="region"] .header-actions {
+  margin-left: auto;
+}
+
 /* Search Bar (48px white pill, 1.5px --dm-line-strong, left magnifier) */
 .search-container {
   position: relative;
@@ -585,9 +598,9 @@ textarea {
 .header-kitchen-pills {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 8px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .kitchen-nav-pill {
@@ -596,13 +609,14 @@ textarea {
   justify-content: center;
   gap: 8px;
   min-height: 42px;
-  padding: 8px 18px;
+  padding: 8px 14px;
   border-radius: 999px;
   border: 1.5px solid var(--dm-line-strong);
   background: var(--dm-white);
   color: var(--dm-ink);
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
+  text-decoration: none;
   cursor: pointer;
   white-space: nowrap;
 }
@@ -757,6 +771,19 @@ textarea {
   min-height: 44px;
   padding: 0 16px;
   font-size: 0.9rem;
+}
+
+body[data-view="region"] .header-whatsapp-btn {
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  border-radius: 999px;
+  justify-content: center;
+}
+
+body[data-view="region"] .header-whatsapp-btn span {
+  display: none;
 }
 
 .basket-pill-btn {
@@ -1282,7 +1309,7 @@ textarea {
 
 .catalog-layout .product-grid,
 .catalog-product-grid {
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
 }
 
 .product-card {
@@ -1716,9 +1743,47 @@ textarea {
   text-decoration: underline;
 }
 
+.category-pills-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin: 0 auto 22px;
+  text-align: center;
+}
+
+.category-filter-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1.5px solid var(--dm-line-strong);
+  background: var(--dm-white);
+  color: var(--dm-ink);
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  white-space: nowrap;
+  text-align: center;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.category-filter-pill:hover {
+  border-color: var(--dm-ink);
+}
+
+.category-filter-pill.active {
+  background: var(--dm-green-soft);
+  border-color: var(--dm-green-soft);
+  color: #FFFFFF;
+}
+
 .catalog-layout {
   display: grid;
-  grid-template-columns: 270px 1fr;
+  grid-template-columns: 1fr;
   gap: 24px;
   align-items: start;
 }
