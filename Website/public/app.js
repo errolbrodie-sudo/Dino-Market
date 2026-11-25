@@ -2025,7 +2025,7 @@ const app = {
         ? `
       <section class="india-secondary-banner region-secondary-banner" dir="ltr" aria-label="Desh Ka Swaad — Premium Packaged Indian Foods">
         <img
-          src="/images/banners/India-Banner.jpeg?v=20261123jpg3"
+          src="/images/banners/India-Banner.jpeg?v=20261125ban1"
           alt="Desh Ka Swaad — Premium Packaged Indian Foods"
           class="region-banner-full-img"
           loading="eager"
@@ -2039,7 +2039,7 @@ const app = {
         ? `
       <section class="ph-secondary-banner region-secondary-banner" dir="ltr" aria-label="Lasang Pinoy — Premium Packaged Filipino Foods">
         <img
-          src="/images/banners/Philippine-Banner.jpeg?v=20261123jpg3"
+          src="/images/banners/Philippine-Banner.jpeg?v=20261125ban1"
           alt="Lasang Pinoy — Premium Packaged Filipino Foods"
           class="region-banner-full-img"
           loading="eager"
@@ -2053,7 +2053,7 @@ const app = {
         ? `
       <section class="lk-secondary-banner region-secondary-banner" dir="ltr" aria-label="Lanka Swaadaya — Premium Packaged Sri Lankan Foods">
         <img
-          src="/images/banners/Sri-Lanka-Banner.jpeg?v=20261123jpg3"
+          src="/images/banners/Sri-Lanka-Banner.jpeg?v=20261125ban1"
           alt="Lanka Swaadaya — Premium Packaged Sri Lankan Foods"
           class="region-banner-full-img"
           loading="eager"
@@ -2067,7 +2067,7 @@ const app = {
         ? `
       <section class="th-secondary-banner region-secondary-banner" dir="ltr" aria-label="Premium Packaged Thai Foods">
         <img
-          src="/images/banners/Thailand-Banner.jpeg?v=20261123jpg3"
+          src="/images/banners/Thailand-Banner.jpeg?v=20261125ban1"
           alt="Premium Packaged Thai Foods"
           class="region-banner-full-img"
           loading="eager"
