@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
+    "build": "node --check server.js && node --check db.js && node --check supabase-client.js && node --check security.js && node --check public/app.js",
     "test": "node test-suite.js"
   },
   "engines": {
@@ -20,6 +21,8 @@
     "sqlite"
   ],
   "author": "Dinu Market Engineering",
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.119.2"
+  }
 }
-

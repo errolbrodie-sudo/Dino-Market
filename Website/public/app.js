@@ -23,9 +23,22 @@ const state = {
   regionProducts: [],
   allProducts: [],
   vendors: [],
+  isLoadingProducts: false,
+  isLoadingRegionProducts: false,
+  catalogueError: null,
+  rlsBlockingAnonRead: false,
+  shopPage: 1,
+  shopHasMore: false,
+  shopTotal: 0,
+  regionPage: 1,
+  regionHasMore: false,
+  regionTotal: 0,
+  realtimeChannel: null,
+  realtimeDebounceTimer: null,
+  lastVisibilityRefreshAt: 0,
   activeRegionPage: null,
   activeRegionalPage: 'philippines',
-  regionalPageLimit: 8,
+  regionalPageLimit: 24,
   regionPageFilters: {
     region: 'philippines',
     category: '',
@@ -33,7 +46,7 @@ const state = {
     vendor: '',
     size: '',
     dietary: '',
-    maxPrice: 150,
+    maxPrice: 99999,
     sort: 'featured'
   },
   filters: {
@@ -48,7 +61,7 @@ const state = {
     inStock: false,
     onSale: false,
     authenticOnly: false,
-    maxPrice: 150,
+    maxPrice: 99999,
     sort: 'featured'
   },
   checkout: {
@@ -185,12 +198,7 @@ const KITCHEN_STOREFRONTS = {
       en: 'Order on WhatsApp',
       he: 'הזמנה בוואטסאפ'
     },
-    packshots: [
-      'images/products/silver-swan-soy-sauce-front.jpg',
-      'images/products/silver-swan-soy-sauce-back.jpg',
-      'images/products/lal-qilla-basmati-rice-front.jpg',
-      'images/products/gorus-cookies-front.png?v=20261123prod1'
-    ],
+    packshots: [],
     aislesHeading: {
       tl: 'Mamili ayon sa pasilyo',
       en: 'Shop the Filipino aisles',
@@ -252,12 +260,7 @@ const KITCHEN_STOREFRONTS = {
       en: 'Order on WhatsApp',
       he: 'הזמנה בוואטסאפ'
     },
-    packshots: [
-      'images/products/silver-swan-soy-sauce-front.jpg',
-      'images/products/lal-qilla-basmati-rice-front.jpg',
-      'images/products/flavorz-jaggery-front.jpg',
-      'images/products/rusky-atta-toast-front.jpg'
-    ],
+    packshots: [],
     aislesHeading: {
       th: 'เลือกช้อปตามมุมโปรดคนไทย',
       en: 'Shop the Thai kitchen aisles',
@@ -319,12 +322,7 @@ const KITCHEN_STOREFRONTS = {
       en: 'Order on WhatsApp',
       he: 'הזמנה בוואטסאפ'
     },
-    packshots: [
-      'images/products/haldirams-gulab-jamun-front.jpg',
-      'images/products/lal-qilla-basmati-rice-front.jpg',
-      'images/products/gorus-cookies-front.png?v=20261123prod1',
-      'images/products/flavorz-jaggery-front.jpg'
-    ],
+    packshots: [],
     aislesHeading: {
       hi: 'अपनी पसंद की गली चुनें',
       en: 'Shop the Indian kitchen aisles',
@@ -386,12 +384,7 @@ const KITCHEN_STOREFRONTS = {
       en: 'Order on WhatsApp',
       he: 'הזמנה בוואטסאפ'
     },
-    packshots: [
-      'images/products/flavorz-jaggery-front.jpg',
-      'images/products/gorus-cookies-front.png?v=20261123prod1',
-      'images/products/lal-qilla-basmati-rice-front.jpg',
-      'images/products/rusky-atta-toast-front.jpg'
-    ],
+    packshots: [],
     aislesHeading: {
       si: 'අපේ කඩේ අංශ අනුව තෝරන්න',
       en: 'Shop the Sri Lankan aisles',
@@ -768,7 +761,7 @@ const STATIC_FALLBACK_REGIONS = [
     flag_emoji: '',
     hero_headline: 'Lasang bahay, dito sa Israel.',
     description: 'Your Sunday sinigang, Lucky Me pancit canton, Silver Swan sawsawan and day-off merienda delivered across Israel.',
-    tile_image: 'images/products/silver-swan-soy-sauce-front.jpg'
+    tile_image: 'images/brand/dinu-logo.png'
   },
   {
     name: 'Thailand',
@@ -788,7 +781,7 @@ const STATIC_FALLBACK_REGIONS = [
     flag_emoji: '',
     hero_headline: 'घर का स्वाद, अब इज़राइल में।',
     description: "Haldiram's biscuits and Gulab Jamun, Lal Qilla aged basmati rice, Rusky atta toast and natural cane jaggery delivered across Israel.",
-    tile_image: 'images/products/lal-qilla-basmati-rice-front.jpg'
+    tile_image: 'images/brand/dinu-logo.png'
   },
   {
     name: 'Sri Lanka',
@@ -892,282 +885,38 @@ const STATIC_FALLBACK_NAVIGATION = [
   }
 ];
 
-const DEFAULT_CATALOG_PRODUCTS = [
-  {
-    id: 'prod-1',
-    sku: 'DM-IN-001',
-    barcode_ean: '8904004416091',
-    title: "Haldiram's Gorus Premium Handmade Cookies (250g)",
-    title_he: 'עוגיות גורוס פרימיום האלדירם 250 גרם',
-    slug: 'haldirams-gorus-premium-cookies-250g',
-    vendor_brand: "Haldiram's",
-    category_slug: 'sweets',
-    subcategory_slug: 'cookies',
-    region_slug: 'india',
-    size_label: '250g',
-    short_description: 'Crunchy golden Indian bakery biscuits crafted with wheat, cashews, and aromatic cardamom.',
-    description: 'Live life at its crunchiest with Haldiram’s Gorus Cookies, the perfect bite of crunchy delight to pair with hot masala chai or coffee.',
-    ingredients: 'Refined Wheat Flour (Maida), Sugar, Edible Vegetable Oil, Cashews, Milk Solids, Liquid Glucose, Raising Agent [INS 500(ii)].',
-    allergens: ['Wheat (Gluten)', 'Cashews (Tree Nuts)', 'Milk'],
-    dietary_tags: ['Vegetarian'],
-    red_labels: ['High Sugar (סוכר בכמות גבוהה)', 'High Saturated Fat (שומן רווי בכמות גבוהה)'],
-    nutrition: { calories_per_100g: 519, protein_g: 7.4, carbs_g: 58.8, sugars_g: 26.0, total_fat_g: 27.6, saturated_fat_g: 12.2, sodium_mg: 46 },
-    storage_instructions: 'Store in a cool, dry place away from direct sunlight.',
-    importer_israel: 'Maharaja Ltd., HaAvoda 32, Ashdod, Israel',
-    purchase_price_ils: 9.5,
-    price_ils: 15.0,
-    compare_at_price_ils: null,
-    discount_percent: 0,
-    price_per_100_ils: 6.0,
-    net_weight_grams: 250,
-    unit_measure_type: '100g',
-    stock_quantity: 45,
-    low_stock_threshold: 8,
-    expiry_date: '2027-06-06',
-    primary_image_url: 'images/products/gorus-cookies-front.png?v=20261123prod1',
-    secondary_image_url: 'images/products/gorus-cookies-back.jpg',
-    variants: [{ code: 'single', label: 'Single Pack (1x)', multiplier: 1.0 }],
-    status: 'active',
-    is_authentic_photo: 1,
-    is_featured: 1,
-    is_best_seller: 1,
-    is_new_arrival: 0,
-    rating_average: 0,
-    rating_count: 0,
-    sales_count: 140
-  },
-  {
-    id: 'prod-2',
-    sku: 'DM-IN-002',
-    barcode_ean: '8904004417319',
-    title: "Haldiram's Rusky Whole Wheat Atta Toast (250g)",
-    title_he: 'טוסט חיטה מלאה ראסקי האלדירם 250 גרם',
-    slug: 'haldirams-rusky-whole-wheat-atta-toast-250g',
-    vendor_brand: "Haldiram's",
-    category_slug: 'snacks',
-    subcategory_slug: 'crackers-buns',
-    region_slug: 'india',
-    size_label: '250g',
-    short_description: 'Twice-baked crispy whole wheat atta bread toast (rusk), trans-fat free and rich in dietary fibre.',
-    description: 'Haldiram’s Rusky Atta Toast is a classic Indian tea-time staple baked with whole wheat flour for a wholesome, golden crunch.',
-    ingredients: 'Whole Wheat Flour (Atta), Sugar, Edible Vegetable Oil, Yeast, Milk Solids, Salt, Cardamom.',
-    allergens: ['Wheat (Gluten)', 'Milk'],
-    dietary_tags: ['Vegetarian', 'Trans-Fat Free', 'High Fibre'],
-    red_labels: ['High Sugar (סוכר בכמות גבוהה)'],
-    nutrition: { calories_per_100g: 435, protein_g: 9.8, carbs_g: 72.4, sugars_g: 21.0, total_fat_g: 11.2, saturated_fat_g: 3.8, sodium_mg: 240 },
-    storage_instructions: 'Store in a cool, dry place in an airtight container after opening.',
-    importer_israel: 'Maharaja Ltd., HaAvoda 32, Ashdod, Israel',
-    purchase_price_ils: 8.2,
-    price_ils: 13.0,
-    compare_at_price_ils: null,
-    discount_percent: 0,
-    price_per_100_ils: 5.2,
-    net_weight_grams: 250,
-    unit_measure_type: '100g',
-    stock_quantity: 52,
-    low_stock_threshold: 8,
-    expiry_date: '2027-05-30',
-    primary_image_url: 'images/products/rusky-atta-toast-front.jpg',
-    secondary_image_url: 'images/products/rusky-atta-toast-back.jpg',
-    variants: [{ code: 'single', label: 'Single Pack (1x)', multiplier: 1.0 }],
-    status: 'active',
-    is_authentic_photo: 1,
-    is_featured: 1,
-    is_best_seller: 1,
-    is_new_arrival: 1,
-    rating_average: 0,
-    rating_count: 0,
-    sales_count: 118
-  },
-  {
-    id: 'prod-3',
-    sku: 'DM-IN-003',
-    barcode_ean: '8906042233463',
-    title: 'Flavorz 100% Natural Unrefined Jaggery Cubes (500g Jar)',
-    title_he: "ג'אגרי קוביות סוכר קנים טבעי לא מזוקק 500 גרם",
-    slug: 'flavorz-natural-jaggery-cubes-500g',
-    vendor_brand: 'Flavorz (Spice of India)',
-    category_slug: 'pantry',
-    subcategory_slug: 'sugar',
-    region_slug: 'india',
-    size_label: '500g',
-    short_description: '100% natural unrefined sugar cane jaggery cubes (~50 cubes per jar) crafted on organic farms.',
-    description: 'Traditional Indian unrefined cane sweetener (Gur / Jaggery) in convenient bite-sized 10g cubes.',
-    ingredients: '100% Natural Unrefined Sugar Cane Juice.',
-    allergens: [],
-    dietary_tags: ['Vegan', 'Vegetarian', '100% Natural'],
-    red_labels: ['High Sugar (סוכר בכמות גבוהה)'],
-    nutrition: { calories_per_100g: 367, protein_g: 5.19, carbs_g: 64.0, sugars_g: 60.0, total_fat_g: 0.17, saturated_fat_g: 0.0, sodium_mg: 4.6 },
-    storage_instructions: 'Keep jar tightly closed in a cool, dry place.',
-    importer_israel: 'Shasha Yehoram Ltd., HaYetzira 23, Ramla, Israel',
-    purchase_price_ils: 14.0,
-    price_ils: 22.0,
-    compare_at_price_ils: null,
-    discount_percent: 0,
-    price_per_100_ils: 4.4,
-    net_weight_grams: 500,
-    unit_measure_type: '100g',
-    stock_quantity: 38,
-    low_stock_threshold: 8,
-    expiry_date: '2027-08-15',
-    primary_image_url: 'images/products/flavorz-jaggery-front.jpg',
-    secondary_image_url: 'images/products/flavorz-jaggery-back.jpg',
-    variants: [{ code: 'single', label: 'Single Pack (1x)', multiplier: 1.0 }],
-    status: 'active',
-    is_authentic_photo: 1,
-    is_featured: 1,
-    is_best_seller: 0,
-    is_new_arrival: 1,
-    rating_average: 0,
-    rating_count: 0,
-    sales_count: 96
-  },
-  {
-    id: 'prod-4',
-    sku: 'DM-IN-006',
-    barcode_ean: '079809001624',
-    title: 'Silver Swan Special Soy Sauce 1 Liter Family Jug (1000 ml)',
-    title_he: 'רוטב סויה מיוחד סילבר סוואן 1 ליטר',
-    slug: 'silver-swan-special-soy-sauce-1000ml',
-    vendor_brand: 'Silver Swan',
-    category_slug: 'sauce-seasoning',
-    subcategory_slug: 'soy-sauces',
-    region_slug: 'philippines',
-    size_label: '1000 ml',
-    short_description: 'Rich, savory soy sauce in a 1-liter handled jug, essential for stir-fries and marinades.',
-    description: 'Silver Swan Special Soy Sauce delivers deep umami and balanced salinity in a generous 1000 ml handled bottle.',
-    ingredients: 'Water, Soybean Extract, Wheat, Iodized Salt, Caramel Color.',
-    allergens: ['Soybeans', 'Wheat (Gluten)'],
-    dietary_tags: ['Vegan', 'Vegetarian'],
-    red_labels: ['High Sodium (נתרן בכמות גבוהה)'],
-    nutrition: { calories_per_100g: 53, protein_g: 4.0, carbs_g: 6.7, sugars_g: 0.0, total_fat_g: 0.0, saturated_fat_g: 0.0, sodium_mg: 5800 },
-    storage_instructions: 'Store in a cool, dry place. Refrigerate after opening.',
-    importer_israel: 'Dinu Market Imports, Israel',
-    purchase_price_ils: 12.0,
-    price_ils: 19.0,
-    compare_at_price_ils: null,
-    discount_percent: 0,
-    price_per_100_ils: 1.9,
-    net_weight_grams: 1000,
-    unit_measure_type: '100ml',
-    stock_quantity: 64,
-    low_stock_threshold: 8,
-    expiry_date: '2028-01-20',
-    primary_image_url: 'images/products/silver-swan-soy-sauce-front.jpg',
-    secondary_image_url: 'images/products/silver-swan-soy-sauce-back.jpg',
-    variants: [{ code: 'single', label: 'Single Pack (1x)', multiplier: 1.0 }],
-    status: 'active',
-    is_authentic_photo: 1,
-    is_featured: 1,
-    is_best_seller: 1,
-    is_new_arrival: 1,
-    rating_average: 0,
-    rating_count: 0,
-    sales_count: 215
-  },
-  {
-    id: 'prod-5',
-    sku: 'DM-IN-004',
-    barcode_ean: '8904004405910',
-    title: "Haldiram's Gulab Jamun in Cardamom Rose Syrup (1 kg Tin)",
-    title_he: "גולאב ג'אמון בסירופ הל האלדירם מארז 1 ק״ג (16 יח׳)",
-    slug: 'haldirams-gulab-jamun-tin-1kg',
-    vendor_brand: "Haldiram's",
-    category_slug: 'canned-jarred-goods',
-    subcategory_slug: 'canned-jarred-fruits',
-    region_slug: 'india',
-    size_label: '1 kg',
-    short_description: '16 soft, melt-in-the-mouth milk-solid (khoa) dumplings steeped in fragrant cardamom syrup.',
-    description: 'Authentic Indian Gulab Jamun crafted from rich khoa (milk solids) and delicately spiced with green cardamom.',
-    ingredients: 'Sugar, Water, Milk Solids (Khoa & Skimmed Milk Powder), Refined Wheat Flour (Maida), Palmolein Oil, Cardamom, Rose Water.',
-    allergens: ['Milk (Dairy)', 'Wheat (Gluten)'],
-    dietary_tags: ['Vegetarian'],
-    red_labels: ['High Sugar (סוכר בכמות גבוהה)', 'High Saturated Fat (שומן רווי בכמות גבוהה)'],
-    nutrition: { calories_per_100g: 312, protein_g: 4.2, carbs_g: 56.5, sugars_g: 46.0, total_fat_g: 8.1, saturated_fat_g: 3.9, sodium_mg: 35 },
-    storage_instructions: 'Store in a cool, dry place. Once opened, transfer contents to a non-metallic container and refrigerate.',
-    importer_israel: 'Maharaja Ltd., HaAvoda 32, Ashdod, Israel',
-    purchase_price_ils: 19.0,
-    price_ils: 29.9,
-    compare_at_price_ils: null,
-    discount_percent: 0,
-    price_per_100_ils: 2.99,
-    net_weight_grams: 1000,
-    unit_measure_type: '100g',
-    stock_quantity: 33,
-    low_stock_threshold: 8,
-    expiry_date: '2027-09-10',
-    primary_image_url: 'images/products/haldirams-gulab-jamun-front.jpg',
-    secondary_image_url: 'images/products/haldirams-gulab-jamun-back.jpg',
-    variants: [{ code: 'single', label: 'Single Pack (1x)', multiplier: 1.0 }],
-    status: 'active',
-    is_authentic_photo: 1,
-    is_featured: 1,
-    is_best_seller: 1,
-    is_new_arrival: 0,
-    rating_average: 0,
-    rating_count: 0,
-    sales_count: 164
-  },
-  {
-    id: 'prod-6',
-    sku: 'DM-IN-005',
-    barcode_ean: '8901161104762',
-    title: 'Lal Qilla Supreme Sella Parboiled Extra-Long Basmati Rice (5 kg Bag)',
-    title_he: 'אורז לבן בסמטי סופרים סלה לאל קילה שק 5 ק״ג (כשר בד״ץ)',
-    slug: 'lal-qilla-supreme-sella-basmati-rice-5kg',
-    vendor_brand: 'Lal Qilla (No. 4268)',
-    category_slug: 'pantry',
-    subcategory_slug: 'rice',
-    region_slug: 'india',
-    size_label: '5 kg',
-    short_description: 'Royal aged extra-long grain parboiled sella basmati rice in a 5 kg family carry sack. Certified Kosher.',
-    description: 'Lal Qilla Supreme Sella (Meza) Parboiled Basmati Rice features slender, aromatic grains that elongate to more than double their length when cooked.',
-    ingredients: '100% Aged Extra-Long Grain Parboiled Basmati Rice (Non-GMO).',
-    allergens: [],
-    dietary_tags: ['Kosher (Badatz & Chief Rabbinate)', 'Vegan', 'Gluten-Free', 'Non-GMO'],
-    red_labels: [],
-    nutrition: { calories_per_100g_dry: 333, protein_g: 6.7, carbs_g: 77.8, sugars_g: 0.0, total_fat_g: 0.0, saturated_fat_g: 0.0, sodium_mg: 2 },
-    storage_instructions: 'Store in a cool, dry, and hygienic place away from moisture.',
-    importer_israel: 'Gershon Spices Ltd., Israel',
-    purchase_price_ils: 48.0,
-    price_ils: 69.9,
-    compare_at_price_ils: null,
-    discount_percent: 0,
-    price_per_100_ils: 1.4,
-    net_weight_grams: 5000,
-    unit_measure_type: '100g',
-    stock_quantity: 42,
-    low_stock_threshold: 8,
-    expiry_date: '2028-04-01',
-    primary_image_url: 'images/products/lal-qilla-basmati-rice-front.jpg',
-    secondary_image_url: 'images/products/lal-qilla-basmati-rice-back.jpg',
-    variants: [{ code: 'single', label: 'Single Pack (1x)', multiplier: 1.0 }],
-    status: 'active',
-    is_authentic_photo: 1,
-    is_featured: 1,
-    is_best_seller: 1,
-    is_new_arrival: 1,
-    rating_average: 0,
-    rating_count: 0,
-    sales_count: 230
-  }
-];
+const PLACEHOLDER_PRODUCT_IMG = '/images/brand/product-placeholder.svg';
+
+/**
+ * Product catalogue single source of truth is Supabase (`"Product lists"` + `"Product Images"`).
+ * No hardcoded static product catalogue or product image URLs are stored in frontend source code.
+ */
+try {
+  localStorage.removeItem('dinu_catalog_products');
+} catch {}
 
 function getLocalProducts() {
-  const saved = localStorage.getItem('dinu_catalog_products');
-  if (saved) {
-    try {
-      return JSON.parse(saved);
-    } catch {}
-  }
-  return DEFAULT_CATALOG_PRODUCTS;
+  return [];
 }
 
-function saveLocalProducts(list) {
-  localStorage.setItem('dinu_catalog_products', JSON.stringify(list));
+function saveLocalProducts() {
+  // No-op: Supabase is the authoritative product catalogue store
 }
 
-const STATIC_FALLBACK_PRODUCTS = getLocalProducts();
+function renderSkeletonCardsHtml(count = 4) {
+  return Array.from({ length: count })
+    .map(
+      () => `
+      <div class="product-card-skeleton" aria-hidden="true">
+        <div class="skeleton-box" style="height:176px;"></div>
+        <div class="skeleton-box" style="height:14px;width:55%;"></div>
+        <div class="skeleton-box" style="height:20px;width:90%;"></div>
+        <div class="skeleton-box" style="height:36px;width:100%;margin-top:8px;"></div>
+      </div>
+    `
+    )
+    .join('');
+}
 
 function recalculateLocalCart() {
   const cart = state.cart;
@@ -1548,6 +1297,9 @@ async function apiFetch(url, options = {}) {
 const app = {
   async init() {
     try {
+      const arrivalsEl = document.getElementById('newArrivalsGrid');
+      if (arrivalsEl) arrivalsEl.innerHTML = renderSkeletonCardsHtml(4);
+
       const boot = await apiFetch('/api/bootstrap');
       state.navigation = boot.navigation || STATIC_FALLBACK_NAVIGATION;
       const rawRegions = boot.regions && boot.regions.length > 0 ? boot.regions : STATIC_FALLBACK_REGIONS;
@@ -1558,9 +1310,13 @@ const app = {
       state.paymentConfig = boot.payment_config || {};
       state.user = boot.user || null;
       state.cart = boot.cart || state.cart;
+      state.rlsBlockingAnonRead = Boolean(boot.catalogue_meta?.rls_blocking_anon_read);
+      state.catalogueError = boot.catalogue_meta?.error || null;
 
-      const allData = await apiFetch('/api/products?maxPrice=9999');
-      state.allProducts = allData.products || getLocalProducts();
+      const allData = await apiFetch('/api/products?limit=0');
+      state.allProducts = allData.products || [];
+      state.catalogueError = allData.catalogue_error || state.catalogueError;
+      state.rlsBlockingAnonRead = Boolean(allData.rls_blocking_anon_read || state.rlsBlockingAnonRead);
 
       const savedCookieLang = getCookie('dinu_lang');
       if (savedCookieLang && I18N_DICTIONARY[savedCookieLang]) {
@@ -1583,6 +1339,15 @@ const app = {
         this.applyLocationRoute(window.location.pathname, false);
       });
 
+      this.initSupabaseRealtime(boot.supabase_realtime);
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && Date.now() - state.lastVisibilityRefreshAt > 15_000) {
+          state.lastVisibilityRefreshAt = Date.now();
+          this.handleRealtimeCatalogueUpdate();
+        }
+      });
+
       document.addEventListener('click', (e) => {
         const sc = document.querySelector('.search-container');
         const dd = document.getElementById('predictiveDropdown');
@@ -1600,6 +1365,63 @@ const app = {
     } catch (err) {
       console.error('Initialization error:', err);
     }
+  },
+
+  initSupabaseRealtime(realtimeCfg) {
+    if (!realtimeCfg || !realtimeCfg.url || !realtimeCfg.publishableKey) return;
+    if (!window.supabase || typeof window.supabase.createClient !== 'function') return;
+    try {
+      const sbClient = window.supabase.createClient(realtimeCfg.url, realtimeCfg.publishableKey, {
+        auth: { persistSession: false, autoRefreshToken: false }
+      });
+      state.realtimeChannel = sbClient
+        .channel('dinu-product-lists-live')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: realtimeCfg.table || 'Product lists'
+          },
+          () => {
+            this.handleRealtimeCatalogueUpdate();
+          }
+        )
+        .subscribe();
+    } catch (err) {
+      console.warn('Realtime subscription unavailable, falling back to automatic revalidation:', err.message);
+    }
+  },
+
+  handleRealtimeCatalogueUpdate() {
+    if (state.realtimeDebounceTimer) clearTimeout(state.realtimeDebounceTimer);
+    state.realtimeDebounceTimer = setTimeout(async () => {
+      try {
+        await apiFetch('/api/catalogue/revalidate', { method: 'POST' }).catch(() => {});
+        const [allData, cartData] = await Promise.all([
+          apiFetch('/api/products?limit=0&refresh=1'),
+          apiFetch('/api/cart')
+        ]);
+        state.allProducts = allData.products || [];
+        state.catalogueError = allData.catalogue_error || null;
+        state.rlsBlockingAnonRead = Boolean(allData.rls_blocking_anon_read);
+        if (cartData?.cart) {
+          state.cart = cartData.cart;
+          this.updateHeaderState();
+          this.renderCartDrawer();
+        }
+        this.renderHomepageSections();
+        if (state.currentView === 'shop') {
+          await this.loadProducts({ refresh: true });
+        } else if (state.currentView === 'region' && state.activeRegionPage) {
+          await this.loadRegionalCatalogProducts({ refresh: true });
+        } else if (state.currentView === 'admin') {
+          await this.loadAndRenderAdminView();
+        }
+      } catch (e) {
+        console.warn('Catalogue refresh skipped:', e.message);
+      }
+    }, 450);
   },
 
   applyLocationRoute(pathname, scrollToTop = true) {
@@ -1938,31 +1760,48 @@ const app = {
   },
 
   renderProductCardHtml(p) {
-    const kitchenCfg = KITCHEN_STOREFRONTS[p.region_slug] || KITCHEN_STOREFRONTS.india;
-    const reg = state.regions.find((r) => r.slug === p.region_slug);
-    const countryName = reg ? getRegionLabel(reg) : kitchenCfg.name;
+    const isUnassigned = !p.region_slug || p.region_slug === 'unassigned' || !KITCHEN_STOREFRONTS[p.region_slug];
+    const kitchenCfg = isUnassigned ? null : KITCHEN_STOREFRONTS[p.region_slug];
+    const reg = isUnassigned ? null : state.regions.find((r) => r.slug === p.region_slug);
+    const countryName = isUnassigned ? (p.raw_country || 'Imported') : reg ? getRegionLabel(reg) : kitchenCfg.name;
+    const badgeClass = kitchenCfg ? kitchenCfg.badgeTintClass : '';
     const isHeBadge = state.lang === 'he' && Boolean(reg?.name_he);
-    const inCartItem = (state.cart.items || []).find((ci) => ci.product_id === p.id && ci.variant_code === 'single');
+    const inCartItem = (state.cart.items || []).find(
+      (ci) => String(ci.product_id) === String(p.id) && ci.variant_code === 'single'
+    );
     const localizedTitle = getProductLocalizedTitle(p);
     const isHeTitle = state.lang === 'he' && Boolean(p.title_he);
     const hasGenuineDiscount = p.compare_at_price_ils && Number(p.compare_at_price_ils) > Number(p.price_ils);
-    const sizeBadge = p.size_label || (p.net_weight_grams >= 1000 ? `${p.net_weight_grams / 1000} kg` : `${p.net_weight_grams}g`);
+    const sizeBadge =
+      p.size_label ||
+      (p.net_weight_grams
+        ? p.net_weight_grams >= 1000
+          ? `${p.net_weight_grams / 1000} kg`
+          : `${p.net_weight_grams}g`
+        : '');
+    const imgUrl = p.primary_image_url || PLACEHOLDER_PRODUCT_IMG;
 
     return `
-      <article class="product-card">
+      <article class="product-card" data-product-id="${escapeHtml(String(p.id))}">
         <div class="product-card-media" onclick="app.openPdpModal('${escapeHtml(p.slug)}')">
-          <span class="country-pill-badge ${escapeHtml(kitchenCfg.badgeTintClass)}" lang="${isHeBadge ? 'he' : 'en'}" dir="${isHeBadge ? 'rtl' : 'ltr'}">${escapeHtml(countryName)}</span>
+          <span class="country-pill-badge ${escapeHtml(badgeClass)}" lang="${isHeBadge ? 'he' : 'en'}" dir="${isHeBadge ? 'rtl' : 'ltr'}">${escapeHtml(countryName)}</span>
           ${
             hasGenuineDiscount
               ? `<span class="badge-sale" lang="en" dir="ltr">SAVE ${p.discount_percent}%</span>`
               : ''
           }
-          <img src="${escapeHtml(p.primary_image_url)}" alt="${escapeHtml(localizedTitle)}" loading="lazy" />
+          <img
+            src="${escapeHtml(imgUrl)}"
+            alt="${escapeHtml(localizedTitle)}"
+            loading="lazy"
+            decoding="async"
+            onerror="this.onerror=null;this.src='${PLACEHOLDER_PRODUCT_IMG}';"
+          />
         </div>
 
         <div class="product-card-body">
           <div class="product-meta-top" lang="en" dir="ltr">
-            <span>${escapeHtml(p.vendor_brand)}</span>
+            <span>${escapeHtml(p.vendor_brand || '')}</span>
             <span>${escapeHtml(sizeBadge)}</span>
           </div>
           <h3 class="product-title" lang="${isHeTitle ? 'he' : 'en'}" dir="${isHeTitle ? 'rtl' : 'ltr'}" onclick="app.openPdpModal('${escapeHtml(p.slug)}')">${escapeHtml(localizedTitle)}</h3>
@@ -1977,7 +1816,11 @@ const app = {
                     : ''
                 }
               </div>
-              <div class="price-unit">₪${Number(p.price_per_100_ils).toFixed(2)} / ${escapeHtml(p.unit_measure_type || '100g')}</div>
+              ${
+                p.price_per_100_ils
+                  ? `<div class="price-unit">₪${Number(p.price_per_100_ils).toFixed(2)} / ${escapeHtml(p.unit_measure_type || '100g')}</div>`
+                  : ''
+              }
             </div>
 
             ${
@@ -1989,17 +1832,15 @@ const app = {
                     <button type="button" class="qty-step-btn" onclick="app.updateCartItemQuantity('${escapeHtml(inCartItem.cart_item_id)}', ${inCartItem.quantity + 1})" aria-label="Increase quantity">+</button>
                   </div>
                 `
-                : p.stock_quantity > 0
-                ? `
+                : `
                   <button
                     type="button"
                     class="add-circle-btn"
-                    onclick="event.stopPropagation(); app.addToCart('${escapeHtml(p.id)}', 'single', 1)"
-                    aria-label="Add ${escapeHtml(localizedTitle)} to basket"
-                    title="Add to basket"
+                    onclick="event.stopPropagation(); app.addToCart('${escapeHtml(String(p.id))}', 'single', 1)"
+                    aria-label="${escapeHtml(t('add_to_basket'))}: ${escapeHtml(localizedTitle)}"
+                    title="${escapeHtml(t('add_to_basket'))}"
                   >+</button>
                 `
-                : `<button type="button" class="pill-control" disabled style="opacity:0.55;cursor:not-allowed;">${escapeHtml(t('out_of_stock'))}</button>`
             }
           </div>
         </div>
@@ -2010,11 +1851,30 @@ const app = {
   renderNewArrivals() {
     const grid = document.getElementById('newArrivalsGrid');
     if (!grid) return;
-    const allProds = (state.allProducts.length > 0 ? state.allProducts : getLocalProducts()).filter(
-      (p) => p.status !== 'archived'
-    );
+    if (state.catalogueError && state.allProducts.length === 0) {
+      grid.innerHTML = `
+        <div class="catalogue-error-banner">
+          <h3 style="margin:0 0 8px;">Product catalogue temporarily unavailable</h3>
+          <p style="margin:0 0 14px;color:var(--dm-text-2);">${escapeHtml(state.catalogueError)}</p>
+          <button type="button" class="pill-control" onclick="app.handleRealtimeCatalogueUpdate()">Try again</button>
+        </div>
+      `;
+      return;
+    }
+    const allProds = (state.allProducts || []).filter((p) => p.status !== 'archived');
+    if (allProds.length === 0) {
+      grid.innerHTML = `
+        <div class="catalog-empty-state" style="grid-column:1 / -1;">
+          <h3>${state.lang === 'he' ? 'הקטלוג מתעדכן כעת' : 'New shipment arriving on our shelves'}</h3>
+          <p class="catalog-empty-copy">${state.lang === 'he' ? 'מוצרים חדשים יתווספו אוטומטית ממאגר המוצרים שלנו. להזמנה מהירה שלחו לנו הודעה בוואטסאפ.' : 'Products added to our live catalogue appear here automatically. Message us on WhatsApp if you need anything right away.'}</p>
+          <div class="catalog-empty-actions">
+            <a href="${escapeHtml(getWhatsAppUrl())}" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">${escapeHtml(t('order_on_whatsapp'))}</a>
+          </div>
+        </div>
+      `;
+      return;
+    }
     const arrivals = allProds.filter((p) => p.is_new_arrival);
-    // Put non-India items first if available so mixed country badges show immediately on homepage
     arrivals.sort((a, b) => (a.region_slug === 'philippines' ? -1 : b.region_slug === 'philippines' ? 1 : 0));
     const list = (arrivals.length >= 4 ? arrivals : allProds).slice(0, 4);
     grid.innerHTML = list.map((p) => this.renderProductCardHtml(p, 'new')).join('');
@@ -2104,6 +1964,7 @@ const app = {
     const normalized = KITCHEN_STOREFRONTS[regionSlug] ? regionSlug : 'philippines';
     state.activeRegionPage = normalized;
     state.activeRegionalPage = normalized;
+    state.regionPage = 1;
     state.regionPageFilters = {
       region: normalized,
       category: '',
@@ -2111,7 +1972,7 @@ const app = {
       vendor: '',
       size: '',
       dietary: '',
-      maxPrice: 150,
+      maxPrice: 99999,
       sort: 'featured'
     };
 
@@ -2382,6 +2243,7 @@ const app = {
 
   resetRegionalCatalogFilters(reload = true) {
     const defaultRegion = state.activeRegionPage || 'philippines';
+    state.regionPage = 1;
     state.regionPageFilters = {
       region: defaultRegion,
       category: '',
@@ -2389,7 +2251,7 @@ const app = {
       vendor: '',
       size: '',
       dietary: '',
-      maxPrice: 150,
+      maxPrice: 99999,
       sort: 'featured'
     };
     if (document.getElementById('regFilterRegionSelect')) document.getElementById('regFilterRegionSelect').value = defaultRegion;
@@ -2400,8 +2262,8 @@ const app = {
     if (document.getElementById('regFilterSizeSelect')) document.getElementById('regFilterSizeSelect').value = '';
     if (document.getElementById('regFilterDietarySelect')) document.getElementById('regFilterDietarySelect').value = '';
     if (document.getElementById('regFilterVendorSelect')) document.getElementById('regFilterVendorSelect').value = '';
-    if (document.getElementById('regFilterMaxPriceRange')) document.getElementById('regFilterMaxPriceRange').value = '150';
-    if (document.getElementById('regMaxPriceLabel')) document.getElementById('regMaxPriceLabel').textContent = '₪150';
+    if (document.getElementById('regFilterMaxPriceRange')) document.getElementById('regFilterMaxPriceRange').value = '99999';
+    if (document.getElementById('regMaxPriceLabel')) document.getElementById('regMaxPriceLabel').textContent = '₪99999';
     if (document.getElementById('regSortOrderSelect')) document.getElementById('regSortOrderSelect').value = 'featured';
 
     this.renderRegionalCatalogStrip();
@@ -2410,20 +2272,28 @@ const app = {
 
   applyRegionalCatalogFilters() {
     const regSelect = document.getElementById('regFilterRegionSelect');
+    state.regionPage = 1;
     state.regionPageFilters.region = regSelect ? regSelect.value : (state.regionPageFilters.region ?? '');
     state.regionPageFilters.category = document.getElementById('regFilterCategorySelect')?.value || '';
     state.regionPageFilters.subcategory = document.getElementById('regFilterSubcategorySelect')?.value || '';
     state.regionPageFilters.size = document.getElementById('regFilterSizeSelect')?.value || '';
     state.regionPageFilters.dietary = document.getElementById('regFilterDietarySelect')?.value || '';
     state.regionPageFilters.vendor = document.getElementById('regFilterVendorSelect')?.value || '';
-    state.regionPageFilters.maxPrice = Number(document.getElementById('regFilterMaxPriceRange')?.value || 150);
+    state.regionPageFilters.maxPrice = Number(document.getElementById('regFilterMaxPriceRange')?.value || 99999);
     state.regionPageFilters.sort = document.getElementById('regSortOrderSelect')?.value || 'featured';
     this.renderRegionalCatalogStrip();
     this.loadRegionalCatalogProducts();
   },
 
-  async loadRegionalCatalogProducts() {
+  async loadRegionalCatalogProducts({ append = false, refresh = false } = {}) {
     const f = state.regionPageFilters;
+    const grid = document.getElementById('regProductGridContainer');
+    if (!append) {
+      state.regionPage = 1;
+      if (grid && !refresh) grid.innerHTML = renderSkeletonCardsHtml(4);
+    }
+    state.isLoadingRegionProducts = true;
+
     const params = new URLSearchParams();
     if (f.category) params.set('category', f.category);
     if (f.subcategory) params.set('subcategory', f.subcategory);
@@ -2431,37 +2301,27 @@ const app = {
     if (f.vendor) params.set('vendor', f.vendor);
     if (f.size) params.set('size', f.size);
     if (f.dietary) params.set('dietary', f.dietary);
-    params.set('maxPrice', String(f.maxPrice || 150));
+    params.set('maxPrice', String(f.maxPrice || 99999));
     params.set('sort', f.sort || 'featured');
+    params.set('page', String(state.regionPage));
+    params.set('limit', '24');
+    if (refresh) params.set('refresh', '1');
 
     const data = await apiFetch(`/api/products?${params.toString()}`);
-    let prods = data.products || [];
-    if (f.size) {
-      prods = prods.filter((p) => p.size_label === f.size);
-    }
-    state.regionProducts = prods;
-
-    const vendorSel = document.getElementById('regFilterVendorSelect');
-    if (vendorSel) {
-      const allVendors =
-        state.vendors && state.vendors.length > 0
-          ? state.vendors
-          : data.facets?.vendors && data.facets.vendors.length > 0
-          ? data.facets.vendors
-          : Array.from(new Set((state.allProducts || []).map((p) => p.vendor_brand).filter(Boolean))).sort();
-      if (vendorSel.options.length <= 1 && allVendors.length > 0) {
-        vendorSel.innerHTML =
-          `<option value="">All Brands (${allVendors.length})</option>` +
-          allVendors
-            .map(
-              (v) =>
-                `<option value="${escapeHtml(v)}" ${f.vendor === v ? 'selected' : ''}>${escapeHtml(v)}</option>`
-            )
-            .join('');
-      }
-    }
+    state.isLoadingRegionProducts = false;
+    state.catalogueError = data.catalogue_error || null;
+    const prods = data.products || [];
+    state.regionProducts = append ? [...state.regionProducts, ...prods] : prods;
+    state.regionHasMore = Boolean(data.has_more);
+    state.regionTotal = Number(data.total ?? state.regionProducts.length);
 
     this.renderRegionalPageProducts();
+  },
+
+  loadMoreRegionalProducts() {
+    if (state.isLoadingRegionProducts || !state.regionHasMore) return;
+    state.regionPage += 1;
+    this.loadRegionalCatalogProducts({ append: true });
   },
 
   renderRegionalPageProducts() {
@@ -2488,8 +2348,20 @@ const app = {
     if (f.size) parts.push(`Size: ${f.size}`);
 
     const list = state.regionProducts || [];
+    const totalCount = state.regionTotal || list.length;
     if (heading) heading.textContent = parts.length > 0 ? parts.join(' · ') : t('all_products_heading');
-    if (countBadge) countBadge.textContent = `(${list.length} items)`;
+    if (countBadge) countBadge.textContent = `(${totalCount} items)`;
+
+    if (state.catalogueError && list.length === 0) {
+      grid.innerHTML = `
+        <div class="catalogue-error-banner">
+          <h3 style="margin:0 0 8px;">Unable to load kitchen catalogue</h3>
+          <p style="margin:0 0 14px;color:var(--dm-text-2);">${escapeHtml(state.catalogueError)}</p>
+          <button type="button" class="pill-control" onclick="app.loadRegionalCatalogProducts({ refresh: true })">Retry</button>
+        </div>
+      `;
+      return;
+    }
 
     if (list.length === 0) {
       grid.innerHTML = `
@@ -2504,7 +2376,13 @@ const app = {
       return;
     }
 
-    grid.innerHTML = list.map((p) => this.renderProductCardHtml(p, 'regcat')).join('');
+    const loadMoreHtml = state.regionHasMore
+      ? `<div class="catalogue-load-more-row">
+           <button type="button" class="pill-control btn-cta-secondary" onclick="app.loadMoreRegionalProducts()">Load more products (${list.length} of ${totalCount})</button>
+         </div>`
+      : '';
+
+    grid.innerHTML = list.map((p) => this.renderProductCardHtml(p, 'regcat')).join('') + loadMoreHtml;
   },
 
   renderRegionStrip() {
@@ -2612,6 +2490,7 @@ const app = {
   },
 
   resetAllFilters(reload = true) {
+    state.shopPage = 1;
     state.filters = {
       category: '',
       subcategory: '',
@@ -2624,7 +2503,7 @@ const app = {
       inStock: false,
       onSale: false,
       authenticOnly: false,
-      maxPrice: 150,
+      maxPrice: 99999,
       sort: 'featured'
     };
     if (document.getElementById('filterRegionSelect')) document.getElementById('filterRegionSelect').value = '';
@@ -2635,8 +2514,8 @@ const app = {
     if (document.getElementById('filterSizeSelect')) document.getElementById('filterSizeSelect').value = '';
     if (document.getElementById('filterDietarySelect')) document.getElementById('filterDietarySelect').value = '';
     if (document.getElementById('filterVendorSelect')) document.getElementById('filterVendorSelect').value = '';
-    if (document.getElementById('filterMaxPriceRange')) document.getElementById('filterMaxPriceRange').value = '150';
-    if (document.getElementById('maxPriceLabel')) document.getElementById('maxPriceLabel').textContent = '₪150';
+    if (document.getElementById('filterMaxPriceRange')) document.getElementById('filterMaxPriceRange').value = '99999';
+    if (document.getElementById('maxPriceLabel')) document.getElementById('maxPriceLabel').textContent = '₪99999';
     if (document.getElementById('sortOrderSelect')) document.getElementById('sortOrderSelect').value = 'featured';
     if (document.getElementById('globalSearchInput')) document.getElementById('globalSearchInput').value = '';
     if (document.getElementById('mobileSearchInput')) document.getElementById('mobileSearchInput').value = '';
@@ -2647,6 +2526,7 @@ const app = {
   },
 
   applyCatalogFilters() {
+    state.shopPage = 1;
     state.filters.tripBox = false;
     const regSelect = document.getElementById('filterRegionSelect');
     state.filters.region = regSelect ? regSelect.value : (state.filters.region || '');
@@ -2655,14 +2535,23 @@ const app = {
     state.filters.size = document.getElementById('filterSizeSelect')?.value || '';
     state.filters.dietary = document.getElementById('filterDietarySelect')?.value || '';
     state.filters.vendor = document.getElementById('filterVendorSelect')?.value || '';
-    state.filters.maxPrice = Number(document.getElementById('filterMaxPriceRange')?.value || 150);
+    state.filters.maxPrice = Number(document.getElementById('filterMaxPriceRange')?.value || 99999);
     state.filters.sort = document.getElementById('sortOrderSelect')?.value || 'featured';
     this.renderRegionStrip();
     this.renderNavigation();
     this.loadProducts();
   },
 
-  async loadProducts() {
+  async loadProducts({ append = false, refresh = false } = {}) {
+    const grid = document.getElementById('productGridContainer');
+    if (!append) {
+      state.shopPage = 1;
+      if (grid && !refresh && state.currentView === 'shop') {
+        grid.innerHTML = renderSkeletonCardsHtml(8);
+      }
+    }
+    state.isLoadingProducts = true;
+
     const params = new URLSearchParams();
     if (state.filters.category) params.set('category', state.filters.category);
     if (state.filters.subcategory) params.set('subcategory', state.filters.subcategory);
@@ -2674,27 +2563,30 @@ const app = {
     if (state.filters.inStock) params.set('inStock', 'true');
     if (state.filters.onSale) params.set('onSale', 'true');
     if (state.filters.authenticOnly) params.set('authenticOnly', 'true');
-    params.set('maxPrice', String(state.filters.maxPrice));
+    params.set('maxPrice', String(state.filters.maxPrice || 99999));
     params.set('sort', state.filters.sort);
+    params.set('page', String(state.shopPage));
+    params.set('limit', '24');
+    if (refresh) params.set('refresh', '1');
 
     const data = await apiFetch(`/api/products?${params.toString()}`);
+    state.isLoadingProducts = false;
+    state.catalogueError = data.catalogue_error || null;
     let prods = data.products || [];
     if (state.filters.tripBox) {
       prods = prods.filter((p) => p.region_slug === 'india' || p.region_slug === 'thailand');
     }
-    if (state.filters.size) {
-      prods = prods.filter((p) => p.size_label === state.filters.size);
-    }
-    state.products = prods;
-
-    const vendorSel = document.getElementById('filterVendorSelect');
-    if (vendorSel && vendorSel.options.length <= 1 && data.facets?.vendors) {
-      vendorSel.innerHTML =
-        `<option value="">All Brands (${data.facets.vendors.length})</option>` +
-        data.facets.vendors.map((v) => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
-    }
+    state.products = append ? [...state.products, ...prods] : prods;
+    state.shopHasMore = Boolean(data.has_more) && !state.filters.tripBox;
+    state.shopTotal = state.filters.tripBox ? state.products.length : Number(data.total ?? state.products.length);
 
     this.renderProductGrid();
+  },
+
+  loadMoreShopProducts() {
+    if (state.isLoadingProducts || !state.shopHasMore) return;
+    state.shopPage += 1;
+    this.loadProducts({ append: true });
   },
 
   renderProductGrid() {
@@ -2719,10 +2611,23 @@ const app = {
     if (state.filters.size) parts.push(`Size: ${state.filters.size}`);
     if (state.filters.q) parts.push(`Search: "${state.filters.q}"`);
 
+    const totalCount = state.shopTotal || state.products.length;
     if (heading) heading.textContent = parts.length > 0 ? parts.join(' · ') : t('all_products_heading');
-    if (countBadge) countBadge.textContent = `(${state.products.length} items)`;
+    if (countBadge) countBadge.textContent = `(${totalCount} items)`;
 
     this.renderCategoryPillsBars();
+
+    if (state.catalogueError && state.products.length === 0) {
+      grid.innerHTML = `
+        <div class="catalogue-error-banner">
+          <h3 style="margin:0 0 8px;">Unable to load product catalogue</h3>
+          <p style="margin:0 0 14px;color:var(--dm-text-2);">${escapeHtml(state.catalogueError)}</p>
+          <button type="button" class="pill-control" onclick="app.loadProducts({ refresh: true })">Retry</button>
+        </div>
+      `;
+      return;
+    }
+
     if (state.products.length === 0) {
       grid.innerHTML = `
         <div class="catalog-empty-state">
@@ -2736,7 +2641,13 @@ const app = {
       return;
     }
 
-    grid.innerHTML = state.products.map((p) => this.renderProductCardHtml(p, 'cat')).join('');
+    const loadMoreHtml = state.shopHasMore
+      ? `<div class="catalogue-load-more-row">
+           <button type="button" class="pill-control btn-cta-secondary" onclick="app.loadMoreShopProducts()">Load more products (${state.products.length} of ${totalCount})</button>
+         </div>`
+      : '';
+
+    grid.innerHTML = state.products.map((p) => this.renderProductCardHtml(p, 'cat')).join('') + loadMoreHtml;
   },
 
   // =========================================================================
@@ -2783,7 +2694,7 @@ const app = {
           html += `
             <div class="predictive-item" onclick="app.openPdpModal('${escapeHtml(p.slug)}'); document.getElementById('predictiveDropdown').style.display='none';">
               <div style="display:flex;align-items:center;gap:10px;">
-                <img src="${escapeHtml(p.primary_image_url)}" alt="${escapeHtml(p.title)}" />
+                <img src="${escapeHtml(p.primary_image_url || PLACEHOLDER_PRODUCT_IMG)}" alt="${escapeHtml(p.title)}" loading="lazy" onerror="this.onerror=null;this.src='${PLACEHOLDER_PRODUCT_IMG}';" />
                 <div>
                   <div style="font-weight:600;font-size:0.92rem;color:var(--dm-ink);">${escapeHtml(p.title)}</div>
                   <div style="font-size:0.8rem;color:var(--dm-muted);">${escapeHtml(p.vendor_brand)} · ${escapeHtml(p.size_label || '')}</div>
@@ -2854,7 +2765,7 @@ const app = {
         <div class="form-grid-2" style="gap:28px;align-items:start;">
           <div>
             <div class="pdp-zoom-container" onclick="this.classList.toggle('zoomed')" title="Click to toggle 2x zoom">
-              <img id="pdpMainImage" src="${escapeHtml(p.primary_image_url)}" alt="${escapeHtml(p.title)}" />
+              <img id="pdpMainImage" src="${escapeHtml(p.primary_image_url || PLACEHOLDER_PRODUCT_IMG)}" alt="${escapeHtml(p.title)}" onerror="this.onerror=null;this.src='${PLACEHOLDER_PRODUCT_IMG}';" />
               <span class="pdp-zoom-hint">Click packet to zoom</span>
             </div>
             ${
@@ -2946,15 +2857,15 @@ const app = {
                 type="button"
                 class="btn-primary btn-cta-lg"
                 style="flex:1;"
-                onclick="app.addToCart('${escapeHtml(p.id)}', document.getElementById('pdpVariantSelect').value, document.getElementById('pdpQtyInput').value)"
+                onclick="app.addToCart('${escapeHtml(String(p.id))}', document.getElementById('pdpVariantSelect').value, document.getElementById('pdpQtyInput').value)"
               >
-                Add to Basket
+                ${escapeHtml(t('add_to_basket'))}
               </button>
               <button
                 type="button"
                 class="pill-control"
                 style="min-height:48px;"
-                onclick="app.toggleWishlist('${escapeHtml(p.id)}'); app.openPdpModal('${escapeHtml(p.slug)}');"
+                onclick="app.toggleWishlist('${escapeHtml(String(p.id))}'); app.openPdpModal('${escapeHtml(p.slug)}');"
               >
                 ${isWished ? 'Saved' : 'Save'}
               </button>
@@ -2984,7 +2895,7 @@ const app = {
                       (rp) => `
                       <div style="border:1px solid var(--dm-line);border-radius:16px;padding:12px;cursor:pointer;background:var(--dm-white);" onclick="app.openPdpModal('${escapeHtml(rp.slug)}')">
                         <div style="height:110px;background:var(--dm-well);border-radius:12px;padding:8px;display:flex;align-items:center;justify-content:center;margin-bottom:8px;">
-                          <img src="${escapeHtml(rp.primary_image_url)}" alt="${escapeHtml(rp.title)}" style="max-width:100%;max-height:100%;object-fit:contain;" />
+                          <img src="${escapeHtml(rp.primary_image_url || PLACEHOLDER_PRODUCT_IMG)}" alt="${escapeHtml(rp.title)}" loading="lazy" onerror="this.onerror=null;this.src='${PLACEHOLDER_PRODUCT_IMG}';" style="max-width:100%;max-height:100%;object-fit:contain;" />
                         </div>
                         <div style="font-weight:600;font-size:14px;line-height:1.3;margin-bottom:4px;">${escapeHtml(rp.title)}</div>
                         <div style="font-family:var(--dm-font-display);font-weight:800;color:var(--dm-ink);font-size:15px;">₪${Number(rp.price_ils).toFixed(2)}</div>
@@ -3150,7 +3061,7 @@ const app = {
       .map(
         (item) => `
         <div class="cart-line-item">
-          <img src="${escapeHtml(item.primary_image_url)}" alt="${escapeHtml(item.title)}" />
+          <img src="${escapeHtml(item.primary_image_url || PLACEHOLDER_PRODUCT_IMG)}" alt="${escapeHtml(item.title)}" loading="lazy" onerror="this.onerror=null;this.src='${PLACEHOLDER_PRODUCT_IMG}';" />
           <div>
             <div style="font-weight:600;font-size:15px;line-height:1.3;">${escapeHtml(item.title)}</div>
             <div style="font-size:14px;color:var(--dm-muted);margin:2px 0 8px;">${escapeHtml(item.variant_label)} · ₪${Number(item.unit_price_ils).toFixed(2)}</div>
@@ -4241,16 +4152,27 @@ const app = {
         </div>
       </div>
 
-      <!-- Centralised Supabase Architecture Banner -->
+      <!-- Centralised Supabase Architecture & Live Catalogue Diagnostics Banner -->
       <div class="card-panel" style="background:#F3F8F4;border:1.5px solid var(--brand-green);margin-bottom:20px;">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
           <div>
-            <strong>${isHe ? 'ארכיטקטורת שרת מרכזית Supabase (24 טבלאות + אחסון + RLS)' : 'Centralised Supabase Backend Architecture (24 Tables + Storage + RLS)'}</strong>
+            <strong>${isHe ? 'סנכרון חי מול Supabase ("Product lists" + Storage "Product Images")' : 'Live Supabase Integration ("Product lists" Table + "Product Images" Storage Bucket)'}</strong>
             <div style="font-size:0.82rem;color:var(--text-secondary);margin-top:4px;">
-              ${isHe ? 'סכמה:' : 'Schema:'} <code dir="ltr">supabase/migrations/001_initial_schema.sql</code> • ${isHe ? 'תיקיות אחסון:' : 'Storage Folders:'} <code dir="ltr">/products/india/</code>, <code dir="ltr">/products/thailand/</code>, <code dir="ltr">/products/sri-lanka/</code>, <code dir="ltr">/products/philippines/</code>.
+              ${isHe ? 'שורות שנקראו:' : 'Rows Retrieved:'} <strong>${data.supabase_diagnostics?.totalRowsRetrieved ?? data.products.length}</strong> •
+              ${isHe ? 'תמונות Storage פעילות:' : 'Resolved Storage Images:'} <strong>${data.supabase_diagnostics?.resolvedImagesCount ?? 0}</strong> •
+              ${isHe ? 'תמונות חסרות (Placeholder):' : 'Placeholder Images:'} <strong>${data.supabase_diagnostics?.missingImageProducts?.length ?? 0}</strong> •
+              ${isHe ? 'מדינות לא מזוהות:' : 'Unrecognised Countries:'} <strong>${data.supabase_diagnostics?.unrecognisedCountryProducts?.length ?? 0}</strong> •
+              ${isHe ? 'קטגוריות לא מזוהות:' : 'Unrecognised Categories:'} <strong>${data.supabase_diagnostics?.unrecognisedCategoryProducts?.length ?? 0}</strong>
             </div>
+            ${
+              data.supabase_diagnostics?.rlsLikelyBlockingAnonRead
+                ? `<div style="margin-top:8px;padding:8px 12px;border-radius:8px;background:#FFF4E5;border:1px solid #F0B429;color:#7A4B00;font-size:0.82rem;">
+                     <strong>RLS Notice:</strong> 0 rows were returned using the public/anon key. Apply <code dir="ltr">Website/supabase/migrations/002_product_lists_rls_and_indexes.sql</code> in the Supabase SQL Editor to grant public read-only SELECT access on <code dir="ltr">public."Product lists"</code> (excluding <code dir="ltr">"Cost"</code>).
+                   </div>`
+                : ''
+            }
           </div>
-          <span class="badge-authentic">${isHe ? 'נעילות מלאי אטומיות פעילות' : 'ATOMIC INVENTORY LOCKS ACTIVE'}</span>
+          <span class="badge-authentic">${isHe ? 'SUPABASE מקור אמת יחיד' : 'SINGLE SOURCE OF TRUTH ACTIVE'}</span>
         </div>
       </div>
 

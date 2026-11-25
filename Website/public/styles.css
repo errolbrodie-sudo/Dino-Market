@@ -1348,9 +1348,54 @@ body[data-view="region"] .header-whatsapp-btn span {
 }
 
 .product-card-media img {
+  width: auto;
+  height: auto;
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
+  background: transparent;
+}
+
+@keyframes dmShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.product-card-skeleton {
+  background: var(--dm-white);
+  border: 1px solid var(--dm-line);
+  border-radius: 22px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skeleton-box {
+  border-radius: 12px;
+  background: linear-gradient(90deg, #F4EBDC 25%, #FAF4EA 50%, #F4EBDC 75%);
+  background-size: 200% 100%;
+  animation: dmShimmer 1.35s ease-in-out infinite;
+}
+
+.catalogue-error-banner {
+  grid-column: 1 / -1;
+  background: #FFF8F5;
+  border: 1.5px solid rgba(196, 55, 43, 0.35);
+  border-radius: 20px;
+  padding: 24px;
+  text-align: center;
+}
+
+.catalogue-load-more-row {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  padding: 20px 0 6px;
 }
 
 .country-pill-badge {

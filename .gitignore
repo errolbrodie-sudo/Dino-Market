@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+Website/node_modules/
+
+# Environment Variables & Secrets (NEVER commit credentials)
+.env
+.env.*
+!.env.example
+Website/.env
+Website/.env.*
+!Website/.env.example
+
+# Local SQLite WAL/SHM runtime files
+Website/data/*.sqlite-wal
+Website/data/*.sqlite-shm
+
+# Vercel build/local state
+.vercel/
+Website/.vercel/
+
+# OS & Editor temporary files
+.DS_Store
+Thumbs.db
+~$*
